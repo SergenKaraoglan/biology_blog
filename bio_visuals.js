@@ -121,6 +121,245 @@ document.getElementById('dna-twirl-btn').addEventListener('click', () => {
     isTwirling = !isTwirling;
 });
 
+// --- Section 2: Codon Reader ---
+const codonCanvas = document.getElementById('codonCanvas');
+const codonCtx = codonCanvas.getContext('2d');
+const codonVal = document.getElementById('codon-val');
+const aminoVal = document.getElementById('amino-val');
+
+let currentCodon = ["A", "T", "G"];
+const bases = ["A", "T", "C", "G"];
+const codonTable = {
+    "ATG": "Methionine (START)", "TTT": "Phenylalanine", "TTC": "Phenylalanine",
+    "TTA": "Leucine", "TTG": "Leucine", "TCT": "Serine", "TCC": "Serine",
+    "TCA": "Serine", "TCG": "Serine", "TAT": "Tyrosine", "TAC": "Tyrosine",
+    "TAA": "STOP", "TAG": "STOP", "TGA": "STOP", "TGT": "Cysteine", "TGC": "Cysteine"
+    // (Simplified for brevity, but enough for variety)
+};
+
+function updateCodonReader() {
+    const seq = currentCodon.join("");
+    codonVal.innerText = seq;
+    aminoVal.innerText = codonTable[seq] || "Amino Acid X (Generic)";
+    
+    // Draw
+    const w = codonCanvas.width;
+    const h = codonCanvas.height;
+    codonCtx.clearRect(0, 0, w, h);
+    
+    currentCodon.forEach((base, i) => {
+        const x = (w / 4) * (i + 1);
+        const y = h / 2;
+        
+        codonCtx.beginPath();
+        codonCtx.arc(x, y, 30, 0, Math.PI * 2);
+        codonCtx.strokeStyle = "#333";
+        codonCtx.lineWidth = 1;
+        codonCtx.stroke();
+        
+        codonCtx.fillStyle = "#fff";
+        codonCtx.font = "bold 24px 'Courier New'";
+        codonCtx.textAlign = "center";
+        codonCtx.textBaseline = "middle";
+        codonCtx.fillText(base, x, y);
+        
+        codonCtx.fillStyle = (base === "A") ? "#00ff88" : (base === "T") ? "#ff0055" : (base === "C") ? "#fbbf24" : "#00aaff";
+        codonCtx.beginPath();
+        codonCtx.arc(x, y + 50, 5, 0, Math.PI * 2);
+        codonCtx.fill();
+    });
+}
+
+document.querySelectorAll('.base-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const pos = parseInt(btn.dataset.pos);
+        const nextIdx = (bases.indexOf(currentCodon[pos]) + 1) % 4;
+        currentCodon[pos] = bases[nextIdx];
+        btn.innerText = currentCodon[pos];
+        updateCodonReader();
+    });
+});
+
+// --- Section 3: Transcription Animation ---
+const transCanvas = document.getElementById('transcriptionCanvas');
+const transCtx = transCanvas.getContext('2d');
+let transProgress = 0;
+let isTranscribing = false;
+
+function drawTranscription() {
+    const w = transCanvas.width;
+    const h = transCanvas.height;
+    transCtx.clearRect(0, 0, w, h);
+    
+    const dnaSeq = "ATGCCGTAGCTA";
+    const rnaSeq = "AUGCCGUAGCUA";
+    const spacing = 40;
+    
+    // Polymerase (Grey box)
+    const polyX = 50 + transProgress * spacing;
+    transCtx.fillStyle = "rgba(100, 100, 100, 0.4)";
+    transCtx.fillRect(polyX - 20, h/2 - 40, 60, 80);
+    
+    for(let i=0; i<dnaSeq.length; i++) {
+        const x = 50 + i * spacing;
+        
+        // DNA
+        transCtx.fillStyle = "#555";
+        transCtx.font = "14px monospace";
+        transCtx.fillText(dnaSeq[i], x, h/2 - 50);
+        
+        // RNA
+        if (i < transProgress) {
+            transCtx.fillStyle = "#a855f7";
+            transCtx.font = "bold 16px monospace";
+            transCtx.fillText(rnaSeq[i], x, h/2 + 20);
+            
+            // Link
+            if (i > 0) {
+                transCtx.beginPath();
+                transCtx.moveTo(x - spacing + 5, h/2 + 15);
+                transCtx.lineTo(x, h/2 + 15);
+                transCtx.strokeStyle = "#a855f744";
+                transCtx.stroke();
+            }
+        }
+    }
+    
+    if (isTranscribing) {
+        if (transProgress < dnaSeq.length) {
+            transProgress += 0.02;
+        } else {
+            isTranscribing = false;
+        }
+    }
+    requestAnimationFrame(drawTranscription);
+}
+
+document.getElementById('transcription-run-btn').addEventListener('click', () => {
+    transProgress = 0;
+    isTranscribing = true;
+});
+
+// --- Section 4: Translation Animation ---
+const translateCanvas = document.getElementById('translationCanvas');
+const translateCtx = translateCanvas.getContext('2d');
+let translateProgress = 0;
+let isTranslating = false;
+
+function drawTranslation() {
+    const w = translateCanvas.width;
+    const h = translateCanvas.height;
+    translateCtx.clearRect(0, 0, w, h);
+    
+    const rnaSeq = "AUGCCGUAGCUA";
+    const proteinSeq = ["Met", "Pro", "Val", "Ala"];
+    const spacing = 40;
+    
+    // mRNA Backbone
+    translateCtx.strokeStyle = "#a855f744";
+    translateCtx.beginPath();
+    translateCtx.moveTo(20, h - 50);
+    translateCtx.lineTo(w - 20, h - 50);
+    translateCtx.stroke();
+    
+    // Ribosome
+    const riboX = 50 + translateProgress * spacing * 3;
+    translateCtx.fillStyle = "rgba(100, 200, 100, 0.2)";
+    translateCtx.beginPath();
+    translateCtx.arc(riboX + 30, h - 70, 50, 0, Math.PI, true);
+    translateCtx.fill();
+    
+    // Protein Chain
+    for(let i=0; i < Math.floor(translateProgress); i++) {
+        const x = 50 + i * spacing * 3 + 30;
+        const y = h - 150 - (i * 10);
+        
+        translateCtx.fillStyle = "var(--protein-gold)";
+        translateCtx.beginPath();
+        translateCtx.arc(x, y, 12, 0, Math.PI * 2);
+        translateCtx.fill();
+        
+        translateCtx.fillStyle = "#000";
+        translateCtx.font = "10px monospace";
+        translateCtx.fillText(proteinSeq[i], x - 10, y + 4);
+    }
+    
+    if (isTranslating) {
+        if (translateProgress < proteinSeq.length) {
+            translateProgress += 0.01;
+        } else {
+            isTranslating = false;
+        }
+    }
+    requestAnimationFrame(drawTranslation);
+}
+
+document.getElementById('translation-run-btn').addEventListener('click', () => {
+    translateProgress = 0;
+    isTranslating = true;
+});
+
+// --- Section 5: Gene Regulation (Lac Operon) ---
+const regCanvas = document.getElementById('regulationCanvas');
+const regCtx = regCanvas.getContext('2d');
+const regBtn = document.getElementById('regulation-toggle-btn');
+let inducerPresent = false;
+let regAlpha = 0;
+
+function drawRegulation() {
+    const w = regCanvas.width;
+    const h = regCanvas.height;
+    regCtx.clearRect(0, 0, w, h);
+    
+    // DNA Line
+    regCtx.strokeStyle = "#333";
+    regCtx.lineWidth = 4;
+    regCtx.beginPath();
+    regCtx.moveTo(50, h/2);
+    regCtx.lineTo(w - 50, h/2);
+    regCtx.stroke();
+    
+    // Promoter/Gene labels
+    regCtx.fillStyle = "#555";
+    regCtx.font = "12px monospace";
+    regCtx.fillText("PROMOTER", 100, h/2 + 30);
+    regCtx.fillText("LACZ GENE", 300, h/2 + 30);
+    
+    // Repressor (Red block)
+    if (!inducerPresent) {
+        regCtx.fillStyle = "#ff0055";
+        regCtx.fillRect(100, h/2 - 20, 40, 40);
+        regAlpha = 0;
+    } else {
+        // Floating inducer
+        regCtx.fillStyle = "#00aaff";
+        regCtx.beginPath();
+        regCtx.arc(80, h/2, 10, 0, Math.PI * 2);
+        regCtx.fill();
+        
+        // Fade in RNA
+        regAlpha = Math.min(regAlpha + 0.01, 1);
+        regCtx.strokeStyle = `rgba(168, 85, 247, ${regAlpha})`;
+        regCtx.beginPath();
+        regCtx.moveTo(150, h/2 - 10);
+        regCtx.lineTo(w - 100, h/2 - 10);
+        regCtx.stroke();
+        regCtx.fillStyle = `rgba(255, 255, 255, ${regAlpha})`;
+        regCtx.fillText("RNA PRODUCED", 250, h/2 - 25);
+    }
+    
+    requestAnimationFrame(drawRegulation);
+}
+
+regBtn.addEventListener('click', () => {
+    inducerPresent = !inducerPresent;
+    regBtn.innerText = inducerPresent ? "TURN OFF" : "TURN ON";
+});
+
 // Initialize
 drawHeroDNA();
 drawDnaSection();
+updateCodonReader();
+drawTranscription();
+drawTranslation();
+drawRegulation();

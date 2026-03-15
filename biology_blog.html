@@ -69,22 +69,73 @@
 
     <span class="section-tag tag-molecular">MOLECULAR</span>
     <h2 id="sec-code">2. The Digital Script (The Genetic Code)</h2>
-    <p>DNA is a digital code. But unlike a computer that uses 0s and 1s (base-2), biology uses a base-4 system. To convert this code into action, the cell reads the bases in groups of three, called <strong>Codons</strong>.</p>
     <p>Each codon represents one specific <strong>Amino Acid</strong>. For example, the sequence <span class="term">ATG</span> is the universal "START" signal. This mapping between 3-letter DNA sequences and amino acids is known as the <strong>Genetic Code</strong>.</p>
+
+    <div class="interactive-container">
+        <canvas id="codonCanvas" width="600" height="250"></canvas>
+        <div class="controls">
+            <div class="control-group">
+                <label>CODON: <span id="codon-val">ATG</span></label>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <button class="base-btn" data-pos="0">A</button>
+                    <button class="base-btn" data-pos="1">T</button>
+                    <button class="base-btn" data-pos="2">G</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>AMINO ACID: <span id="amino-val" style="color:var(--bio-green)">Methionine (START)</span></label>
+            </div>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click the bases to cycle through A, T, C, G and see how the genetic code maps 3-letter sequences to amino acids.
+        </p>
+    </div>
 
     <span class="section-tag tag-molecular">MOLECULAR</span>
     <h2 id="sec-transcription">3. Copying the Code (RNA & Transcription)</h2>
-    <p>DNA is too precious to be used directly in the messy factory of the cell. Instead, the cell makes a working copy called <strong>mRNA</strong> (messenger RNA). This process is called <strong>Transcription</strong>.</p>
     <p>The mRNA is essentially a mirror image of the DNA, with one small change: instead of Thymine (T), it uses <strong>Uracil (U)</strong>. This copy is then shipped out of the cell's nucleus to the protein factories.</p>
+
+    <div class="interactive-container">
+        <canvas id="transcriptionCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <button id="transcription-run-btn">START TRANSCRIPTION</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch RNA Polymerase (the grey scanner) unzip the DNA and build a complementary mRNA strand (purple).
+        </p>
+    </div>
 
     <span class="section-tag tag-molecular">MOLECULAR</span>
     <h2 id="sec-translation">4. Building the Machine (Proteins & Translation)</h2>
-    <p>Once the mRNA reaches a <strong>Ribosome</strong>, the process of <strong>Translation</strong> begins. The ribosome "reads" the mRNA and assembles amino acids into a long chain. As the chain grows, it begins to fold into a complex 3D shape.</p>
     <p>This shape is everything. A protein's function is determined entirely by how it folds. Some become structural bricks (collagen), others become scanners (antibodies), and others become specialized tools (enzymes).</p>
+
+    <div class="interactive-container">
+        <canvas id="translationCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <button id="translation-run-btn">ASSEMBLE PROTEIN</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            The ribosome reads the mRNA and links amino acids together. The resulting chain folds into a functional protein nanomachine.
+        </p>
+    </div>
 
     <span class="section-tag tag-regulation">REGULATION</span>
     <h2 id="sec-regulation">5. The Biological Logic (Gene Tuning)</h2>
     <p>Every cell in your body has the exact same DNA. Why is a brain cell different from a skin cell? The answer is <strong>Gene Regulation</strong>. Not every gene is "on" at the same time. Cells use complex feedback loops—biological IF/THEN statements—to tune their behavior.</p>
+
+    <div class="interactive-container" style="min-height: 400px;">
+        <canvas id="regulationCanvas" width="600" height="300"></canvas>
+        <div class="controls" style="align-items:center;">
+             <div style="display:flex; align-items:center; gap:20px;">
+                <span style="font-family:'Courier New', monospace; font-size:14px; color:#888;">INDUCER ABSENT</span>
+                <button id="regulation-toggle-btn" style="background:var(--cell-pink); color:#fff; width:120px;">TURN ON</button>
+                <span style="font-family:'Courier New', monospace; font-size:14px; color:#fff; font-weight:bold;">INDUCER PRESENT</span>
+            </div>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            This is the <strong>Lac Operon</strong> model. When the inducer molecule is present, it removes the repressor (red block), allowing the cell to produce RNA.
+        </p>
+    </div>
 
     <h2 id="sec-quiz">6. Test Your Biology Knowledge</h2>
     <p>Can you implement the core logic of the central dogma? Below is a live Python environment. Write the functions to simulate base-pairing and protein translation.</p>
