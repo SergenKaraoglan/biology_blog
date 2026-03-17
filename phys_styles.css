@@ -1,0 +1,204 @@
+.home-nav {
+    padding: 1rem 2rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.home-nav a {
+    color: #ffaa00;
+    text-decoration: none;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.home-nav a:hover {
+    opacity: 1;
+}
+
+:root {
+    /* Physics Inspired Dark Theme */
+    --bg-color: #050505;
+    --container-bg: #0a0a0a;
+    --accent-orange: #ff7700;
+    --accent-gold: #ffaa00;
+    --accent-purple: #9d00ff;
+    --text-color: #e0e0e0;
+    --dim-text: #888;
+    --border-color: #1a1a1a;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Inter', -apple-system, sans-serif;
+    line-height: 1.8;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 5rem;
+    font-weight: 800;
+    text-align: center;
+    margin: 4rem 0 2rem;
+    background: linear-gradient(to bottom, var(--accent-gold), var(--accent-orange));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -2px;
+}
+
+h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.2rem;
+    margin-top: 5rem;
+    color: #fff;
+    border-bottom: 2px solid var(--accent-orange);
+    display: inline-block;
+    padding-bottom: 0.5rem;
+}
+
+p {
+    margin-bottom: 1.5rem;
+    font-size: 1.15rem;
+    color: #ccc;
+}
+
+.section-tag {
+    display: block;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--accent-gold);
+    letter-spacing: 2px;
+    margin-bottom: -4rem;
+    margin-top: 6rem;
+}
+
+.toc {
+    background: var(--container-bg);
+    border: 1px solid var(--border-color);
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin: 4rem 0;
+}
+
+.toc-title {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--dim-text);
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+}
+
+.toc-part {
+    font-weight: bold;
+    color: #fff;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.toc ol {
+    list-style: none;
+    padding-left: 0;
+}
+
+.toc a {
+    color: var(--accent-orange);
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: color 0.2s;
+}
+
+.toc a:hover {
+    color: #fff;
+}
+
+.interactive-container {
+    background: #000;
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    margin: 3rem 0;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.controls {
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+button {
+    background: #111;
+    color: #fff;
+    border: 1px solid #333;
+    padding: 12px 24px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+button:hover {
+    background: var(--accent-gold);
+    color: #000;
+    border-color: var(--accent-gold);
+}
+
+.slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 200px;
+}
+
+.slider-group label {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: var(--dim-text);
+}
+
+input[type="range"] {
+    appearance: none;
+    background: #222;
+    height: 4px;
+    border-radius: 2px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    background: var(--accent-orange);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+footer {
+    margin-top: 8rem;
+    padding: 4rem 0;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    color: var(--dim-text);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+}

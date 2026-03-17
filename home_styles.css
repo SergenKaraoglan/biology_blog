@@ -4,8 +4,10 @@
     --text-dim: #888;
     --bio-accent: #00ffaa;
     --ai-accent: #00e5ff;
+    --phys-accent: #ffaa00;
     --bio-glow: rgba(0, 255, 170, 0.2);
     --ai-glow: rgba(0, 229, 255, 0.2);
+    --phys-glow: rgba(255, 170, 0, 0.2);
     --font-header: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -43,7 +45,7 @@ body {
     font-weight: 800;
     letter-spacing: -1px;
     margin-bottom: 0.5rem;
-    background: linear-gradient(to right, var(--bio-accent), var(--ai-accent));
+    background: linear-gradient(to right, var(--bio-accent), var(--ai-accent), var(--phys-accent));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -86,6 +88,10 @@ body {
 
 .ai-bg {
     background: radial-gradient(circle at center, var(--ai-accent), transparent 70%);
+}
+
+.phys-bg {
+    background: radial-gradient(circle at center, var(--phys-accent), transparent 70%);
 }
 
 .cards-container {
@@ -146,6 +152,16 @@ body {
     background: linear-gradient(to top, var(--ai-glow), transparent);
 }
 
+.phys-card:hover {
+    border-color: var(--phys-accent);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--phys-glow);
+}
+
+.phys-card::before {
+    background: linear-gradient(to top, var(--phys-glow), transparent);
+}
+
 .portal-card:hover::before {
     opacity: 1;
 }
@@ -161,6 +177,7 @@ body {
 
 .bio-card .category-tag { color: var(--bio-accent); }
 .ai-card .category-tag { color: var(--ai-accent); }
+.phys-card .category-tag { color: var(--phys-accent); }
 
 .portal-card h2 {
     font-family: var(--font-header);
