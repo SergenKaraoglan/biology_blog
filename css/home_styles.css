@@ -16,6 +16,8 @@
     --cs-glow: rgba(0, 255, 255, 0.2);
     --astro-accent: #8a2be2;
     --astro-glow: rgba(138, 43, 226, 0.2);
+    --math-accent: #ff3e3e;
+    --math-glow: rgba(255, 62, 62, 0.2);
     --font-header: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -53,7 +55,7 @@ body {
     font-weight: 800;
     letter-spacing: -1px;
     margin-bottom: 0.5rem;
-    background: linear-gradient(to right, var(--bio-accent), var(--ai-accent), var(--phys-accent), var(--chem-accent), var(--econ-accent), var(--cs-accent), var(--astro-accent));
+    background: linear-gradient(to right, var(--bio-accent), var(--ai-accent), var(--phys-accent), var(--chem-accent), var(--econ-accent), var(--cs-accent), var(--astro-accent), var(--math-accent));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -86,7 +88,7 @@ body {
     z-index: 1;
 }
 
-.bg-seventh {
+.bg-eighth {
     flex: 1;
 }
 
@@ -116,6 +118,10 @@ body {
 
 .astro-bg {
     background: radial-gradient(circle at center, var(--astro-accent), transparent 70%);
+}
+
+.math-bg {
+    background: radial-gradient(circle at center, var(--math-accent), transparent 70%);
 }
 
 .cards-container {
@@ -220,6 +226,16 @@ body {
     background: linear-gradient(to top, var(--astro-glow), transparent);
 }
 
+.math-card:hover {
+    border-color: var(--math-accent);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--math-glow);
+}
+
+.math-card::before {
+    background: linear-gradient(to top, var(--math-glow), transparent);
+}
+
 .portal-card:hover::before {
     opacity: 1;
 }
@@ -240,6 +256,7 @@ body {
 .econ-card .category-tag { color: var(--econ-accent); }
 .cs-card .category-tag { color: var(--cs-accent); }
 .astro-card .category-tag { color: var(--astro-accent); }
+.math-card .category-tag { color: var(--math-accent); }
 
 .portal-card h2 {
     font-family: var(--font-header);
