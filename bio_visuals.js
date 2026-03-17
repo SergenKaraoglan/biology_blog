@@ -240,53 +240,186 @@ document.getElementById('transcription-run-btn').addEventListener('click', () =>
     isTranscribing = true;
 });
 
-// --- Section 4: Translation Animation ---
+// --- Section 4: Translation Animation (High Fidelity) ---
 const translateCanvas = document.getElementById('translationCanvas');
 const translateCtx = translateCanvas.getContext('2d');
 let translateProgress = 0;
 let isTranslating = false;
+
+// Background particles for immersion
+const bioParticles = Array.from({ length: 20 }, () => ({
+    x: Math.random() * 600,
+    y: Math.random() * 300,
+    size: Math.random() * 2 + 1,
+    speed: Math.random() * 0.2 + 0.1,
+    offset: Math.random() * Math.PI * 2
+}));
 
 function drawTranslation() {
     const w = translateCanvas.width;
     const h = translateCanvas.height;
     translateCtx.clearRect(0, 0, w, h);
     
-    const rnaSeq = "AUGCCGUAGCUA";
+    // 0. Draw Background Particles
+    bioParticles.forEach(p => {
+        p.y -= p.speed;
+        if (p.y < 0) p.y = h;
+        const xShift = Math.sin(time + p.offset) * 10;
+        translateCtx.fillStyle = "rgba(0, 255, 136, 0.05)";
+        translateCtx.beginPath();
+        translateCtx.arc(p.x + xShift, p.y, p.size, 0, Math.PI * 2);
+        translateCtx.fill();
+    });
+
+    const codons = ["AUG", "CCG", "UAG", "CUA"];
+    const anticodons = ["UAC", "GGC", "AUC", "GAU"];
     const proteinSeq = ["Met", "Pro", "Val", "Ala"];
-    const spacing = 40;
+    const spacing = 70;
     
-    // mRNA Backbone
-    translateCtx.strokeStyle = "#a855f744";
+    // mRNA Backbone (Sliding)
+    const offsetX = -translateProgress * spacing;
+    translateCtx.strokeStyle = "#a855f7";
+    translateCtx.setLineDash([5, 5]);
+    translateCtx.lineWidth = 1;
     translateCtx.beginPath();
-    translateCtx.moveTo(20, h - 50);
-    translateCtx.lineTo(w - 20, h - 50);
+    translateCtx.moveTo(0, h - 60);
+    translateCtx.lineTo(w, h - 60);
+    translateCtx.stroke();
+    translateCtx.setLineDash([]);
+    
+    // Ribosome - Small Subunit (bottom)
+    translateCtx.fillStyle = "rgba(40, 80, 40, 0.3)";
+    translateCtx.strokeStyle = "rgba(100, 200, 100, 0.4)";
+    translateCtx.lineWidth = 2;
+    translateCtx.beginPath();
+    translateCtx.roundRect(w/2 - 90, h - 85, 180, 45, [10, 10, 20, 20]);
+    translateCtx.fill();
     translateCtx.stroke();
     
-    // Ribosome
-    const riboX = 50 + translateProgress * spacing * 3;
-    translateCtx.fillStyle = "rgba(100, 200, 100, 0.2)";
+    // Ribosome - Large Subunit (top) with A, P, E sites labels
+    translateCtx.fillStyle = "rgba(40, 80, 40, 0.45)";
     translateCtx.beginPath();
-    translateCtx.arc(riboX + 30, h - 70, 50, 0, Math.PI, true);
+    translateCtx.roundRect(w/2 - 110, h - 240, 220, 160, [50, 50, 10, 10]);
     translateCtx.fill();
-    
-    // Protein Chain
-    for(let i=0; i < Math.floor(translateProgress); i++) {
-        const x = 50 + i * spacing * 3 + 30;
-        const y = h - 150 - (i * 10);
+    translateCtx.stroke();
+
+    // Site Labels inside Ribosome
+    translateCtx.fillStyle = "rgba(255,255,255,0.1)";
+    translateCtx.font = "bold 10px monospace";
+    translateCtx.fillText("E-SITE", w/2 - 70, h - 110);
+    translateCtx.fillText("P-SITE", w/2, h - 110);
+    translateCtx.fillText("A-SITE", w/2 + 70, h - 110);
+
+    const idx = Math.floor(translateProgress);
+    const fraction = translateProgress % 1;
+
+    // 1. Draw mRNA Codons
+    for(let i=0; i < codons.length; i++) {
+        const x = w/2 + (i * spacing) + offsetX;
+        if (x < -50 || x > w + 50) continue;
+        
+        translateCtx.fillStyle = (i === idx) ? "#fff" : "#a855f777";
+        translateCtx.font = "12px monospace";
+        translateCtx.textAlign = "center";
+        translateCtx.fillText(codons[i], x, h - 45);
+    }
+
+    // 2. Draw tRNAs
+    for (let i = Math.max(0, idx - 1); i <= idx + 1; i++) {
+        if (i >= codons.length) continue;
+        
+        const xBase = w/2 + (i * spacing) + offsetX;
+        let tRNA_Y = h - 65;
+        let opacity = 1;
+        let showAmino = true;
+        
+        if (i > idx) {
+            // Incoming (A-site bound)
+            tRNA_Y = 20 + (1 - fraction) * (h - 140);
+            opacity = fraction;
+        } else if (i < idx) {
+            // Outgoing (E-site exit)
+            opacity = 1 - fraction;
+            tRNA_Y = h - 140 - fraction * 100;
+            showAmino = false; // Left behind
+        } else {
+            // Active codon (P-site)
+            tRNA_Y = h - 140;
+        }
+
+        if (xBase > 0 && xBase < w) {
+            translateCtx.save();
+            translateCtx.globalAlpha = opacity;
+            
+            // tRNA Body (T-shape)
+            translateCtx.fillStyle = "#00aaff33";
+            translateCtx.strokeStyle = "#00aaff";
+            translateCtx.lineWidth = 1;
+            translateCtx.beginPath();
+            translateCtx.moveTo(xBase - 15, tRNA_Y - 40);
+            translateCtx.lineTo(xBase + 15, tRNA_Y - 40);
+            translateCtx.lineTo(xBase, tRNA_Y);
+            translateCtx.closePath();
+            translateCtx.fill();
+            translateCtx.stroke();
+
+            // Anticodon
+            translateCtx.fillStyle = "#fff";
+            translateCtx.font = "9px monospace";
+            translateCtx.fillText(anticodons[i], xBase, tRNA_Y - 5);
+
+            // Amino Acid
+            if (showAmino && i < proteinSeq.length) {
+                translateCtx.fillStyle = "var(--protein-gold)";
+                translateCtx.beginPath();
+                translateCtx.arc(xBase, tRNA_Y - 55, 10, 0, Math.PI * 2);
+                translateCtx.fill();
+                
+                // Peptide Bond Sparkle if just added
+                if (i === idx && fraction < 0.2) {
+                    translateCtx.fillStyle = "#fff";
+                    const sparkSize = (0.2 - fraction) * 100;
+                    translateCtx.beginPath();
+                    translateCtx.arc(xBase, tRNA_Y - 70, sparkSize, 0, Math.PI * 2);
+                    translateCtx.fill();
+                }
+            }
+            translateCtx.restore();
+        }
+    }
+
+    // 3. Growing Peptide Chain
+    for(let i=0; i <= idx; i++) {
+        const x = w/2 - (idx - i) * 18;
+        const y = h - 250 - (Math.sin(i * 0.5 + time) * 8);
         
         translateCtx.fillStyle = "var(--protein-gold)";
         translateCtx.beginPath();
-        translateCtx.arc(x, y, 12, 0, Math.PI * 2);
+        translateCtx.arc(x, y, 7, 0, Math.PI * 2);
         translateCtx.fill();
         
-        translateCtx.fillStyle = "#000";
-        translateCtx.font = "10px monospace";
-        translateCtx.fillText(proteinSeq[i], x - 10, y + 4);
+        if (i > 0) {
+            const prevX = w/2 - (idx - (i-1)) * 18;
+            const prevY = h - 250 - (Math.sin((i-1) * 0.5 + time) * 8);
+            translateCtx.beginPath();
+            translateCtx.moveTo(prevX, prevY);
+            translateCtx.lineTo(x, y);
+            translateCtx.strokeStyle = "rgba(251, 191, 36, 0.4)";
+            translateCtx.stroke();
+        }
     }
-    
+
+    // 4. Global UI Labels
+    translateCtx.fillStyle = "rgba(255,255,255,0.2)";
+    translateCtx.font = "9px monospace";
+    translateCtx.textAlign = "left";
+    translateCtx.fillText("RIBOSOME (80S)", w/2 + 115, h - 160);
+    translateCtx.fillText("MESSENGER RNA", 20, h - 70);
+    translateCtx.fillText("PEPTIDE CHAIN", w/2 - 100, h - 265);
+
     if (isTranslating) {
-        if (translateProgress < proteinSeq.length) {
-            translateProgress += 0.01;
+        if (translateProgress < codons.length - 0.1) {
+            translateProgress += 0.004; // Slower for detail
         } else {
             isTranslating = false;
         }

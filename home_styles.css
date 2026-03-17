@@ -1,0 +1,209 @@
+:root {
+    --bg-dark: #050505;
+    --text-main: #f0f0f0;
+    --text-dim: #888;
+    --bio-accent: #00ffaa;
+    --ai-accent: #00e5ff;
+    --bio-glow: rgba(0, 255, 170, 0.2);
+    --ai-glow: rgba(0, 229, 255, 0.2);
+    --font-header: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.home-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.home-header {
+    padding: 4rem 2rem;
+    text-align: center;
+    z-index: 10;
+}
+
+.main-title {
+    font-family: var(--font-header);
+    font-size: 4rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, var(--bio-accent), var(--ai-accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-family: var(--font-body);
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    font-weight: 300;
+}
+
+.portal-section {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 2rem;
+}
+
+.split-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    opacity: 0.15;
+    z-index: 1;
+}
+
+.bg-half {
+    flex: 1;
+}
+
+.bio-bg {
+    background: radial-gradient(circle at center, var(--bio-accent), transparent 70%);
+}
+
+.ai-bg {
+    background: radial-gradient(circle at center, var(--ai-accent), transparent 70%);
+}
+
+.cards-container {
+    display: flex;
+    gap: 3rem;
+    max-width: 1200px;
+    width: 100%;
+    z-index: 5;
+}
+
+.portal-card {
+    flex: 1;
+    text-decoration: none;
+    color: inherit;
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid #222;
+    padding: 3rem;
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 450px;
+    position: relative;
+    overflow: hidden;
+}
+
+.portal-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+}
+
+.bio-card:hover {
+    border-color: var(--bio-accent);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--bio-glow);
+}
+
+.bio-card::before {
+    background: linear-gradient(to top, var(--bio-glow), transparent);
+}
+
+.ai-card:hover {
+    border-color: var(--ai-accent);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--ai-glow);
+}
+
+.ai-card::before {
+    background: linear-gradient(to top, var(--ai-glow), transparent);
+}
+
+.portal-card:hover::before {
+    opacity: 1;
+}
+
+.category-tag {
+    font-family: var(--font-header);
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+.bio-card .category-tag { color: var(--bio-accent); }
+.ai-card .category-tag { color: var(--ai-accent); }
+
+.portal-card h2 {
+    font-family: var(--font-header);
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+}
+
+.portal-card p {
+    color: var(--text-dim);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.card-action {
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    transition: transform 0.3s ease;
+}
+
+.portal-card:hover .card-action {
+    transform: translateX(10px);
+}
+
+.home-footer {
+    padding: 3rem 2rem;
+    text-align: center;
+    color: #444;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 900px) {
+    .cards-container {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    .main-title {
+        font-size: 3rem;
+    }
+    .portal-card {
+        min-height: 350px;
+        padding: 2rem;
+    }
+}

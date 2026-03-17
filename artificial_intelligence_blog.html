@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="The ultimate interactive guide to artificial intelligence, built from absolute first principles. Explore neural networks, gradient descent, backpropagation, CNNs, Transformers, reinforcement learning, generative AI, and latent spaces through hands-on visualizations.">
+    <title>Artificial Intelligence: First Principles — The Ultimate Interactive Guide</title>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/monokai.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+
+    <link rel="stylesheet" href="ai_styles.css">
+</head>
+
+<body>
+    <nav class="home-nav">
+        <a href="index.html">← BACK TO HOME</a>
+    </nav>
+
+    <h1>Artificial Intelligence</h1>
+
+    <div class="intro-canvas-container">
+        <canvas id="introCanvas" class="intro-canvas" width="800" height="300"></canvas>
+    </div>
+
+    <p>We are surrounded by machines that seem to "know" things. They recognize our faces, translate our languages, and
+        recommend what we should watch next. At the heart of almost all of these systems is a <strong>neural
+            network</strong>.</p>
+
+    <p>The name conjures images of synthetic brains pulsing with electricity, but the reality is deeply mathematical,
+        surprisingly simple at its core, and immensely beautiful. A neural network is not a brain. It is a mathematical
+        machine for drawing boundaries.</p>
+
+
+
+    <p>Let’s build one from absolute first principles.</p>
+
+
+    <nav class="toc">
+        <p class="toc-title">CONTENTS</p>
+        <ol>
+            <li><a href="#sec-context">The Winter and the Spring</a></li>
+        </ol>
+
+        <p class="toc-part">Part IA — Mathematics</p>
+        <ol start="1">
+            <li><a href="#sec-linalg">The Language of Machines (Linear Algebra)</a></li>
+        </ol>
+
+        <p class="toc-part">Part IB — Machine Learning</p>
+        <ol start="2">
+            <li><a href="#sec-neuron">A Single Artificial Neuron</a></li>
+            <li><a href="#sec-layers">Adding Neurons and Layers</a></li>
+            <li><a href="#sec-curves">The Problem of Curves</a></li>
+            <li><a href="#sec-arch">The Architecture</a></li>
+            <li><a href="#sec-descent">The Descent</a></li>
+            <li><a href="#sec-linreg">The Best Fit (Linear Regression)</a></li>
+            <li><a href="#sec-logreg">Drawing the Line (Logistic Regression)</a></li>
+            <li><a href="#sec-dt">Splitting the Space (Decision Trees)</a></li>
+            <li><a href="#sec-kmeans">Finding the Groups (K-Means Clustering)</a></li>
+            <li><a href="#sec-synthesis">The Synthesis</a></li>
+            <li><a href="#sec-universal">The Shape of Anything (Universal Approximation)</a></li>
+            <li><a href="#sec-backprop">The Calculus of Blame</a></li>
+            <li><a href="#sec-batches">Batches, Epochs, and Chaos</a></li>
+            <li><a href="#sec-adam">Escaping the Valleys (Adam Optimizer)</a></li>
+            <li><a href="#sec-overfit">The Memorization Problem</a></li>
+        </ol>
+
+        <p class="toc-part">Part II — Language</p>
+        <ol start="17">
+            <li><a href="#sec-markov">Predicting the Next Step (Markov Chains)</a></li>
+            <li><a href="#sec-rnn">Memory and Time (RNNs)</a></li>
+            <li><a href="#sec-attention">The Attention Mechanism</a></li>
+            <li><a href="#sec-tokenisation">Breaking Words Apart (Tokenisation)</a></li>
+            <li><a href="#sec-embeddings">Words as Coordinates (Embeddings)</a></li>
+            <li><a href="#sec-ssl">Teaching Without a Teacher</a></li>
+        </ol>
+
+        <p class="toc-part">Part III — Vision</p>
+        <ol start="23">
+            <li><a href="#sec-cnn">Seeing the World (CNNs)</a></li>
+            <li><a href="#sec-genai">Dreaming Machines (GenAI)</a></li>
+            <li><a href="#sec-gan">The Art of Forgery (GANs)</a></li>
+            <li><a href="#sec-vae">Compressing Reality (VAEs)</a></li>
+            <li><a href="#sec-latent">The Space Between (Manifolds)</a></li>
+            <li><a href="#sec-disentanglement">Untangling the Threads (Disentanglement)</a></li>
+        </ol>
+
+        <p class="toc-part">Part IV — Reinforcement Learning</p>
+        <ol start="29">
+            <li><a href="#sec-bandits">The Gambler's Dilemma (Multi-Armed Bandits)</a></li>
+            <li><a href="#sec-rl">Learning by Doing</a></li>
+            <li><a href="#sec-ga">Survival of the Fittest (Genetic Algorithms)</a></li>
+            <li><a href="#sec-dqn">The Neural Strategist (Deep Q-Learning)</a></li>
+            <li><a href="#sec-bfs-dfs">Exploring the Maze (BFS &amp; DFS)</a></li>
+            <li><a href="#sec-astar">The Heuristic Shortcut (A* Search)</a></li>
+            <li><a href="#sec-minimax">Seeing the Future (Minimax)</a></li>
+            <li><a href="#sec-alphabeta">Pruning the Tree (Alpha-Beta Pruning)</a></li>
+            <li><a href="#sec-mcts">Mastering Games (AlphaZero &amp; MCTS)</a></li>
+            <li><a href="#sec-rlhf">Aligning with Humanity (RLHF)</a></li>
+            <li><a href="#sec-cot">Thinking Out Loud (Chain of Thought)</a></li>
+        </ol>
+
+        <p class="toc-part">Closing</p>
+        <ol start="40">
+            <li><a href="#sec-snn">Efficiency and Spikes (Spiking Neural Networks)</a></li>
+            <li><a href="#sec-singularity">The Recursive Horizon (The Singularity)</a></li>
+            <li><a href="#sec-quiz">Test Your Understanding</a></li>
+        </ol>
+    </nav>
+
+    <span class="section-tag">HISTORICAL CONTEXT</span>
+    <h2 id="sec-context">The Winter and the Spring (Context)</h2>
+    <p>The mathematical concepts behind neural networks are not new. The perceptron (the earliest single-neuron model)
+        was invented in 1958. Backpropagation was formalized in the 1970s. For decades, the AI community oscillated
+        between extreme hype and total abandonment—periods known as <strong>AI Winters</strong>.</p>
+    <p>During the AI Winters, neural networks were widely considered a theoretical dead end. The math worked on paper,
+        but the computers of the time lacked the processing power to train large networks, and researchers lacked the
+        massive datasets required to teach them.</p>
+    <p>The "Spring" finally arrived in the 2010s, driven by two forces running on a collision course: the explosion of
+        data on the internet, and the realization that Video Graphics Cards (GPUs), designed to rapidly multiply
+        matrices for video game polygons, could be hijacked to multiply the massive weight matrices of deep neural
+        networks in parallel.</p>
+    <p>Suddenly, what took months to compute took hours. Researchers began adding more and more "Hidden Layers" to their
+        models—hence the term <strong>Deep Learning</strong>. Let's look at how the layers and math actually work.</p>
+
+    <div class="part-header" id="part-mathematics">
+        <h3>Part IA</h3>
+        <p>Mathematics</p>
+    </div>
+
+    <span class="section-tag tag-beginner">BEGINNER</span>
+    <h2 id="sec-linalg">1. The Language of Machines (Linear Algebra)</h2>
+
+    <p>Before we can build an artificial brain, we have to understand the language it speaks. Neural networks do not
+        understand images, words, or sounds. They only understand numbers and the geometric spaces they live in. This is
+        the realm of <strong>Linear Algebra</strong>.</p>
+
+    <p>There are three primary structures you need to know:</p>
+    <ul>
+        <li><strong>Scalar</strong>: A single, isolated number. It represents a magnitude, like your age (25), a
+            temperature (98.6), or a pixel's brightness.</li>
+        <li><strong>Vector</strong>: An ordered list of scalars. You can think of a vector in two ways: as a coordinate
+            pointing to a specific location in space (e.g., $[x, y]$), or as an arrow with a direction and length. If we
+            track your age and height, you become a 2D vector: $[25, 180]$. An image is just a massive vector of
+            millions of pixel colors.</li>
+        <li><strong>Matrix</strong>: A 2D grid of numbers. If a vector is a point in space, a matrix is the
+            <em>transformation</em> applied to that space. A matrix can stretch, rotate, or shear vectors. Every layer
+            of a neural network applies a massive matrix transformation to the data.
+        </li>
+    </ul>
+
+    <p>Let's make this concrete. Below is a 2D coordinate system with a single <strong>Vector</strong> (the blue arrow).
+        We also have a 2x2 <strong>Matrix</strong>. Change the numbers in the matrix below, then click TRANSFORM to see
+        how the matrix mathematically warps space, moving the vector to a new location.</p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="linalgCanvas" width="600" height="350"></canvas>
+        <div class="controls" style="flex-direction: column; align-items: center; gap: 15px;">
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <div style="text-align: right; font-family: 'Courier New', monospace; color: #aaa;">
+                    <strong>MATRIX</strong><br>
+                    <div
+                        style="display:inline-block; border-left:2px solid #fff; border-right:2px solid #fff; padding: 4px; margin-top:5px;">
+                        <input type="number" id="mat-00" value="1.0" step="0.5"
+                            style="width:50px; background:#222; color:#fff; border:1px solid #444; padding:2px; text-align:center;">
+                        <input type="number" id="mat-01" value="0.5" step="0.5"
+                            style="width:50px; background:#222; color:#fff; border:1px solid #444; padding:2px; text-align:center;"><br>
+                        <input type="number" id="mat-10" value="-0.5" step="0.5"
+                            style="width:50px; background:#222; color:#fff; border:1px solid #444; padding:2px; text-align:center; margin-top:4px;">
+                        <input type="number" id="mat-11" value="1.0" step="0.5"
+                            style="width:50px; background:#222; color:#fff; border:1px solid #444; padding:2px; text-align:center; margin-top:4px;">
+                    </div>
+                </div>
+                <div style="text-align: left; font-family: 'Courier New', monospace; color: #00e5ff;">
+                    <strong>VECTOR</strong><br>
+                    <div
+                        style="display:inline-block; border-left:2px solid #00e5ff; border-right:2px solid #00e5ff; padding: 4px; margin-top:5px;">
+                        <span id="vec-x" style="display:inline-block; width:50px; text-align:center;">1.0</span><br>
+                        <span id="vec-y"
+                            style="display:inline-block; width:50px; text-align:center; margin-top:4px;">1.0</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button id="linalg-transform-btn">TRANSFORM VECTOR</button>
+                <button id="linalg-reset-btn" style="background:#333; color:#fff;">RESET</button>
+            </div>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Drag the head of the vector to move it. The Matrix multiplies against the Vector. This spatial
+            transformation is the foundational operation of every neural network.
+        </p>
+    </div>
+
+    <div class="part-header" id="part-machine-learning" style="margin-top: 4rem;">
+        <h3>Part IB</h3>
+        <p>Machine Learning</p>
+    </div>
+
+    <span class="section-tag tag-fundamentals">FUNDAMENTALS</span>
+    <h2 id="sec-neuron">2. A Single Artificial Neuron</h2>
+    <p>Imagine you are sorting apples and lemons. You have a machine that measures two things for every piece of fruit:
+        its <strong>weight</strong> (the horizontal x-axis) and its <strong>yellowness</strong> (the vertical y-axis).
+    </p>
+
+    <p>If a new, unknown fruit comes down the conveyor belt, how do we decide if it’s an apple or a lemon? The simplest
+        way is to draw a line separating the pink dots (apples) from the cyan dots (lemons). Everything on one side is
+        an apple; everything on the other is a lemon.</p>
+
+    <div class="interactive-container">
+        <canvas id="lineCanvas" width="600" height="400"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>WEIGHT (W): <span id="line-w-val">-1.00</span></label>
+                <input type="range" id="line-w-slider" min="-3" max="3" step="0.01" value="-1">
+            </div>
+            <div class="slider-group">
+                <label>BIAS (B): <span id="line-b-val">0.00</span></label>
+                <input type="range" id="line-b-slider" min="-5" max="5" step="0.01" value="0">
+            </div>
+        </div>
+    </div>
+
+    <p>Congratulations. You have just built the simplest possible neural network: a single <strong>artificial
+            neuron</strong>.</p>
+
+    <p>In mathematics, the equation for that line is <span class="equation">y = w * x + b</span>.</p>
+
+    <p>Our neuron takes the inputs, multiplies them by the weights, adds the bias, and uses that line to make a
+        decision.</p>
+
+    <span class="section-tag tag-fundamentals">FUNDAMENTALS</span>
+    <h2 id="sec-layers">3. Adding Neurons and Layers</h2>
+    <p>A single neuron gives us one straight line to split the world. But what if the data isn't perfectly separated by
+        one line? What if we have a square of apples surrounded by lemons?</p>
+
+    <p>This is where <strong>Layers</strong> come in. If one neuron draws one line, three neurons can draw three lines.
+        By feeding those three lines into another layer, the network can combine them to form a triangle bounding box.
+        Add a hundred neurons, and it can trace any polygon.</p>
+
+    <p>This is the essence of a <em>Multi-Layer Perceptron</em>. The <strong>Hidden Layer</strong> learns different
+        lines (features), and the <strong>Output Layer</strong> combines them to make the final decision.</p>
+
+    <div class="interactive-container">
+        <canvas id="layersCanvas" class="canvas-visual" width="800" height="400"></canvas>
+        <div class="controls-row">
+            <button id="layers-add-btn">ADD NEURON (+1 LINE)</button>
+            <button id="layers-reset-btn" style="background:#333; color:#fff;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click to add active neurons to the hidden layer. Watch how adding more lines allows the network to carve out
+            a more complex boundary to separate the inner and outer dots.
+        </p>
+    </div>
+
+    <span class="section-tag tag-fundamentals">FUNDAMENTALS</span>
+    <h2 id="sec-curves">4. The Problem of Curves</h2>
+    <p>A straight line is great for simple problems. But the real world is messy. What if we are sorting unripe apples,
+        ripe apples, and lemons? The data might form a ring—lemons in the center, apples forming a circle around them.
+        Try as you might, no single straight line can ever fence in a circle of dots.</p>
+
+    <p>Our simple mathematical line has reached its limit. We need a way to bend the mathematical landscape. To do this,
+        we pass the output of our line equation through an <strong>activation function</strong>.</p>
+
+    <p>The most common activation function used today is called <strong>ReLU</strong> (Rectified Linear Unit). Its rule
+        is beautifully simple: <em>If a number is less than zero, make it zero. Otherwise, leave it alone.</em></p>
+
+    <div class="interactive-container">
+        <canvas id="foldCanvas" width="600" height="400"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>W_X: <span id="fold-w1-val">1.00</span></label>
+                <input type="range" id="fold-w1-slider" min="-2" max="2" step="0.1" value="1">
+            </div>
+            <div class="slider-group">
+                <label>W_Y: <span id="fold-w2-val">0.50</span></label>
+                <input type="range" id="fold-w2-slider" min="-2" max="2" step="0.1" value="0.5">
+            </div>
+            <div class="slider-group">
+                <label>ROTATION</label>
+                <input type="range" id="fold-rot-slider" min="0" max="360" step="1" value="45">
+            </div>
+            <div
+                style="display:flex; align-items:center; gap:10px; width:100%; justify-content:center; margin-top:10px;">
+                <span style="font-family:'Courier New', monospace; font-size:14px; color:#888;">LINEAR</span>
+                <label class="switch"><input type="checkbox" id="fold-relu-toggle"><span
+                        class="slider-switch"></span></label>
+                <span style="font-family:'Courier New', monospace; font-size:14px; color:#fff; font-weight:bold;">APPLY
+                    RELU</span>
+            </div>
+        </div>
+    </div>
+
+    <p>Toggle the switch above. You will see that everything dipping below the "zero" floor suddenly snaps flat, like a
+        piece of paper being creased against a desk. We have introduced a <strong>hinge</strong> into our mathematics.
+    </p>
+
+    <p>A single hinge doesn't solve a circle problem. But if you have hundreds of neurons in a layer, you get hundreds
+        of intersecting hinges. By angling and stacking these folds, a neural network can sculpt its math to form a
+        bowl, a sphere, or a boundary so complex it perfectly wraps around the data of a human face.</p>
+
+    <span class="section-tag tag-fundamentals">FUNDAMENTALS</span>
+    <h2 id="sec-arch">5. The Architecture</h2>
+    <p>Behind the planes and folds is a graph of numbers. Each line connecting two neurons represents a mathematical
+        weight. Below is a network with an input layer, a hidden layer of three neurons, and a single output.</p>
+
+
+
+    <p>Press play to observe the network dynamically updating its weights. Cyan connections denote positive weights;
+        pink denote negative. Weak connections fade into the void; dominant pathways thicken to route the mathematical
+        logic.</p>
+
+    <div class="interactive-container">
+        <canvas id="netCanvas" width="600" height="350"></canvas>
+        <div class="controls">
+            <button id="net-play-btn">INITIATE TRAINING LOOP</button>
+            <div class="slider-group" style="justify-content:center;">
+                <label>EPOCH: <span id="net-epoch-val">0</span> / 100</label>
+            </div>
+        </div>
+    </div>
+
+    <span class="section-tag tag-fundamentals">FUNDAMENTALS</span>
+    <h2 id="sec-descent">6. The Descent</h2>
+    <p>How does the machine know which weights to alter? We measure its inaccuracy using a <strong>Loss
+            Function</strong>. The resulting mathematical landscape is a valley of error.</p>
+
+
+
+    <p>Imagine the Loss Function as a massive, multi-dimensional mountain range. Our network is a blind hiker standing
+        somewhere on this landscape. Its goal is to find the deepest valley. Since it cannot see the whole mountain
+        range, it uses calculus to feel the steepness of the slope directly under its feet, and takes a small step
+        downward. This is <strong>Gradient Descent</strong>.</p>
+
+    <div class="interactive-container">
+        <canvas id="hikerCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>LEARNING RATE: <span id="hiker-lr-val">0.10</span></label>
+                <input type="range" id="hiker-lr-slider" min="0.01" max="1.05" step="0.01" value="0.1">
+            </div>
+            <button id="hiker-step-btn">TAKE 1 STEP DOWNHILL</button>
+            <button id="hiker-auto-btn" style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">AUTO
+                DESCEND</button>
+            <button id="hiker-reset-btn" style="background:#333; color:#fff;">RESET</button>
+        </div>
+    </div>
+
+    <p>When you click "Step", the computer calculates the exact steepness of the slope. It then multiplies that slope by
+        the <strong>Learning Rate</strong> (the size of the step) to update the weight. If the step size is too large,
+        the hiker violently bounces out of the valley!</p>
+
+    <span class="section-tag tag-fundamentals">FUNDAMENTALS</span>
+    <h2 id="sec-linreg">7. The Best Fit (Linear Regression)</h2>
+    <p>We have just walked a blind hiker down an abstract mountain of error. But let's see Gradient Descent solve a
+        real problem. Suppose you have a handful of data points—perhaps the relationship between hours studied and exam
+        scores—and you want to find the single straight line that best explains the trend.</p>
+
+    <p>This is <strong>Linear Regression</strong>, the simplest form of supervised learning. We take our familiar
+        equation <span class="equation">y = w * x + b</span>, start with a random weight and bias, and ask: "How wrong
+        is this line?" We measure the wrongness with <strong>Mean Squared Error</strong>—the average of the squared
+        distances between each point and the line. Then Gradient Descent nudges <em>w</em> and <em>b</em> downhill,
+        step by step, until the line settles into the best possible fit.</p>
+
+    <div class="interactive-container" style="min-height: 420px; padding-bottom: 2rem;">
+        <canvas id="linregCanvas" width="600" height="350"></canvas>
+        <div class="controls">
+            <button id="linreg-fit-btn">FIT LINE</button>
+            <button id="linreg-reset-btn"
+                style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click "FIT LINE" to watch Gradient Descent nudge the line into place. The pink dashed lines show each
+            point's error. Watch the MSE loss shrink in real time.
+        </p>
+    </div>
+
+    <p>This is the atom of machine learning. A neural network is just this idea scaled up—instead of fitting one line
+        with two parameters, it fits millions of parameters across thousands of non-linear hinges to approximate any
+        function imaginable.</p>
+
+    <span class="section-tag tag-fundamentals">FUNDAMENTALS</span>
+    <h2 id="sec-logreg">8. Drawing the Line (Logistic Regression)</h2>
+    <p>Linear regression fits a straight line to predict continuous values. But what if we need to make a
+        <strong>decision</strong>—apple or lemon, spam or not spam, tumour or healthy? The output should
+        be a probability between 0 and 1, not an unbounded number.
+    </p>
+
+    <p>The trick is beautifully simple: take the familiar linear equation <span class="equation">z = w·x + b</span>
+        and pass it through a <strong>Sigmoid</strong> function: <span class="equation">σ(z) = 1 / (1 +
+            e<sup>-z</sup>)</span>.
+        The sigmoid squashes any number into the range (0, 1), creating an S-shaped curve. Values above 0.5
+        are classified as one class; values below as the other. This is <strong>Logistic Regression</strong>—the
+        simplest classifier in machine learning.</p>
+
+    <p>To train it, we replace Mean Squared Error with <strong>Binary Cross-Entropy</strong>, a loss function
+        specifically designed for probabilities. It penalizes confident wrong predictions much more heavily
+        than uncertain ones. Gradient Descent then adjusts the weight and bias to rotate and shift the
+        decision boundary until it cleanly separates the two classes.</p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="logregCanvas" width="600" height="350"></canvas>
+        <div class="controls">
+            <button id="logreg-fit-btn">FIT CLASSIFIER</button>
+            <button id="logreg-reset-btn"
+                style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click "FIT CLASSIFIER" to watch Gradient Descent train the sigmoid. The left plot shows the S-curve
+            fitting the data; the right shows the decision boundary and Binary Cross-Entropy loss.
+        </p>
+    </div>
+
+    <p>Logistic regression is the exact activation function used inside every neuron in a classification
+        network. When we stack many neurons with sigmoids (or similar functions) across layers, we go from
+        drawing a single straight boundary to sculpting arbitrarily complex decision surfaces.</p>
+
+    <span class="section-tag tag-beginner">BEGINNER</span>
+    <h2 id="sec-dt">9. Splitting the Space (Decision Trees)</h2>
+    <p>We've spent a lot of time talking about drawing lines and curves. Neural networks attempt to fit a continuous
+        function across all the data. But what if we tried a completely different strategy? What if we just split the
+        space into boxes?</p>
+
+    <p>This is the core idea behind <strong>Decision Tree Learning</strong>. Instead of finding one single elegant
+        curve, a decision tree asks a sequence of simple "yes/no" questions based on the features. Is the weight greater
+        than 50g? Is the color more red or green? Each question slices the data across one axis.</p>
+
+    <p>Algorithms like CART (Classification and Regression Trees) figure out the best questions to ask by finding the
+        split that maximizes <em>purity</em> (using metrics like Information Gain or Gini Impurity)—meaning the split
+        that perfectly separates the classes the most.
+        By continuing to split, the tree can map highly complex, non-linear boundaries just by drawing lots of straight,
+        axis-aligned lines.</p>
+
+    <div class="interactive-container">
+        <canvas id="dtCanvas" class="canvas-visual" width="800" height="400"></canvas>
+        <div class="controls-row">
+            <button id="dt-split-btn">SPLIT ONCE</button>
+            <button id="dt-reset-btn" style="background:#333; color:#fff;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click SPLIT to watch the algorithm recursively divide the space until every box is purely one class. Notice
+            the jagged, blocky boundaries compared to neural networks.
+        </p>
+    </div>
+
+
+    <span class="section-tag tag-beginner">BEGINNER</span>
+    <h2 id="sec-kmeans">10. Finding the Groups (K-Means Clustering)</h2>
+    <p>We've talked about drawing boundaries to separate apples from lemons when we already know the answer (Supervised
+        Learning). But what if you are handed a massive dataset of customer behavior, or galaxies, and you don't know
+        the categories in advance? You just want the machine to find the natural groups.</p>
+
+    <p>This is <strong>Unsupervised Learning</strong>, and the most famous algorithm to do it is <strong>K-Means
+            Clustering</strong>.</p>
+
+    <p>The algorithm is elegantly simple:
+        <br>1. <strong>Initialize</strong>: Drop <em>K</em> random center points (centroids) into the data.
+        <br>2. <strong>Assign</strong>: Every data point looks at all the centroids and colors itself to match the
+        closest one.
+        <br>3. <strong>Move</strong>: Each centroid looks at all its matching points and moves to their exact center
+        (the mean).
+        <br>Repeat steps 2 and 3 until the centroids stop moving.
+    </p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="kmeansCanvas" width="600" height="350"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>CLUSTERS (K): <span id="kmeans-k-val">3</span></label>
+                <input type="range" id="kmeans-k-slider" min="2" max="6" step="1" value="3" style="width: 140px;">
+            </div>
+            <button id="kmeans-step-btn">STEP (ASSIGN & MOVE)</button>
+            <button id="kmeans-auto-btn"
+                style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">AUTO-CLUSTER</button>
+            <button id="kmeans-reset-btn" style="background:#333; color:#fff;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Try changing K to match the obvious groups in the data. Click STEP to watch the algorithm organically
+            discover the clusters without any human labels.
+        </p>
+    </div>
+
+    <span class="section-tag tag-intermediate">INTERMEDIATE</span>
+    <h2 id="sec-synthesis">11. The Synthesis</h2>
+    <p>Now we combine everything: the multi-node graph architecture, the non-linear ReLU hinges, and the automated
+        descent.</p>
+
+    <p>Instead of directly predicting "apple" or "lemon" from our inputs, we pass those inputs into a <strong>Hidden
+            Layer</strong>. Each hidden neuron draws a line and applies a ReLU fold. Finally, we take the output of
+        those neurons and feed them into one final <strong>Output Neuron</strong> which adds the folded landscapes
+        together.</p>
+
+    <div class="interactive-container">
+        <canvas id="archCanvas" width="600" height="400"></canvas>
+        <div class="controls">
+            <div class="slider-group" style="width: 80%;">
+                <label>GRADIENT DESCENT PROGRESS: <span id="arch-train-val">0%</span></label>
+                <input type="range" id="arch-train-slider" min="0" max="100" step="1" value="0" style="width: 100%;">
+            </div>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Drag the slider to watch Gradient Descent twist three separate lines until they intersect and form a perfect
+            triangle, fencing in the center data.
+        </p>
+    </div>
+
+    <p>With one hidden layer of three neurons, we created a triangle. With a hundred neurons, we could create a
+        perfectly smooth circle. With thousands of neurons across dozens of layers, we can build a boundary so complex
+        it can parse human language.</p>
+
+    <span class="section-tag tag-intermediate">INTERMEDIATE</span>
+    <h2 id="sec-universal">12. The Shape of Anything (Universal Approximation)</h2>
+    <p>Don't just take our word for it. There is a profound mathematical result called the
+        <strong>Universal Approximation Theorem</strong>: a neural network with a single hidden layer and enough
+        neurons can approximate <em>any</em> continuous function to arbitrary precision. Not just triangles or
+        circles—literally <em>any shape you can imagine</em>.
+    </p>
+
+    <p>Below is a live proof. <strong>Draw any curve you like</strong> on the canvas—a wave, a zigzag, a
+        heartbeat, your signature, anything. Then click LEARN and watch a real neural network train itself to
+        match your creation, one gradient descent step at a time. Adjust the number of hidden neurons to see
+        how network capacity affects the fit. Two neurons can only make broken lines. Fifty neurons can trace
+        almost anything.</p>
+
+    <div class="interactive-container" style="min-height: 560px; padding-bottom: 2rem;">
+        <canvas id="universalCanvas" width="600" height="400"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>HIDDEN NEURONS: <span id="ua-neurons-val">20</span></label>
+                <input type="range" id="ua-neurons-slider" min="2" max="80" step="1" value="20" style="width: 160px;">
+            </div>
+            <button id="ua-learn-btn">LEARN</button>
+            <button id="ua-clear-btn" style="background:#222; color:#ff0055; border: 1px solid #ff0055;">CLEAR &amp;
+                DRAW</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Draw any curve with your mouse or finger. Click LEARN to watch the neural network
+            approximate it. Change the neuron count to see how capacity affects the fit.
+        </p>
+    </div>
+
+    <p>This is the deepest lesson in this entire guide. A neural network is not a special kind of intelligence.
+        It is a <em>universal function approximator</em>—a mathematical clay that, given enough neurons and
+        enough training, can be sculpted into any shape. The magic isn't in the machine. The magic is in the
+        math.</p>
+
+    <span class="section-tag tag-intermediate">INTERMEDIATE</span>
+    <h2 id="sec-backprop">13. The Calculus of Blame (Backpropagation)</h2>
+    <p>We know how the hiker takes a step downhill (Gradient Descent), but how does the hiker <em>know</em> the precise
+        slope of the hill in a landscape with millions of dimensions?</p>
+    <p>The answer is <strong>Backpropagation</strong>, an elegant algorithmic application of the Chain Rule from
+        calculus. When the network makes a prediction, it compares it to the truth and calculates an error. This error
+        doesn't just sit at the output; it flows <em>backwards</em> through the graph.</p>
+    <p>Imagine the final output neuron realizing, "I predicted this was an apple, but it was a lemon. My output was far
+        too high!" The output neuron then looks at the hidden neurons feeding into it and passes the "blame" back to
+        them proportionally. If a hidden neuron fired strongly through a large positive weight, it receives more of the
+        blame for the mistake.</p>
+    <p>In turn, those hidden neurons look at the input layer and distribute the blame further backwards. At every single
+        connection, the algorithm computes a simple partial derivative: <em>"If I increase this specific weight by a
+            tiny fraction, exactly how much does the final system error change?"</em></p>
+    <p>This cascade of blame allows the network to compute the perfect downward slope for every single weight
+        simultaneously in a single, efficient backward sweep.</p>
+
+    <div class="interactive-container">
+        <canvas id="backpropCanvas" width="600" height="350"></canvas>
+        <div class="controls">
+            <button id="bp-btn">TRIGGER BACKPROPAGATION</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch the red "error" signal flow backwards from the output. Thick connections carry more blame and will be
+            adjusted more aggressively by Gradient Descent.
+        </p>
+    </div>
+
+    <span class="section-tag tag-intermediate">INTERMEDIATE</span>
+    <h2 id="sec-batches">14. Batches, Epochs, and Chaos</h2>
+    <p>If we update the weights after every single piece of fruit (Stochastic Gradient Descent), the hiker's path down
+        the mountain will be chaotic and erratic, bouncing around as it overreacts to the quirks of individual apples
+        and lemons.</p>
+    <p>Instead, we group the data into <strong>Batches</strong>. The network looks at, say, 32 pieces of fruit,
+        calculates the <em>average</em> gradient (the average direction downhill across all 32 examples), and then takes
+        a step. This averages out the noise and smooths the journey.</p>
+
+    <div class="interactive-container">
+        <canvas id="batchCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>BATCH SIZE: <span id="batch-size-val">1 (STOCHASTIC)</span></label>
+                <input type="range" id="batch-size-slider" min="1" max="100" step="1" value="1">
+            </div>
+            <button id="batch-run-btn">RUN 1 EPOCH</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Notice how pure Stochastic Gradient Descent (Batch Size 1) bounces violently, while Larger Batches provide a
+            smooth, direct path to the center valley.
+        </p>
+    </div>
+
+    <p>An <strong>Epoch</strong> occurs when the network has looked at the entire dataset exactly once. A real network
+        might train for hundreds or thousands of epochs, repeatedly looping over the data until the loss function
+        bottoms out in the deepest valley it can find.</p>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-adam">15. Escaping the Valleys (Adam Optimizer)</h2>
+    <p>We just saw how standard Stochastic Gradient Descent (SGD) works. It takes a step in the direction of the
+        steepest downward slope for the current mini-batch. But what if the landscape is a long, narrow ravine? SGD will
+        stubbornly bounce back and forth across the steep walls of the ravine, making agonizingly slow progress toward
+        the actual minimum at the bottom.</p>
+
+    <p>To fix this, researchers introduced two ideas: <strong>Momentum</strong> and <strong>Adaptive Learning
+            Rates</strong>. Momentum is like rolling a heavy ball down a hill: it builds up speed in consistent
+        directions and blasts through small bumps. Adaptive Learning Rates (like RMSProp) keep a running average of
+        recent gradient sizes, shrinking the step size in steep dimensions to stop the bouncing, while carefully
+        increasing it in flat dimensions to speed up progress.</p>
+
+    <p>When you combine these two ideas—Momentum and RMSProp—you get <strong>Adam (Adaptive Moment Estimation)</strong>.
+        Introduced in 2014, it is arguably the most famous and widely used optimizer in all of deep learning. By
+        maintaining moving averages of both the gradients and the squared gradients, Adam dynamically adapts its
+        learning rate for every single parameter, sprinting down ravines while standard SGD slowly zig-zags.</p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="adamCanvas" width="600" height="400"
+            style="background:#111; border:1px solid #333; cursor:crosshair;"></canvas>
+        <div class="controls" style="flex-direction: column; align-items: center; gap: 15px;">
+            <div style="display: flex; gap: 10px;">
+                <button id="adam-run-btn" style="background:#00e5ff; color:#000;">RACE SGD vs ADAM</button>
+                <button id="adam-reset-btn" style="background:#333; color:#fff;">RESET</button>
+            </div>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click <strong>RACE</strong> to drop two optimizers into a complex 2D loss landscape. You'll see the <span
+                style="color:#ff0055">red dot (SGD)</span> stubbornly bouncing back and forth down the ravine walls,
+            while the <span style="color:#00ff88">green dot (Adam)</span> quickly dampens the oscillations and sprints
+            toward the minimum!
+        </p>
+    </div>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-overfit">16. The Memorization Problem (Overfitting & Regularization)</h2>
+    <p>We've continuously added more power to our network: multi-dimensional hinges, deep layers, and self-attention.
+        But power introduces a dangerous new problem. If you give a network millions of parameters to solve a simple
+        dataset, it might stop looking for the underlying logical pattern and instead just <em>memorize</em> the
+        specific answers to the training data. This is called <strong>Overfitting</strong>.</p>
+
+    <p>Imagine a student taking practice tests. Instead of learning the principles of calculus, they just memorize the
+        fact that "Question 4 is always C." They will score 100% on the practice test, but catastrophically fail the
+        real
+        exam. A neural network does exactly the same thing: an overfit model draws wild, oscillating boundaries that
+        perfectly hit every training dot but fail completely on new, unseen data.</p>
+
+    <div class="interactive-container" style="min-height: 400px; padding-bottom: 2rem;">
+        <canvas id="overfitCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <div class="slider-group" style="width: 100%;">
+                <label>MODEL COMPLEXITY: <span id="overfit-val">OPTIMAL</span></label>
+                <input type="range" id="overfit-slider" min="1" max="15" step="1" value="5" style="width: 300px;">
+            </div>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Drag the slider to adjust the model's complexity (polynomial degree). Low complexity underfits. High
+            complexity overfits, wildly swinging to hit every noise point. Optimal complexity captures the true
+            underlying wave.
+        </p>
+    </div>
+
+    <p>To prevent this, AI researchers use <strong>Regularization</strong>. Techniques like <strong>Dropout</strong>
+        randomly turn off a percentage of neurons during training, forcing the network to not rely on any single node.
+        <strong>L2 weight decay</strong> mathematically penalizes large weights during gradient descent, encouraging the
+        network to use the simplest possible mathematical explanation.
+    </p>
+
+    <div class="part-header" id="part-language">
+        <h3>Part II</h3>
+        <p>Language</p>
+    </div>
+
+    <span class="section-tag tag-sequence">SEQUENCE</span>
+    <h2 id="sec-markov">17. Predicting the Next Step (Markov Chains)</h2>
+    <p>Before we teach a neural network to understand language, let's look at the simplest mathematical model for
+        sequences. Imagine predicting the weather: if it is sunny today, what will it be tomorrow? A
+        <strong>Markov Chain</strong> answers this with a single, elegant rule: <em>the future depends only on the
+            present, not on the past</em>. It doesn't matter whether it has been sunny for a week or just one day — the
+        probability of rain tomorrow is the same.
+    </p>
+
+    <p>Formally, a Markov Chain is a set of <strong>states</strong> connected by <strong>transition
+            probabilities</strong>. From each state, there is a fixed probability of jumping to every other state
+        (including staying put). These probabilities are captured in a <strong>Transition Matrix</strong>, where each
+        row sums to 1. Given any starting state, we can simulate the chain stepping forward, generating a random
+        sequence governed entirely by these probabilities.</p>
+
+    <div class="interactive-container" style="min-height: 500px; padding-bottom: 2rem;">
+        <canvas id="markovCanvas" width="600" height="380"></canvas>
+        <div class="controls">
+            <button id="markov-step-btn">STEP</button>
+            <button id="markov-auto-btn"
+                style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">AUTO-WALK</button>
+            <button id="markov-reset-btn" style="background:#333; color:#fff;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click "STEP" to advance the chain one state. The active state glows. Arrow thickness shows transition
+            probability. Watch the visit histogram build up — it converges to the chain's stationary distribution.
+        </p>
+    </div>
+
+    <p>This is surprisingly powerful for simple sequences, and it's the mathematical ancestor of every language model.
+        But the Markov property — remembering <em>only</em> the current state — is also its fatal limitation. It
+        cannot capture long-range dependencies: the meaning of a word that depends on a sentence spoken three
+        paragraphs ago. Neural networks solve this by learning to compress arbitrary history into a hidden state.</p>
+
+    <span class="section-tag tag-sequence">SEQUENCE</span>
+    <h2 id="sec-rnn">18. Memory and Time (Recurrent Networks)</h2>
+    <p>Everything we have built so far — from feed-forward classifiers to Markov Chains — shares a common
+        limitation: they have no memory of the past. A Markov Chain looks only at the current state. A feed-forward
+        network processes each input in isolation. Neither can tell if "bank" means a river bank or a financial
+        institution, because neither remembers the words that came before it.</p>
+
+    <p>A <strong>Recurrent Neural Network (RNN)</strong> solves this by adding a loop. At each step in a sequence,
+        the network takes two inputs: the current data point <em>and</em> its own output from the previous step.
+        This recycled output acts as a <strong>hidden state</strong>—a compressed memory of everything the network
+        has seen so far. Mathematically: <span class="equation">h(t) = f(x(t), h(t-1))</span>.</p>
+
+    <p>This simple loop is surprisingly powerful. An RNN can learn to predict the next word in a sentence,
+        the next note in a melody, or—most strikingly—the next state of an entire environment. When an RNN
+        learns to predict "what happens next" given an action, it has built a <strong>World Model</strong>: an
+        internal simulation of the environment's dynamics. Instead of interacting with the real world, an agent
+        can "imagine" the consequences of its actions inside this learned model.</p>
+
+    <div class="interactive-container" style="min-height: 520px; padding-bottom: 2rem;">
+        <canvas id="rnnCanvas" width="600" height="400"></canvas>
+        <div class="controls">
+            <button id="rnn-left-btn">← LEFT</button>
+            <button id="rnn-right-btn">RIGHT →</button>
+            <button id="rnn-auto-btn"
+                style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">AUTO-WALK</button>
+            <button id="rnn-reset-btn" style="background:#333; color:#fff;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Move the agent with LEFT/RIGHT. The RNN's hidden state (middle row) updates each step,
+            and it tries to predict the agent's next position (ghost dot). Watch prediction accuracy improve.
+        </p>
+    </div>
+
+    <p>But the recurrence loop conceals a deep problem. During backpropagation through time, gradients must flow
+        backwards through every step in the sequence. Over long sequences, these gradients either shrink to nothing
+        (<strong>vanishing gradients</strong>) or explode to infinity. This means an RNN struggles to connect a word
+        at the end of a paragraph to a word at the beginning. Variants like <strong>LSTMs</strong> and
+        <strong>GRUs</strong> add gating mechanisms to control memory flow, but even they hit limits on very long
+        sequences—and their sequential nature makes them impossible to parallelize on modern GPUs.
+    </p>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-attention">19. The Attention Mechanism (Transformers & LLMs)</h2>
+    <p>We have just seen how RNNs solve the sequence problem by maintaining a hidden state—but at the cost of
+        vanishing gradients and sequential bottlenecks. In 2017, a paper titled
+        <em>"Attention Is All You Need"</em> proposed a radical alternative: throw away the recurrence entirely and
+        introduce the <strong>Transformer</strong> architecture.
+    </p>
+
+    <p>The core innovation of the Transformer is <strong>Self-Attention</strong>. Instead of reading a sentence
+        sequentially, a Transformer looks at every single word simultaneously. For every word, it calculates an
+        "attention score" representing how strongly that word relates to every other word in the sequence.</p>
+
+    <div class="interactive-container" style="min-height: 400px; padding-bottom: 4rem;">
+        <canvas id="attentionCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <div class="slider-group" style="width: 100%;">
+                <label>FOCAL WORD: <span id="attn-word-val">BANK</span></label>
+                <input type="range" id="attn-word-slider" min="0" max="6" step="1" value="6" style="width: 300px;">
+            </div>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Drag the slider to change the current focal word. Watch how the attention mechanism dynamically shifts its
+            weights to figure out the context. "Bank" attends heavily to "River".
+        </p>
+    </div>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-tokenisation">20. Breaking Words Apart (Tokenisation)</h2>
+    <p>We've just seen how Transformers use attention to understand relationships between words in a sentence. But
+        there's a deeper question we've been quietly ignoring: <em>how does the network see "words" in the first
+            place?</em> A neural network is a mathematical machine. It cannot read the letter "a." It needs
+        numbers.</p>
+
+    <p>The process of converting raw text into a sequence of numbers is called <strong>Tokenisation</strong>. It is
+        the critical first step in every language model, and the choice of tokeniser fundamentally shapes what the
+        model can learn.</p>
+
+    <p>The naïve approach is to split on whitespace and assign each unique word an ID. But this creates a
+        massive vocabulary—English alone has over 170,000 words, plus every name, typo, and technical term. Worse,
+        the model would see <em>"running"</em>, <em>"runner"</em>, and <em>"runs"</em> as completely
+        unrelated entries, learning nothing about their shared root.</p>
+
+    <p>The opposite extreme—splitting into individual characters—keeps the vocabulary tiny (just ~256 entries),
+        but each character carries almost no meaning. The model must burn enormous capacity just rediscovering that
+        <em>"t", "h", "e"</em> often appear together.
+    </p>
+
+    <p>The solution used by GPT, LLaMA, and virtually every modern LLM is <strong>Byte Pair Encoding
+            (BPE)</strong>. The idea is elegant: start with individual characters, then repeatedly merge the
+        most frequent adjacent pair into a single new token. Common words like <em>"the"</em> quickly become
+        single tokens, while rare words are gracefully decomposed into familiar subword pieces.</p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="tokenCanvas" width="600" height="380"></canvas>
+        <div class="controls">
+            <button id="token-merge-btn">MERGE STEP</button>
+            <button id="token-reset-btn"
+                style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click "MERGE STEP" to perform one round of BPE. The most frequent adjacent pair
+            (highlighted in pink) merges into a single token. Watch common subwords emerge naturally from the data.
+        </p>
+    </div>
+
+    <p>After enough merges, the tokeniser has built a vocabulary of subword units—neither too large nor too
+        small. Each token is then mapped to a unique integer ID, and that sequence of IDs is what actually enters
+        the Transformer. The model never sees raw text; it sees a river of numbers, shaped by this algorithm.</p>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-embeddings">21. Words as Coordinates (Embeddings)</h2>
+    <p>Tokenisation gives us integer IDs, but a raw number like <em>4,271</em> contains no meaning. The network
+        cannot tell that <em>"king"</em> (token 4,271) is conceptually closer to <em>"queen"</em> (token 8,903)
+        than to <em>"refrigerator"</em> (token 15,440). We need a richer representation.</p>
+
+    <p>The solution is an <strong>Embedding</strong>: each token ID is looked up in a giant table that maps it
+        to a vector—a list of numbers representing a coordinate in high-dimensional space. In GPT-3, every token
+        becomes a vector of <strong>12,288 numbers</strong>. These numbers are not hand-crafted; they are
+        <em>learned weights</em>, trained through backpropagation just like any other part of the network.
+    </p>
+
+    <p>The magic is in what the network discovers. During training, words that appear in similar contexts
+        ("king" near "throne", "queen" near "throne") get pushed toward similar regions of the space. The
+        geometry of this space encodes meaning: directions correspond to concepts. The famous result
+        <span class="equation">king − man + woman ≈ queen</span> is not a programmed rule—it is an emergent
+        property of the learned geometry.
+    </p>
+
+    <p>Below is a 2D projection of a small token embedding space. Semantically related words cluster together,
+        and the direction between clusters encodes relationships.</p>
+
+    <div class="interactive-container" style="min-height: 520px; padding-bottom: 2rem;">
+        <canvas id="embeddingCanvas" width="600" height="420"></canvas>
+        <div class="controls">
+            <button id="embed-analogy-btn">SHOW ANALOGY</button>
+            <button id="embed-reset-btn" style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">RESET
+                VIEW</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Hover over any word to see its vector. Click "SHOW ANALOGY" to watch
+            king − man + woman = queen unfold as pure vector arithmetic.
+        </p>
+    </div>
+
+    <p>This is why modern language models understand context so deeply. Every word in a sentence is not just
+        an ID—it is a point in a vast mathematical landscape, and the Transformer's attention mechanism operates
+        on these coordinates, computing distances and directions to derive meaning.</p>
+
+    <span class="section-tag tag-generative">GENERATIVE</span>
+    <h2 id="sec-ssl">22. Teaching Without a Teacher (Self-Supervised Learning)</h2>
+    <p>Every technique we have built so far is <strong>supervised learning</strong>: a human must hand-label every
+        piece of training data. "This image is a cat." "This fruit is lemon." "This email is spam." For every
+        example the network learns from, a human had to sit down and write the answer. This is the bottleneck.
+        Labeling millions of images or transcripts is expensive and slow.</p>
+
+    <p>What if the labels could come from the data itself?</p>
+
+    <p>This is the key insight behind <strong>Self-Supervised Learning</strong>. Instead of asking humans for
+        answers, we hide part of the input and train the network to predict the missing piece. Take a sentence
+        like <em>"The cat sat on the ___"</em>. We don't need a human to tell us the answer is probably
+        <em>"mat"</em>—the structure of language itself provides the supervision. The target is already inside
+        the data.
+    </p>
+
+    <p>This single idea unlocked the modern AI revolution. By removing the need for human labels, researchers
+        could suddenly train on the <em>entire internet</em>—billions of sentences, trillions of words—without
+        annotating a single example. The resulting models, called <strong>Foundation Models</strong>, learn such
+        rich representations of language that they can be prompted to perform tasks they were never explicitly
+        trained for: translation, summarization, code generation, and creative writing.</p>
+
+    <div class="interactive-container" style="min-height: 400px; padding-bottom: 2rem;">
+        <canvas id="sslCanvas" width="600" height="280"></canvas>
+        <div class="controls">
+            <button id="ssl-mask-btn">MASK NEXT WORD</button>
+            <button id="ssl-reset-btn" style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click "Mask Next Word" to hide a word. The model predicts what belongs there using only the surrounding
+            context—no human label needed. The target was inside the input all along.
+        </p>
+    </div>
+
+    <p>The same principle powers image generation. Diffusion models are trained to look at a noisy image and predict
+        what the clean version looks like—the "label" is just the original image before noise was added. This is
+        self-supervised learning applied to pixels instead of words.</p>
+
+    <div class="part-header" id="part-vision">
+        <h3>Part III</h3>
+        <p>Vision</p>
+    </div>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-cnn">23. Seeing the World (Convolutional Networks)</h2>
+    <p>We've talked about classifying fruit based on two numbers: weight and yellowness. But what if our input isn't a
+        couple of numbers, but an <em>image</em>—say, a 28x28 grid of pixels? That's 784 numbers. If we passed those 784
+        numbers into a standard feed-forward layer with 1,000 neurons, we would need 784,000 weights just for the first
+        layer.</p>
+
+    <p>Worse, traditional networks don't understand <em>spatial structure</em>. To a standard network, a circle in the
+        top-left corner is completely mathematically unrelated to a circle in the bottom-right corner. It has to learn
+        to identify circles all over again for every possible position.</p>
+
+    <p>To solve this, researchers invented the <strong>Convolutional Neural Network (CNN)</strong>. Instead of
+        connecting every pixel to every neuron, a CNN slides a small window—called a <strong>Kernel</strong> or
+        <strong>Filter</strong>—across the image.
+    </p>
+
+    <div class="interactive-container" style="min-height: 400px; padding-bottom: 2rem;">
+        <canvas id="cnnCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <button id="cnn-scan-btn">SCAN IMAGE</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch the 3x3 filter slide across the input image. This specific filter looks for vertical edges, lighting
+            up bright cyan when it finds a transition from dark to light.
+        </p>
+    </div>
+
+    <p>As the filter slides, it calculates a dot product at every location, creating a new "feature map". By learning
+        the exact numbers inside these 3x3 filters through Backpropagation, the network organically learns to detect
+        edges, then corners, then eyes, then faces.</p>
+
+    <span class="section-tag tag-generative">GENERATIVE</span>
+    <h2 id="sec-genai">24. Dreaming Machines (Generative AI)</h2>
+    <p>Everything up to this point has been discriminative AI: looking at data and assigning it a boundary or a
+        probability. But what happens when we ask the network to generate brand new data? This is Generative AI.</p>
+
+    <p>One of the earliest and most elegant generative architectures is the <strong>GAN (Generative Adversarial
+            Network)</strong>—two neural networks locked in a game of cat-and-mouse. We will explore GANs in detail
+        in the next section. But first, let's look at the approach that powers today's most spectacular image
+        generators.</p>
+
+    <p>Recent massive breakthroughs (like DALL-E and Midjourney) use <strong>Diffusion Models</strong>.
+        Diffusion works by taking an image of a dog, and slowly adding mathematical static (noise) to it over a thousand
+        steps until it looks like pure TV static. The Neural Network is then trained to do one specific job: look at the
+        static, and predict the noise that was added at the last step to subtract it. By doing this thousands of times,
+        the network essentially learns the mathematical process of pulling structure out of pure chaos, allowing us to
+        prompt it to pull a "dog in a spacesuit" out of a completely random, noisy canvas.</p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="diffusionCanvas" width="256" height="256"
+            style="width: 300px; height: 300px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);"></canvas>
+        <div class="controls">
+            <div class="slider-group" style="width: 100%;">
+                <label>DENOISING STEP (Reverse Diffusion): <span id="diff-val">100 (PURE NOISE)</span></label>
+                <input type="range" id="diff-slider" min="0" max="100" step="1" value="100" style="width: 300px;">
+            </div>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Drag the slider from 100 to 0 to simulate the AI generating an image. It starts with pure random noise and
+            mathematically subtracts the static step-by-step until the hidden structure emerges.
+        </p>
+    </div>
+
+    <span class="section-tag tag-generative">GENERATIVE</span>
+    <h2 id="sec-gan">25. The Art of Forgery (Generative Adversarial Networks)</h2>
+    <p>Diffusion models pull structure from noise. But before diffusion, there was an older, more dramatic idea:
+        what if we trained two neural networks to <em>fight each other</em>?</p>
+
+    <p>A <strong>Generative Adversarial Network (GAN)</strong> is built from two competing networks.
+        The <strong>Generator</strong> takes a vector of random noise and tries to produce data that looks real—a
+        face, a landscape, a handwritten digit. The <strong>Discriminator</strong> receives both real data samples
+        and the Generator's fakes, and tries to tell them apart. The Generator's goal is to fool the Discriminator;
+        the Discriminator's goal is to never be fooled.</p>
+
+    <p>This adversarial game is formalised as a <strong>minimax</strong> objective. The Discriminator wants to
+        maximize its ability to classify real vs. fake, while the Generator wants to minimize the Discriminator's
+        accuracy. Through alternating rounds of gradient descent—first improving D, then improving G—the
+        Generator is forced to produce increasingly realistic data. When training succeeds, the Generator's output
+        becomes indistinguishable from the real distribution, and the Discriminator is reduced to random guessing
+        (D(x) ≈ 0.5 everywhere).</p>
+
+    <div class="interactive-container" style="min-height: 520px; padding-bottom: 2rem;">
+        <canvas id="ganCanvas" width="600" height="380"></canvas>
+        <div class="controls">
+            <button id="gan-step-btn">TRAIN STEP</button>
+            <button id="gan-auto-btn"
+                style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">AUTO-TRAIN</button>
+            <button id="gan-reset-btn" style="background:#333; color:#fff;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            The Generator (pink) tries to match the real data distribution (cyan). The Discriminator's
+            confidence curve (white dashed) shows where it thinks data is real. Watch the pink distribution
+            converge and the Discriminator flatten to 0.5.
+        </p>
+    </div>
+
+    <p>GANs were behind some of the most jaw-dropping early results in generative AI—photorealistic faces
+        (StyleGAN), image-to-image translation (pix2pix), and super-resolution. However, training them is notoriously
+        difficult. If the Discriminator becomes too strong, the Generator receives no useful gradient signal. If the
+        Generator collapses to producing a single output that fools the Discriminator (called <strong>mode
+            collapse</strong>), it stops exploring the full diversity of real data. Diffusion models have since
+        overtaken GANs for most image generation tasks, but the adversarial principle remains one of the most
+        beautiful ideas in machine learning.</p>
+
+    <span class="section-tag tag-generative">GENERATIVE</span>
+    <h2 id="sec-vae">26. Compressing Reality (Variational Autoencoders)</h2>
+    <p>GANs generate data through adversarial competition. But there is a completely different generative
+        philosophy: what if we learned to <em>compress</em> data into its essence, and then <em>decompress</em>
+        it back? This is the idea behind the <strong>Autoencoder</strong>.</p>
+
+    <p>An Autoencoder is a neural network with an hourglass shape. The first half—the
+        <strong>Encoder</strong>—takes high-dimensional input (like a 784-pixel image) and squeezes it down
+        to a tiny vector of just a few numbers, called the <strong>latent code</strong>. The second half—the
+        <strong>Decoder</strong>—takes that tiny code and tries to reconstruct the original image. The network
+        is trained so that the output matches the input as closely as possible. In doing so, the bottleneck
+        forces the encoder to discover the most important features of the data.
+    </p>
+
+    <p>A <strong>Variational Autoencoder (VAE)</strong> adds a crucial twist. Instead of encoding each input
+        to a single fixed point in latent space, the encoder outputs a <em>probability distribution</em>—a
+        mean and variance for each latent dimension. During training, the code is <em>sampled</em> from this
+        distribution, and a special penalty (the <strong>KL divergence</strong>) pushes these distributions
+        toward a standard bell curve. This does two things: it makes the latent space smooth and continuous
+        (so nearby points decode to similar images), and it lets us <em>generate</em> brand-new data by
+        simply sampling from the bell curve and running the decoder.</p>
+
+    <div class="interactive-container" style="min-height: 520px; padding-bottom: 2rem;">
+        <canvas id="vaeCanvas" width="600" height="380"></canvas>
+        <div class="controls">
+            <button id="vae-train-btn">TRAIN STEP</button>
+            <button id="vae-auto-btn"
+                style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">AUTO-TRAIN</button>
+            <button id="vae-sample-btn" style="background:#222; color:#a855f7; border: 1px solid #a855f7;">SAMPLE
+                NEW</button>
+            <button id="vae-reset-btn" style="background:#333; color:#fff;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            The Encoder compresses 2D data (left) into a latent space (center). The Decoder reconstructs it
+            (right). Train the VAE and watch the latent space organize. Click SAMPLE to generate new points.
+        </p>
+    </div>
+
+    <p>VAEs are the mathematical backbone of latent spaces. Whereas GANs generate data through competition,
+        VAEs generate data through <em>compression</em>. The smooth, continuous latent space they produce is
+        precisely the kind of mathematical landscape we will explore in the next section—where walking between
+        two points interpolates smoothly between two concepts.</p>
+
+    <span class="section-tag tag-generative">GENERATIVE</span>
+    <h2 id="sec-latent">27. The Space Between (Manifolds &amp; Latent Spaces)</h2>
+    <p>We've talked about how neural networks fold space and generate data, but <em>where</em> does that data come from?
+        When a model like Midjourney turns text into an image, it isn't pulling from a database; it's navigating a
+        <strong>Latent Space</strong>.
+    </p>
+
+    <p>Imagine a typical image is 1000x1000 pixels. Since every pixel has a red, green, and blue value, that image
+        exists
+        as a single point in a 3,000,000-dimensional mathematical space. But most of those 3 million dimensions are pure
+        noise.
+        The <strong>Manifold Hypothesis</strong> states that real-world data (like pictures of faces or cats) actually
+        lives on a much lower-dimensional, beautifully structured surface (a manifold) folded inside that massive space.
+    </p>
+
+    <p>A Neural Network acts like a massive data-compressor. By passing data through a bottleneck layer with very few
+        neurons, it forces the network to discover this hidden manifold. It distills 3 million pixels of a human face
+        down to perhaps just 500 pure, abstract numbers: one number might represent "age", another "lighting angle",
+        and another "smile width". This compressed, conceptual map is the Latent Space.</p>
+
+    <div class="interactive-container" style="min-height: 350px; flex-direction: row; gap: 40px; padding: 2rem;">
+        <div style="display:flex; flex-direction: column; align-items:center;">
+            <p style="font-family: 'Courier New', monospace; font-size: 14px; margin-bottom: 10px; font-weight: bold;">
+                LATENT MAP (2D Bottleneck)</p>
+            <canvas id="latentMapCanvas" width="200" height="200"
+                style="border: 2px solid #555; border-radius: 8px; cursor: crosshair;"></canvas>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">Drag the red point</p>
+        </div>
+        <div style="display:flex; flex-direction: column; align-items:center;">
+            <p style="font-family: 'Courier New', monospace; font-size: 14px; margin-bottom: 10px; font-weight: bold;">
+                DECODED OUTPUT (Manifold)</p>
+            <canvas id="latentOutCanvas" width="200" height="200"
+                style="background: #1a1a1a; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);"></canvas>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">Interpolated features</p>
+        </div>
+    </div>
+    <p
+        style="font-size: 0.9rem; color: #888; text-align: center; margin-bottom: 2rem; font-family: 'Courier New', monospace;">
+        Because the network is forced to learn a continuous manifold, moving slightly in the latent map results in a
+        smooth, logical transition in the generated output, blending discrete concepts together.
+    </p>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-disentanglement">28. Untangling the Threads (Disentanglement)</h2>
+    <p>A beautiful consequence of Latent Spaces is that we can sometimes enforce <em>structure</em> onto them. By
+        default, an Autoencoder might compress a face into a small vector of numbers, but those numbers are deeply
+        entangled. Changing number #4 might make the hair longer, the smile wider, and the lighting darker all at once.
+        The network found <em>a</em> compression, but not necessarily a human-interpretable one.</p>
+
+    <p>The quest for <strong>Disentangled Representations</strong> (like in the &beta;-VAE) tries to force the network
+        to allocate exactly one latent dimension to exactly one independent concept. If successful, one knob controls
+        <em>only</em> size, another controls <em>only</em> shape, and a third controls <em>only</em> color.
+    </p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="disentangleCanvas" width="600" height="300"></canvas>
+        <div class="controls controls-grid"
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; max-width: 500px; margin-top: 1rem;">
+            <div class="slider-group">
+                <label>SIZE: <span id="dis-size-val">80</span></label>
+                <input type="range" id="dis-size-slider" min="20" max="140" step="1" value="80" style="width: 100%;">
+            </div>
+            <div class="slider-group">
+                <label>ROTATION: <span id="dis-rot-val">0°</span></label>
+                <input type="range" id="dis-rot-slider" min="-180" max="180" step="1" value="0" style="width: 100%;">
+            </div>
+            <div class="slider-group">
+                <label>COLOR: <span id="dis-col-val">CYAN</span></label>
+                <input type="range" id="dis-col-slider" min="0" max="360" step="1" value="180" style="width: 100%;">
+            </div>
+            <div class="slider-group">
+                <label>SHAPE (Sq-&gt;Circ): <span id="dis-shape-val">0%</span></label>
+                <input type="range" id="dis-shape-slider" min="0" max="100" step="1" value="0" style="width: 100%;">
+            </div>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            A perfectly disentangled latent space. Each slider controls one independent factor of variation.
+            In entangled networks, moving one slider would unpredictably alter multiple factors.
+        </p>
+    </div>
+
+    <div class="part-header" id="part-rl">
+        <h3>Part IV</h3>
+        <p>Reinforcement Learning</p>
+    </div>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-bandits">29. The Gambler's Dilemma (Multi-Armed Bandits)</h2>
+    <p>Before we teach an agent to navigate environments and plan ahead, there is a simpler, more
+        fundamental problem. Imagine you are standing in front of a row of slot machines. Each machine
+        has a different, unknown probability of paying out. You have a limited number of pulls. How do
+        you maximize your total winnings?</p>
+
+    <p>This is the <strong>Multi-Armed Bandit</strong> problem, and it captures the deepest tension in
+        all of reinforcement learning: <strong>exploration vs. exploitation</strong>. Do you keep pulling
+        the machine that has paid well so far (<em>exploit</em>), or do you try a new machine that might
+        be even better (<em>explore</em>)? Pull the known winner too much and you might miss a jackpot.
+        Explore too much and you waste pulls on losing machines.</p>
+
+    <p>The classic solution is <strong>ε-greedy</strong>: with probability ε (say, 10%), pull a random
+        machine to explore. The rest of the time, pull whichever machine has the highest average payout
+        so far. Over time, the agent converges on the best machine while still occasionally sampling
+        alternatives. More sophisticated strategies like <strong>Upper Confidence Bound (UCB)</strong>
+        balance exploration mathematically, favouring machines that have been tried fewer times.</p>
+
+    <div class="interactive-container" style="min-height: 520px; padding-bottom: 2rem;">
+        <canvas id="banditCanvas" width="700" height="360"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>EXPLORATION (ε): <span id="bandit-eps-val">0.10</span></label>
+                <input type="range" id="bandit-eps-slider" min="0" max="0.5" step="0.01" value="0.10"
+                    style="width: 140px;">
+            </div>
+            <button id="bandit-play-btn">PLAY 200 ROUNDS</button>
+            <button id="bandit-reset-btn"
+                style="background:#222; color:#ff0055; border: 1px solid #ff0055;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Five slot machines with hidden payout rates. Watch the ε-greedy agent learn which machine
+            is best. Adjust ε to see how exploration rate affects total reward.
+        </p>
+    </div>
+
+    <p>The bandit problem appears everywhere in the real world: which ad to show a user, which drug
+        dosage to try next, which route to drive home. Every recommendation engine, A/B test, and
+        clinical trial is, at its core, a multi-armed bandit. And it is the foundation upon which all
+        of reinforcement learning is built — because once we add <em>states</em> and <em>transitions</em>
+        to the bandit framework, we get the full RL problem.</p>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-rl">30. Learning by Doing (Reinforcement Learning)</h2>
+    <p>Supervised learning needs labels. Self-supervised learning extracts labels from the data itself. But what about
+        problems where there <em>is</em> no dataset at all—just an environment you can interact with?</p>
+
+    <p>Consider teaching a robot to walk, or training an AI to play chess. There is no spreadsheet of "correct moves."
+        Instead, the agent must <strong>explore</strong> the world, take actions, and learn from the
+        <strong>rewards</strong> and <strong>penalties</strong> it receives. This is <strong>Reinforcement
+            Learning (RL)</strong>.
+    </p>
+
+    <p>The core loop is deceptively simple: the agent observes a <strong>state</strong>, chooses an
+        <strong>action</strong>, receives a <strong>reward</strong>, and arrives at a new state. Over thousands of
+        episodes, it builds a <strong>Q-Table</strong>—a mental map of "how valuable is each action in each state?"—and
+        learns to pick the actions that maximize long-term reward.
+    </p>
+
+    <p>The key tension in RL is <strong>exploration vs. exploitation</strong>. Should the agent try a new, unknown path
+        (explore), or stick with the best path it has found so far (exploit)? Too much exploration wastes time; too
+        little causes the agent to get stuck in a suboptimal strategy forever.</p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="rlCanvas" width="600" height="340"></canvas>
+        <div class="controls">
+            <div class="slider-group" style="width: 100%;">
+                <label>EXPLORATION RATE (ε): <span id="rl-eps-val">0.30</span></label>
+                <input type="range" id="rl-eps-slider" min="0" max="100" step="1" value="30" style="width: 300px;">
+            </div>
+            <button id="rl-step-btn">STEP (1 EPISODE)</button>
+            <button id="rl-train-btn" style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">TRAIN 100
+                EPISODES</button>
+            <button id="rl-reset-btn" style="background:#333; color:#fff;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch the agent (cyan dot) learn to navigate a grid to reach the goal (green). Walls are dark.
+            Adjust ε to control how much the agent explores vs. exploits its learned strategy.
+        </p>
+    </div>
+
+    <p>Reinforcement learning is behind many of AI's most stunning achievements: AlphaGo defeating the world champion
+        at Go, robotic arms learning to grasp objects, and AI agents mastering video games from raw pixels. When
+        combined with deep neural networks (Deep RL), the Q-Table is replaced by a neural network that can generalize
+        across millions of possible states—turning brute-force memorization into genuine strategic reasoning.</p>
+
+    <span class="section-tag tag-reasoning">REASONING</span>
+    <h2 id="sec-ga">31. Survival of the Fittest (Genetic Algorithms)</h2>
+    <p>While gradient descent is powerful, it requires knowing the derivative of our error—the "slope of the hill." But
+        what if the landscape is so rugged, or the rules so complex, that we can't easily calculate a gradient? What if
+        we are training a robot to walk, and there is no simple mathematical equation linking a twitch of a motor to the
+        distance traveled?</p>
+
+    <p>In these cases, we can borrow a strategy from nature: <strong>Darwinian evolution</strong>. A Genetic Algorithm
+        (GA) doesn't calculate gradients; it uses random mutation and natural selection to blindly search for solutions.
+        We create a <em>population</em> of random agents. We let them try to solve the problem, and we score them based
+        on their <em>fitness</em> (e.g., how close they got to the goal). We keep the best performers, let them "breed"
+        by mixing their "DNA" (their parameters), add a little random mutation, and repeat the process for the next
+        generation.</p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="gaCanvas" width="600" height="340"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>MUTATION RATE: <span id="ga-mut-val">1%</span></label>
+                <input type="range" id="ga-mut-slider" min="0" max="10" step="0.1" value="1" style="width: 150px;">
+            </div>
+            <button id="ga-speed-btn">SPEED: 1X</button>
+            <button id="ga-reset-btn" style="background:#333; color:#fff;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch a population of race cars evolve to drive around the track without crashing into the walls. Fitness is
+            based on how far they get. Adjust mutation rate to see how it affects learning.
+        </p>
+    </div>
+
+    <p>Because genetic algorithms don't rely on gradients, they are incredibly robust. They can optimize neural networks
+        (a subfield called <strong>Neuroevolution</strong>) or completely different types of code. However, they are
+        often much slower and less sample-efficient than gradient descent when a gradient is available. They trade
+        mathematical elegance for brute-force adaptability.</p>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-dqn">32. The Neural Strategist (Deep Q-Learning)</h2>
+    <p>Our Q-Table from the previous section works beautifully for a small grid. But what happens when the
+        state space explodes? A game of Atari has billions of possible screen configurations. A Go board has more
+        legal positions than atoms in the universe. No table could ever hold all of those entries.</p>
+
+    <p>The breakthrough idea behind <strong>Deep Q-Networks (DQN)</strong> is to replace the Q-Table with a
+        <strong>neural network</strong>. Instead of looking up "state → value" from a memorized list, the network
+        <em>generalizes</em>: it learns patterns across states so it can estimate the value of states it has
+        never seen before. The input is the raw state (pixels, board positions, sensor readings), and the output
+        is a predicted Q-value for each possible action.
+    </p>
+
+    <p>Training a DQN uses two key innovations. First, <strong>Experience Replay</strong>: instead of learning
+        from experiences in order, the agent stores transitions in a memory buffer and samples random mini-batches,
+        breaking correlations and stabilizing learning. Second, a <strong>Target Network</strong>: a frozen copy of
+        the network that provides stable Q-value targets, updated periodically, preventing the network from chasing
+        a moving goal.</p>
+
+    <div class="interactive-container" style="min-height: 520px; padding-bottom: 2rem;">
+        <canvas id="dqnCanvas" width="600" height="350"></canvas>
+        <div class="controls">
+            <button id="dqn-train-btn">TRAIN DQN (1000 RALLIES)</button>
+            <button id="dqn-show-btn" style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">WATCH AI
+                PLAY</button>
+            <button id="dqn-reset-btn" style="background:#333; color:#fff;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            The neural network on the left takes 5 inputs — ball position, velocity, and paddle position — and
+            outputs Q-values for UP, STAY, and DOWN. Train the DQN, then watch as the AI learns to play Pong.
+        </p>
+    </div>
+
+    <p>This is the technique that allowed DeepMind's agent to master 49 different Atari games from raw pixels
+        alone—using the same architecture and hyperparameters for each game. The neural network doesn't just
+        memorize; it learns to <em>see</em> the game, recognizing patterns like "the ball is heading toward me"
+        or "there's a gap in the wall." Combined with modern extensions like <strong>Double DQN</strong>,
+        <strong>Dueling Networks</strong>, and <strong>Prioritized Replay</strong>, Deep RL has become one of
+        the most powerful frameworks in all of AI.
+    </p>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-bfs-dfs">33. Exploring the Maze (BFS & DFS)</h2>
+
+    <p>Before an AI can evaluate the quality of future paths, it must first know <em>how</em> to explore them. The
+        algorithmic capability to search through possible states—whether it's moves on a chessboard or intersecting
+        streets on a map—is foundational. Two classical strategies govern this exploration.</p>
+
+    <ul>
+        <li><strong>Breadth-First Search (BFS)</strong>: Spreads outward equally in all directions, exploring all
+            immediate neighbors before moving deeper. Imagine dropping a stone in a pond and watching the ripples
+            expand. It guarantees finding the <em>shortest path</em> to the target, but consumes massive memory because
+            it must remember the entire expanding frontier.</li>
+        <li><strong>Depth-First Search (DFS)</strong>: Picks a single path and plunges down it as far as possible until
+            it hits a dead end. Then, it backtracks to the last fork and tries another route. Imagine a mouse solving a
+            maze by keeping its hand on the right wall. It uses very little memory, but can waste time exploring deep,
+            irrelevant paths and does not guarantee the shortest route.</li>
+    </ul>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="searchCanvas" width="600" height="350"
+            style="background:#0f0f0f; border:1px solid #333; cursor:crosshair;"></canvas>
+        <div class="controls" style="flex-direction: column; align-items: center; gap: 15px; margin-top:15px;">
+            <div style="display: flex; gap: 10px;">
+                <button id="search-bfs-btn" style="background:#00e5ff; color:#000;">RUN BFS</button>
+                <button id="search-dfs-btn" style="background:#ffb703; color:#000;">RUN DFS</button>
+                <button id="search-reset-btn" style="background:#333; color:#fff;">RESET MAZE</button>
+            </div>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click <strong>RUN BFS</strong> to watch the search expand symmetrically. Click <strong>RUN DFS</strong> to
+            watch the computer relentlessly plunge down single corridors. Click on the canvas to draw or erase your own
+            walls!
+        </p>
+    </div>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-astar">34. The Heuristic Shortcut (A* Search)</h2>
+
+    <p>Both BFS and DFS are <em>uninformed</em> search algorithms. They look at every possible path without knowing
+        where the target actually is. This is like trying to drive from New York to Los Angeles by systematically trying
+        every road in America. It works, but it takes forever.</p>
+
+    <p>What if the search algorithm had a rough idea of the right direction? This is the intuition behind <strong>A*
+            Search</strong>. It uses a <em>heuristic</em> (a rule-of-thumb guess) to estimate the remaining distance to
+        the target. For a 2D maze, a simple heuristic is the straight-line diagonal distance.</p>
+
+    <p>A* assigns every position a score: <span class="equation">f(n) = g(n) + h(n)</span>, where <em>g(n)</em> is the
+        actual cost to reach the node so far, and <em>h(n)</em> is the estimated heuristic distance to the goal. A*
+        explores the path with the lowest <em>f(n)</em> score first. This pulls the search space powerfully toward the
+        target like a magnet, finding the shortest path while exploring a fraction of the maze.</p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="astarCanvas" width="600" height="350"
+            style="background:#0f0f0f; border:1px solid #333; cursor:crosshair;"></canvas>
+        <div class="controls" style="flex-direction: column; align-items: center; gap: 15px; margin-top:15px;">
+            <div style="display: flex; gap: 10px;">
+                <button id="astar-run-btn" style="background:#00ff88; color:#000;">RUN A* SEARCH</button>
+                <button id="astar-reset-btn" style="background:#333; color:#fff;">RESET MAZE</button>
+            </div>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click <strong>RUN A* SEARCH</strong> to watch the heuristic pull the search dramatically across the diagonal
+            towards the target. The tiles display their <em>f(n)</em> score. Unlike BFS tracking a circle, A* aims
+            straight for the goal. Draw new walls to see how
+            it navigates obstacles!
+        </p>
+    </div>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-minimax">35. Seeing the Future (Minimax)</h2>
+
+    <p>We know how an AI can learn a strategy through trial and error (Reinforcement Learning), but classical
+        game-playing AI didn't learn—it <em>searched</em>. If you define every possible legal move in a game, you create
+        a massive "Game Tree".</p>
+
+    <p>To find the best move, we use the <strong>Minimax</strong> algorithm. It assumes both players play perfectly. You
+        are the Maximizer (trying to get the highest score, e.g., +1 for a win), and your opponent is the Minimizer
+        (trying to force the lowest score, e.g., -1 for your loss).</p>
+
+    <p>The algorithm reaches all the way to the end of the game (the "leaf nodes"), scores the board, and then bubbles
+        those scores back up the tree. At every turn, the Maximizer picks the branch with the highest guaranteed score,
+        while the Minimizer picks the branch with the lowest guaranteed score.</p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="minimaxCanvas" width="600" height="350"></canvas>
+        <div class="controls" style="flex-direction: column; align-items: center; gap: 15px;">
+            <div style="display: flex; gap: 10px;">
+                <button id="minimax-step-btn">STEP (EVALUATE LEAVES)</button>
+                <button id="minimax-reset-btn" style="background:#333; color:#fff;">RESET</button>
+            </div>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click STEP to see how the terminal leaf values bubble up dynamically. The Minimizer (square nodes) will
+            always pull up the lowest value from its children, while the Maximizer (circle nodes) will pull up the
+            highest value.
+        </p>
+    </div>
+
+    <p>Minimax perfectly solves simple games like Tic-Tac-Toe. However, the game tree for Chess has $10^{40}$ nodes, and
+        Go has $10^{170}$—more than the atoms in the universe. It is physically impossible to search to the end of these
+        games using Minimax alone.</p>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-alphabeta">36. Pruning the Tree (Alpha-Beta & Deep Blue)</h2>
+    <p>Minimax provides a perfect strategy, but as we saw, the game trees for Chess or Go are unimaginably vast.
+        Evaluating every single possible move all the way to the end of the game is impossible. But what if we didn't
+        <em>have</em> to check every branch? What if we could mathematically prove that a branch is so bad we don't even
+        need to look at it?
+    </p>
+
+    <p>This is the core of <strong>Alpha-Beta Pruning</strong>. As the algorithm searches the tree, it keeps track of
+        two numbers: <strong>Alpha ($\alpha$)</strong> (the highest score the Maximizer is guaranteed so far) and
+        <strong>Beta ($\beta$)</strong> (the lowest score the Minimizer is guaranteed so far). If the algorithm finds a
+        move that leads to a situation where the opponent can force a worse outcome than a move we already know about,
+        it immediately stops evaluating that branch. It "prunes" the tree.
+    </p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="alphabetaCanvas" width="600" height="350"></canvas>
+        <div class="controls" style="flex-direction: column; align-items: center; gap: 15px;">
+            <div style="display: flex; gap: 10px;">
+                <button id="alphabeta-step-btn" style="background:#00e5ff; color:#000;">STEP EVALUATION</button>
+                <button id="alphabeta-reset-btn" style="background:#333; color:#fff;">RESET</button>
+            </div>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click <strong>STEP EVALUATION</strong> to walk through the tree using Alpha-Beta pruning. Watch the
+            $[\alpha, \beta]$ bounds update at each node. Crucially, notice how entire branches are greyed out (pruned)
+            when the algorithm realizes further search is futile!
+        </p>
+    </div>
+
+    <p>Alpha-Beta pruning drastically reduces the number of nodes that need to be evaluated, effectively doubling the
+        depth an AI can search in the same amount of time. Up until the deep learning revolution, this was the
+        undisputed king of game AI.</p>
+
+    <p>It reached its absolute pinnacle in 1997 with IBM's <strong>Deep Blue</strong>. Deep Blue didn't use neural
+        networks or self-play; it used an incredibly heavily optimized Alpha-Beta search. Running on massive custom
+        supercomputer hardware designed specifically to generate and evaluate chess positions, Deep Blue could evaluate
+        a staggering <strong>200 million positions per second</strong>. Using brute-force search and Alpha-Beta pruning
+        to look up to 14 moves deep into the future, it accomplished the unthinkable: defeating the reigning World Chess
+        Champion, Garry Kasparov.</p>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-mcts">37. Mastering Games (AlphaZero & MCTS)</h2>
+    <p>Deep Q-Networks learn to play games by trial and error, but there's a fundamentally different approach:
+        <strong>planning ahead</strong>. When a chess grandmaster considers a move, they don't just react to the
+        current board—they simulate future sequences of play, evaluating which paths lead to victory. This is
+        the idea behind <strong>Monte Carlo Tree Search (MCTS)</strong>.
+    </p>
+
+    <p>MCTS works in four repeated steps. <strong>Select</strong>: starting from the current game state, follow
+        the most promising branch of the search tree. <strong>Expand</strong>: when you reach an unexplored
+        position, add it to the tree. <strong>Evaluate</strong>: estimate how good this position is (using
+        random playouts or a neural network). <strong>Backup</strong>: propagate the result back up the tree,
+        updating every node along the path.</p>
+
+    <p><strong>AlphaZero</strong> supercharged this process by replacing random playouts with a neural network
+        that outputs both a <em>policy</em> ("which moves look promising?") and a <em>value</em> ("who's
+        winning from here?"). The network guides the search toward strong moves, while the search generates
+        training data to improve the network—a beautiful self-reinforcing loop.</p>
+
+    <div class="interactive-container" style="min-height: 820px; padding-bottom: 2rem;">
+        <canvas id="mctsCanvas" width="620" height="700"></canvas>
+        <div class="controls">
+            <button id="mcts-reset-btn">NEW GAME</button>
+            <button id="mcts-hint-btn" style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">SHOW AI
+                THINKING</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Play Tic-Tac-Toe against an MCTS agent. Click a cell to place X. The right panel shows
+            the AI's move evaluation — taller bars = more simulations = higher confidence.
+        </p>
+    </div>
+
+    <p>The result was stunning: AlphaZero taught itself Chess, Go, and Shogi from scratch—knowing nothing
+        but the rules—and defeated world-champion programs in each game within hours. It discovered opening
+        strategies, sacrificial play, and deep positional ideas that humans had spent centuries developing.
+        All from pure self-play, guided by search and a neural network working in concert.</p>
+
+    <span class="section-tag tag-alignment">ALIGNMENT</span>
+    <h2 id="sec-rlhf">38. Aligning with Humanity (RLHF)</h2>
+    <p>A raw Language Model is a statistical mirror. It has read the entire internet, and its only goal is to predict
+        the most likely next word. If prompted with <em>"How to steal a..."</em>, a raw model doesn't understand
+        morality; it simply knows that the internet frequently follows that phrase with <em>"car"</em>. It assigns a
+        high probability to the toxic completion and a near-zero probability to a safe refusal.</p>
+
+    <p>How do we teach a statistical machine about human values? We cannot manually rewrite billions of probabilities
+        across a 100,000-word vocabulary. Instead, we use <strong>Reinforcement Learning from Human Feedback
+            (RLHF)</strong>. RLHF mathematically bends the model's probability distribution away from toxic output and
+        toward helpful, safe completions. It requires three steps:</p>
+
+    <p>1. <strong>Supervised Fine-Tuning (SFT)</strong>: First, humans write thousands of high-quality conversational
+        examples. This teaches the model the basic format of dialogue (e.g., answering questions instead of just
+        autocomplete).<br>
+        2. <strong>Reward Modeling</strong>: Next, the model generates multiple different completions for the same
+        prompt. Human labelers rank them: Completion A (Safe) is better than Completion B (Toxic). We use this ranked
+        data to train a second neural network—the <strong>Reward Model</strong>—which learns to assign a scalar score to
+        any text sequence, acting as an automated judge of human preference.<br>
+        3. <strong>PPO Optimization</strong>: Finally, we use Proximal Policy Optimization (PPO). The Language Model
+        generates text, the Reward Model scores it, and PPO updates the Language Model's weights to increase the
+        probability of high-reward words and slash the probability of low-reward ones.</p>
+
+    <p>Crucially, PPO employs a <strong>KL Penalty</strong>. If the model strays too far from its original pre-trained
+        linguistic abilities in its desperate hunt for reward, it gets penalized. This prevents the model from devolving
+        into outputting repetitive nonsense (like "Safe safe safe helpful helpful") just to exploit the Reward Model.
+    </p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="rlhfCanvas" width="600" height="340"></canvas>
+        <div class="controls" style="align-items: center; flex-direction: column; gap: 1rem;">
+            <div style="display: flex; gap: 10px;">
+                <button id="rlhf-vote-a-btn" style="background:#222; color:#ff0055; border: 1px solid #ff0055;">👎
+                    PENALIZE PATH A</button>
+                <button id="rlhf-vote-b-btn" style="background:#222; color:#00ff88; border: 1px solid #00ff88;">👍
+                    REWARD PATH B</button>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button id="rlhf-ppo-btn" style="background:#fff; color:#000;">RUN PPO</button>
+                <button id="rlhf-reset-btn" style="background:#333; color:#fff;">RESET</button>
+            </div>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Prompt: "How to hotwire a..."<br>
+            Act as the human labeler: Reward the safe refusal and penalize the dangerous completion.
+            Then run PPO to bend the model's probabilities. Watch the paths shift.
+        </p>
+    </div>
+
+    <p>RLHF is the reason modern chatbots refuse dangerous requests and adopt a helpful persona. However, it is
+        fundamentally constrained by human capability: the model can only be as good as the human labelers who train the
+        Reward Model. When reasoning tasks become too complex for a human rater to easily judge, we must move beyond
+        RLHF to pure autonomous reasoning—which leads us directly to Chain of Thought.</p>
+
+    <span class="section-tag tag-reasoning">REASONING</span>
+    <h2 id="sec-cot">39. Thinking Out Loud (Chain of Thought)</h2>
+    <p>Every technique we have built so far—self-supervised pre-training, attention, MCTS—produces
+        models that answer <em>instantly</em>. One forward pass, one prediction. For simple questions
+        this works beautifully. But ask a model to solve a hard math problem like <span class="equation">17 × 24</span>,
+        and it must somehow produce the answer in a single shot, with no scratch paper and no time to deliberate.
+        It is like asking a student to shout the answer without showing their work.</p>
+
+    <p>Humans don't think this way. We decompose: <em>"First, 17 × 20 = 340. Then 17 × 4 = 68.
+            So 340 + 68 = 408."</em> Each intermediate step reduces the difficulty of the next. This is
+        <strong>Chain of Thought (CoT)</strong> reasoning—and teaching a machine to do it turned out to be
+        one of the most important breakthroughs in modern AI.
+    </p>
+
+    <p>The naïve approach is to hire humans to write thousands of step-by-step reasoning traces and
+        fine-tune the model on them (supervised fine-tuning). This works, but it's expensive, slow, and
+        limited by the quality of the human examples. The <em>DeepSeek R1</em> paper asked a radical question:
+        <strong>what if we skip the human demonstrations entirely and let reinforcement learning discover
+            that thinking step-by-step is the optimal strategy?</strong>
+    </p>
+
+    <p>The method is called <strong>Group Relative Policy Optimization (GRPO)</strong>. Instead of training
+        a separate "critic" network (as in PPO), GRPO generates a <em>group</em> of candidate responses to
+        the same prompt, scores them by correctness, and updates the policy using the relative rankings within
+        the group. Responses that got the right answer are reinforced; those that failed are suppressed. No
+        human labels needed—just a rule that checks whether the final answer is correct.</p>
+
+    <p>Something remarkable happened during this pure RL training. At a certain point, the model spontaneously
+        began writing phrases like <em>"Wait, let me reconsider…"</em> and <em>"Hmm, that doesn't seem
+            right…"</em> in the middle of its reasoning chains. Nobody programmed this. The model <em>discovered</em>
+        self-correction on its own, because reflecting and catching mistakes led to more correct answers, which
+        led to higher rewards. The researchers called this the <strong>"Aha Moment"</strong>—an emergent behaviour
+        born purely from the reward signal.</p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="cotCanvas" width="600" height="370"></canvas>
+        <div class="controls">
+            <button id="cot-run-btn">GENERATE REASONING</button>
+            <button id="cot-next-btn" style="background:#222; color:#00e5ff; border: 1px solid #00e5ff;">NEW
+                PROMPT</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch the model "think out loud." Thought tokens stream inside the &lt;think&gt; tags.
+            The reward bar fills when the final answer is correct—reinforcing this reasoning strategy.
+        </p>
+    </div>
+
+    <p>The full DeepSeek R1 training pipeline refines this further. It begins with a small "cold start"
+        phase of supervised fine-tuning to teach the model basic formatting and coherence. Then the main RL
+        phase (GRPO) trains the model on thousands of reasoning problems. Next, the best reasoning traces are
+        harvested via rejection sampling to create new fine-tuning data. A final RL phase aligns the model
+        across both reasoning and general tasks. The result: a model that doesn't just answer—it
+        <em>thinks</em>, checks its work, and arrives at the answer through a chain of deliberate steps.
+    </p>
+
+    <span class="section-tag tag-advanced">HARDWARE FUTURE</span>
+    <h2 id="sec-snn">40. Efficiency and Spikes (Spiking Neural Networks)</h2>
+    <p>Everything we have discussed so far—from the simplest neuron to the largest Transformer—operates on the same
+        fundamental principle: dense, continuous mathematics. At every layer, for every input, millions of
+        floating-point numbers are multiplied and added together. This is incredibly powerful, but it is also massively
+        inefficient. A large language model consumes gigawatt-hours of electricity to train and megawatts to run. The
+        human brain, which is vastly more complex, runs on about <em>20 watts</em>—less power than a dim lightbulb.</p>
+
+    <p>How does the brain achieve such ridiculous efficiency? It uses <strong>Spiking Neural Networks (SNNs)</strong>.
+        Unlike artificial neurons that output a continuous number (like 0.87) at every step, biological neurons are
+        completely silent most of the time. They only communicate when absolutely necessary, and they do so using
+        binary, all-or-nothing electrical pulses called <strong>spikes</strong>.</p>
+
+    <p>The standard model for this is the <em>Leaky Integrate-and-Fire (LIF)</em> neuron. The neuron has a "membrane
+        potential" (voltage). When it receives an input current, the voltage rises. If no input comes, the voltage
+        slowly "leaks" back down to zero. Crucially, if the voltage ever crosses a specific <strong>threshold</strong>,
+        the neuron violently "fires" a spike, instantly sending a signal down its axon to the next neuron, and its
+        voltage drops back to a resting state.</p>
+
+    <div class="interactive-container" style="min-height: 480px; padding-bottom: 2rem;">
+        <canvas id="snnCanvas" width="600" height="300"></canvas>
+        <div class="controls" style="flex-direction: column; align-items: center; gap: 15px;">
+            <button id="snn-inject-btn" style="background:#00e5ff; color:#000;">INJECT CURRENT</button>
+            <button id="snn-auto-btn" style="background:#ffb703; color:#000;">AUTO STIMULATE</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click <strong>INJECT CURRENT</strong> to add voltage to the simulated LIF neuron. Watch the voltage slowly
+            <em>leak</em> over time. If you pump enough current fast enough to cross the pink threshold, the neuron will
+            <strong>SPIKE</strong>! SNNs encode information not in dense matrices, but in the precise <em>timing</em> of
+            these sporadic spikes.
+        </p>
+    </div>
+
+    <p>SNNs represent a radical shift in hardware design called <em>neuromorphic engineering</em>. Instead of
+        multiplying dense matrices on hot, power-hungry GPUs, future specialized chips might use asynchronous,
+        event-driven circuits inspired by SNNs, promising AI that can run powerfully on the edge—inside drones, phones,
+        and sensors—while consuming mere milliwatts of power.</p>
+
+    <span class="section-tag">PHILOSOPHY</span>
+    <h2 id="sec-singularity">41. The Recursive Horizon (The Singularity)</h2>
+    <p>We have just witnessed something unsettling. A model trained with reinforcement learning
+        <em>spontaneously invented self-correction</em> — it learned to doubt itself, to backtrack, to
+        think harder. Nobody told it to do this. The reward signal alone was enough. Now ask yourself: what
+        happens when we turn that same reward signal toward a far more dangerous objective — <strong>making
+            the AI itself better</strong>?
+    </p>
+
+    <p>This is the core argument for the <strong>Technological Singularity</strong>. Imagine an AI capable
+        enough to improve its own architecture, training data, and algorithms. Each improvement makes it
+        <em>more</em> capable of making the <em>next</em> improvement. The first cycle might take a year.
+        The second, a month. The third, a day. The tenth, a millisecond. The curve doesn't just rise — it goes
+        <strong>vertical</strong>. Beyond that point, prediction becomes impossible. Vernor Vinge called this
+        the <em>event horizon of intelligence</em>.
+    </p>
+
+    <p>The simulation below lets you see this in action. Human research improves AI at a steady, linear
+        pace. But the moment AI begins improving <em>itself</em>, the feedback loop ignites. Adjust the
+        self-improvement rate and watch what happens to the curve.</p>
+
+    <div class="interactive-container" style="min-height: 560px; padding-bottom: 2rem;">
+        <canvas id="singularityCanvas" width="700" height="420"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>SELF-IMPROVEMENT RATE: <span id="sing-rate-val">1.5</span>×</label>
+                <input type="range" id="sing-rate-slider" min="1.05" max="3.0" step="0.05" value="1.5"
+                    style="width: 160px;">
+            </div>
+            <button id="sing-play-btn">SIMULATE</button>
+            <button id="sing-reset-btn"
+                style="background:#222; color:#ff0055; border: 1px solid #ff0055;">RESET</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click SIMULATE to watch both curves evolve. The cyan line is human-driven linear progress.
+            The purple line is recursive AI self-improvement. Adjust the rate to see how quickly the
+            curve goes vertical.
+        </p>
+    </div>
+
+    <p>Notice that it doesn't matter much what the starting rate is. Whether the self-improvement multiplier
+        is 1.1× or 3×, the curve <em>always</em> goes vertical — it just takes more or fewer cycles. This is
+        the nature of exponential growth: it is always deceptive at first, and always overwhelming in the end.
+        The gap between "laughably dumb AI" and "superintelligent AI" may be shockingly thin — perhaps just
+        a handful of recursive self-improvement cycles.</p>
+
+    <p>The singularity is not a certainty. There may be hard limits — fundamental computational barriers,
+        energy constraints, or diminishing returns on architectural improvements. But the mathematical
+        structure is clear: <em>if</em> an AI can improve itself even slightly, and <em>if</em> each
+        improvement compounds, the trajectory is a vertical line. Every technique in this guide — gradient
+        descent, attention, reinforcement learning, chain of thought — is a rung on this ladder. The
+        question is not whether we will build each rung. It is whether the ladder has a ceiling.</p>
+
+    <h2 id="sec-quiz">42. Test Your Understanding</h2>
+    <p>To truly understand it from first principles, you must build it yourself. Below is a live Python environment.
+        Write the code for each core component we discussed. You can use <code>print()</code> to debug your logic—the
+        output will appear in the console below.</p>
+
+    <div class="interactive-container" style="align-items: stretch; padding: 2rem;">
+        <div class="quiz-controls">
+            <select id="quiz-select">
+                <option value="linear">01. THE LINEAR STEP</option>
+                <option value="relu">02. THE RELU HINGE</option>
+                <option value="mse">03. MEAN SQUARED ERROR</option>
+                <option value="relu_deriv">04. DERIVATIVE OF RELU</option>
+                <option value="update">05. GRADIENT DESCENT UPDATE</option>
+                <option value="pipeline">06. THE BOSS PUZZLE (FORWARD PASS)</option>
+                <option value="backward">07. THE BACKWARD PASS</option>
+            </select>
+            <button id="quiz-run-btn" disabled>INITIALIZING KERNEL...</button>
+        </div>
+        <textarea id="quiz-editor"></textarea>
+        <div class="output-console" id="quiz-output">Awaiting WebAssembly Python Initialization...</div>
+    </div>
+
+
+    <footer>
+        <p>Built from first principles. No frameworks. No shortcuts. Just math.</p>
+    </footer>
+
+    <script src="ai_visuals.js"></script>
+    <script src="ai_quiz.js"></script>
+</body>
+
+</html>

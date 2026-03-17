@@ -1,0 +1,458 @@
+        .home-nav {
+    padding: 1rem 2rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.home-nav a {
+    color: #00e5ff;
+    text-decoration: none;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.home-nav a:hover {
+    opacity: 1;
+}
+
+:root {
+            /* Bleuje Inspired Dark Theme */
+            --bg-color: #080808;
+            --container-bg: #0f0f0f;
+            --text-color: #b0b0b0;
+            --heading-color: #ffffff;
+            --apple: #ff0055;
+            /* Neon Pink */
+            --lemon: #00e5ff;
+            /* Neon Cyan */
+            --success: #00ff88;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.7;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            font-size: 18px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: var(--heading-color);
+            font-weight: 300;
+            letter-spacing: 0.05em;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-top: 5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .part-header {
+            margin-top: 6rem;
+            margin-bottom: 1rem;
+            padding-top: 3rem;
+            border-top: 1px solid #333;
+            text-align: center;
+        }
+
+        .part-header h3 {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 0.3rem;
+        }
+
+        .part-header p {
+            font-size: 1.4rem;
+            color: #888;
+            font-weight: 300;
+            margin-bottom: 0;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+        }
+
+        .equation {
+            font-family: "Courier New", monospace;
+            font-weight: bold;
+            color: #fff;
+            background: #222;
+            padding: 2px 8px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+        }
+
+        /* Minimalist Interactive Containers */
+        .interactive-container {
+            background: var(--container-bg);
+            padding: 2rem;
+            border: 1px solid #222;
+            border-radius: 12px;
+            margin: 3rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .intro-canvas-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 3rem 0 4rem 0;
+        }
+
+        canvas {
+            background: var(--bg-color);
+            border: 1px solid #222;
+            border-radius: 8px;
+            max-width: 100%;
+        }
+
+        .intro-canvas {
+            border: none;
+            background: transparent;
+        }
+
+        /* Stark, Minimalist Controls */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 2rem;
+            width: 100%;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: "Courier New", monospace;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .slider-group span {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 150px;
+            background: transparent;
+            margin-top: 10px;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 14px;
+            width: 14px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            margin-top: -6px;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 2px;
+            cursor: pointer;
+            background: #444;
+        }
+
+        button {
+            padding: 0.8rem 1.5rem;
+            font-family: "Courier New", monospace;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #000;
+            background-color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: #ccc;
+        }
+
+        button:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        /* Switch for ReLU */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 22px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider-switch {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 22px;
+        }
+
+        .slider-switch:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #fff;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider-switch {
+            background-color: #fff;
+        }
+
+        input:checked+.slider-switch:before {
+            transform: translateX(22px);
+            background-color: #000;
+        }
+
+        /* Code/Quiz Aesthetics */
+        .CodeMirror {
+            border: 1px solid #333;
+            border-radius: 6px;
+            font-family: "Courier New", monospace;
+            font-size: 15px;
+            height: auto;
+            min-height: 250px;
+            background: #0a0a0a !important;
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            width: 100%;
+            gap: 1rem;
+        }
+
+        .quiz-controls select {
+            padding: 0.6rem;
+            font-family: "Courier New", monospace;
+            background: #111;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 4px;
+            flex-grow: 1;
+            outline: none;
+        }
+
+        .output-console {
+            margin-top: 1rem;
+            background: #050505;
+            color: #0f0;
+            padding: 1.2rem;
+            border-radius: 6px;
+            border: 1px solid #333;
+            font-family: "Courier New", monospace;
+            white-space: pre-wrap;
+            min-height: 60px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .print-output {
+            color: #00e5ff;
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed #333;
+            padding-bottom: 0.5rem;
+        }
+
+        /* Table of Contents */
+        .toc {
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin: 3rem 0;
+            background: var(--container-bg);
+        }
+
+        .toc-title {
+            font-family: "Courier New", monospace;
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            color: #555;
+            margin-bottom: 0.8rem !important;
+        }
+
+        .toc ol {
+            counter-reset: toc-counter;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toc ol[start="14"] {
+            counter-reset: toc-counter 13;
+        }
+
+        .toc ol[start="20"] {
+            counter-reset: toc-counter 19;
+        }
+
+        .toc ol[start="25"] {
+            counter-reset: toc-counter 24;
+        }
+
+        .toc ol[start="31"] {
+            counter-reset: toc-counter 30;
+        }
+
+        .toc-part {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #555;
+            margin-top: 1rem;
+            margin-bottom: 0.3rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .toc li {
+            counter-increment: toc-counter;
+            margin-bottom: 0.5rem;
+            font-family: "Courier New", monospace;
+            font-size: 0.85rem;
+        }
+
+        .toc li::before {
+            content: counter(toc-counter, decimal-leading-zero) ". ";
+            color: #555;
+        }
+
+        .toc a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .toc a:hover {
+            color: #fff;
+        }
+
+        /* Section Category Tags */
+        .section-tag {
+            display: inline-block;
+            font-family: "Courier New", monospace;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            padding: 3px 10px;
+            border-radius: 3px;
+            margin-bottom: -0.5rem;
+            background: #1a1a1a;
+            color: #666;
+            border: 1px solid #333;
+        }
+
+        .tag-fundamentals {
+            color: #00e5ff;
+            border-color: #00e5ff33;
+        }
+
+        .tag-intermediate {
+            color: #ff9f00;
+            border-color: #ff9f0033;
+        }
+
+        .tag-advanced {
+            color: #ff0055;
+            border-color: #ff005533;
+        }
+
+        .tag-generative {
+            color: #a855f7;
+            border-color: #a855f733;
+        }
+
+        .tag-reasoning {
+            color: #fbbf24;
+            border-color: #fbbf2433;
+        }
+
+        .tag-alignment {
+            color: #00ff88;
+            border-color: #00ff8833;
+        }
+
+        .tag-sequence {
+            color: #2dd4bf;
+            border-color: #2dd4bf33;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 6rem;
+            padding: 2rem 0;
+            border-top: 1px solid #222;
+            text-align: center;
+        }
+
+        footer p {
+            font-family: "Courier New", monospace;
+            font-size: 0.8rem;
+            color: #444;
+            letter-spacing: 2px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
