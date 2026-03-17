@@ -1,0 +1,196 @@
+:root {
+    --astro-purple: #8a2be2;
+    --astro-blue: #0000ff;
+    --astro-indigo: #4b0082;
+    --astro-bg: #030305;
+    --astro-card: #0a0a0f;
+    --text-primary: #ffffff;
+    --text-secondary: #aaaaaa;
+    --star-white: #ffffff;
+    --star-yellow: #fff3a3;
+    --star-blue: #a3d9ff;
+    --star-red: #ffa3a3;
+}
+
+body {
+    background-color: var(--astro-bg);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0 10%;
+    padding-bottom: 100px;
+    background-image: 
+        radial-gradient(1px 1px at 20px 30px, #eee, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 100px 150px, #fff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 200px 300px, #ddd, rgba(0,0,0,0));
+    background-size: 300px 300px;
+}
+
+h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    margin-top: 60px;
+    letter-spacing: -2px;
+    text-align: center;
+    background: linear-gradient(135deg, #fff 0%, #8a2be2 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2rem;
+    margin-top: 80px;
+    border-bottom: 1px solid #222;
+    padding-bottom: 15px;
+}
+
+p {
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 1.5rem auto;
+    color: #ccc;
+}
+
+.home-nav {
+    padding: 2rem 0;
+}
+
+.home-nav a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+}
+
+.home-nav a:hover {
+    color: #fff;
+}
+
+.hero-canvas-container {
+    width: 100%;
+    height: 400px;
+    margin: 40px 0;
+    background: #000;
+    border: 1px solid #111;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 50px rgba(138, 43, 226, 0.1);
+}
+
+.toc {
+    background: var(--astro-card);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid #1a1a1a;
+    max-width: 600px;
+    margin: 4rem auto;
+}
+
+.toc-title {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+}
+
+.toc-part {
+    font-weight: bold;
+    color: var(--astro-purple);
+    margin-top: 1.5rem;
+}
+
+.toc ol {
+    list-style: none;
+    padding-left: 0;
+}
+
+.toc li {
+    margin: 0.8rem 0;
+}
+
+.toc a {
+    color: #fff;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.toc a:hover {
+    opacity: 0.7;
+}
+
+.interactive-container {
+    background: #050508;
+    border: 1px solid #151520;
+    border-radius: 12px;
+    margin: 3rem 0;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: inset 0 0 30px rgba(138, 43, 226, 0.05);
+}
+
+.controls {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.slider-group label {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+button {
+    background: transparent;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 10px 20px;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+button:hover {
+    border-color: var(--astro-purple);
+    background: rgba(138, 43, 226, 0.1);
+}
+
+.section-tag {
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+}
+
+.tag-scale { background: rgba(138, 43, 226, 0.1); color: var(--astro-purple); }
+.tag-stellar { background: rgba(0, 0, 255, 0.1); color: #5c5cff; }
+.tag-gravity { background: rgba(75, 0, 130, 0.1); color: #9d5cff; }
+
+footer {
+    margin-top: 100px;
+    border-top: 1px solid #111;
+    padding-top: 40px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+}

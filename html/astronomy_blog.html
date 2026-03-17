@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A first-principles guide to astronomy. Explore the scale of the universe, stellar evolution, and the laws of gravity.">
+    <title>Astronomy: First Principles — The Cosmic Perspective</title>
+    <link rel="stylesheet" href="../css/astro_styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← BACK TO HOME</a>
+    </nav>
+
+    <h1>Astronomy</h1>
+
+    <div class="hero-canvas-container">
+        <canvas id="heroCanvas"></canvas>
+    </div>
+
+    <p>Astronomy is the ultimate exercise in perspective. It is the study of everything beyond our atmosphere—from the fire of newborn stars to the silent, massive gravity of black holes. To study astronomy is to look back in time and out in space simultaneously.</p>
+
+    <p>At its heart, astronomy is about <strong>Energy</strong> and <strong>Gravity</strong>. It is the story of how the simplest element, hydrogen, can be compressed until it ignites, creating the elements that eventually form planets, oceans, and life itself. We are, quite literally, made of star-stuff.</p>
+
+    <p>Let's explore the architecture of the cosmos from first principles.</p>
+
+    <nav class="toc">
+        <p class="toc-title">CONTENTS</p>
+        
+        <p class="toc-part">Part I — Cosmic Scale</p>
+        <ol>
+            <li><a href="#sec-scale">The Vastness (Understanding Distances)</a></li>
+        </ol>
+
+        <p class="toc-part">Part II — Stellar Engine</p>
+        <ol start="2">
+            <li><a href="#sec-stellar">First Fire (Stellar Evolution)</a></li>
+        </ol>
+
+        <p class="toc-part">Part III — The Cosmic Dance</p>
+        <ol start="3">
+            <li><a href="#sec-gravity">Gravity & Orbits (Kepler & Newton)</a></li>
+        </ol>
+    </nav>
+
+    <span class="section-tag tag-scale">COSMIC SCALE</span>
+    <h2 id="sec-scale">1. The Vastness (Understanding Distances)</h2>
+    <p>Space is big. You just won't believe how vastly, hugely, mind-bogglingly big it is. To measure these distances, we use the <strong>Light Year</strong>—the distance light travels in one year (about 9.46 trillion kilometers).</p>
+    
+    <p>Because the speed of light is finite, when we look at the stars, we are seeing them as they were in the past. The sun is 8 minutes away; the nearest star is 4 years away; the nearest galaxy is 2.5 million years away.</p>
+
+    <div class="interactive-container">
+        <canvas id="scaleCanvas" width="600" height="400"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>ZOOM LEVEL: <span id="scale-val">Logarithmic</span></label>
+                <input type="range" id="scale-slider" min="-1" max="4" step="0.01" value="0">
+            </div>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Zoom out to see how the Earth compares to the Sun and giant stars like Betelgeuse. Notice how quickly planetary scales disappear.
+        </p>
+    </div>
+
+    <span class="section-tag tag-stellar">STELLAR ENGINE</span>
+    <h2 id="sec-stellar">2. First Fire (Stellar Evolution)</h2>
+    <p>A star is a delicate balance between two opposing forces: <strong>Gravity</strong> pulling inward and <strong>Nuclear Fusion</strong> pushing outward. When a cloud of gas becomes dense enough, hydrogen atoms fuse to create helium, releasing a massive amount of energy.</p>
+
+    <p>The fate of a star depends entirely on its initial <strong>Mass</strong>. Smaller stars live for trillions of years as Red Dwarfs, while massive stars burn bright and fast, ending their lives in spectacular Supernova explosions, leaving behind neutron stars or black holes.</p>
+
+    <div class="interactive-container">
+        <canvas id="stellarCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>INITIAL MASS: <span id="mass-val">1.0 Solar Masses</span></label>
+                <input type="range" id="mass-slider" min="0.1" max="50" step="0.1" value="1.0">
+            </div>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Adjust the mass to see how the star's color and classification change. More mass means a hotter, bluer star with a much shorter lifespan.
+        </p>
+    </div>
+
+    <span class="section-tag tag-gravity">THE COSMIC DANCE</span>
+    <h2 id="sec-gravity">3. Gravity & Orbits (Kepler & Newton)</h2>
+    <p>Gravity is the glue of the universe. It doesn't just make things fall; it makes things <strong>Orbit</strong>. An orbit is essentially a continuous free-fall that never hits the ground because of horizontal speed.</p>
+
+    <p>Everything follows the same laws, from the Moon orbiting Earth to our Solar System orbiting the center of the Milky Way. This orbital mechanics, first described by Johannes Kepler and later Isaac Newton, allows us to predict the positions of planets with incredible precision.</p>
+
+    <div class="interactive-container">
+        <canvas id="gravityCanvas" width="600" height="400"></canvas>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Everything follows the same laws, from the Moon orbiting Earth to our Solar System orbiting the center of the Milky Way.
+        </p>
+    </div>
+
+    <footer>
+        <p>© 2026 ASTRONOMY FIRST PRINCIPLES</p>
+    </footer>
+
+    <script src="../js/astro_visuals.js"></script>
+</body>
+</html>
