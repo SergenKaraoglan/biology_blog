@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A first-principles guide to computer science. Explore binary, logic gates, and complexity through interactive visualizations.">
+    <title>Computer Science: First Principles — The Architecture of Thought</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/monokai.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <link rel="stylesheet" href="../css/cs_styles.css">
+</head>
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← BACK TO HOME</a>
+    </nav>
+
+    <h1>Computer Science</h1>
+
+    <div class="hero-canvas-container">
+        <canvas id="heroCanvas" class="hero-canvas" width="800" height="300"></canvas>
+    </div>
+
+    <p>Computer Science is not the study of computers anymore than astronomy is the study of telescopes. It is the study of <strong>Computation</strong>: the formal systematic process of transforming information.</p>
+
+    <p>At its most fundamental level, computation is about <strong>Logic</strong> and <strong>Information</strong>. It is the realization that anything—a symphony, a stock market crash, or a human face—can be reduced to a sequence of simple yes/no questions. By arranging these questions into complex structures, we can build machines that simulate reality itself.</p>
+
+    <p>Let's strip away the software and the silicon and look at the gears of information from absolute first principles.</p>
+
+    <nav class="toc">
+        <p class="toc-title">CONTENTS</p>
+        
+        <p class="toc-part">Part I — Representation</p>
+        <ol>
+            <li><a href="#sec-binary">The Atomic Unit (Binary)</a></li>
+        </ol>
+
+        <p class="toc-part">Part II — Transformation</p>
+        <ol start="2">
+            <li><a href="#sec-logic">The Geometry of Thought (Logic Gates)</a></li>
+            <li><a href="#sec-architecture">The Loom of Data (Von Neumann Architecture)</a></li>
+        </ol>
+
+        <p class="toc-part">Part III — Organization</p>
+        <ol start="4">
+            <li><a href="#sec-structures">Architectures of Memory (Data Structures)</a></li>
+            <li><a href="#sec-complexity">The Speed of Thought (Big O)</a></li>
+            <li><a href="#sec-quiz">Test Your Computational Intuition</a></li>
+        </ol>
+    </nav>
+
+    <span class="section-tag tag-info">REPRESENTATION</span>
+    <h2 id="sec-binary">1. The Atomic Unit (Binary)</h2>
+    <p>Information is the resolution of uncertainty. To represent anything, we only need a way to distinguish between two states: <strong>0</strong> and <strong>1</strong>. This is a <strong>Bit</strong>.</p>
+    
+    <p>With one bit, you can represent a light being on or off. With eight bits (a byte), you can represent 256 different values—enough for every letter of the alphabet. With billions of bits, you can represent every pixel in a high-definition movie. Every digital experience you have is ultimately a river of these binary choices.</p>
+
+    <div class="interactive-container">
+        <div id="binary-grid" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; margin-bottom: 20px;">
+            <!-- Bits will be generated here -->
+        </div>
+        <div class="value-display">
+            DECIMAL VALUE: <span id="decimal-val">0</span>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Toggle the bits above to see how binary numbers map to decimal values. Each bit represents a power of 2.
+        </p>
+    </div>
+
+    <span class="section-tag tag-logic">LOGIC</span>
+    <h2 id="sec-logic">2. The Geometry of Thought (Logic Gates)</h2>
+    <p>Computation happens when we combine bits using <strong>Logic Gates</strong>. These are the fundamental building blocks of processors.</p>
+
+    <p>An <strong>AND</strong> gate only outputs a 1 if both its inputs are 1. An <strong>OR</strong> gate outputs a 1 if at least one input is 1. By combining these simple switches, we can perform addition, comparison, and ultimately, complex logic. This is the bridge between electricity and math.</p>
+
+    <div class="interactive-container">
+        <canvas id="logicCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <button id="gate-type-btn">GATE: AND</button>
+            <button id="toggle-in1-btn">INPUT A: 0</button>
+            <button id="toggle-in2-btn">INPUT B: 0</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Interact with the inputs to see how logic gates transform signals. This is the physical implementation of Boolean algebra.
+        </p>
+    </div>
+
+    <span class="section-tag tag-struct">STRUCTURE</span>
+    <h2 id="sec-structures">3. Architectures of Memory (Data Structures)</h2>
+    <p>How we arrange data determines how fast we can find it. This is the essence of <strong>Data Structures</strong>.</p>
+
+    <p>An <strong>Array</strong> is like a row of lockers—fast to access if you know the number, but hard to expand. A <strong>Linked List</strong> is like a scavenger hunt—each item tells you where the next one is; easy to grow, but slow to search. Choosing the right structure is the most important decision a programmer makes.</p>
+
+    <div class="interactive-container">
+        <canvas id="structCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <button id="array-mode-btn">MODE: ARRAY</button>
+            <button id="search-btn">FIND ELEMENT</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch how the search algorithm navigates an Array (random access) versus a Linked List (sequential access).
+        </p>
+    </div>
+
+    <h2 id="sec-quiz">4. Test Your Computational Intuition</h2>
+    <p>Can you implement a basic sort? Use the Python environment below to sort a list of numbers from first principles.</p>
+
+    <div class="interactive-container" style="align-items: stretch; padding: 2rem;">
+        <div class="controls" style="justify-content: space-between; margin-top: 0; margin-bottom: 1rem;">
+            <select id="quiz-select" style="background:#111; color:#fff; border:1px solid #444; padding:0.5rem; font-family:'Courier New', monospace; flex-grow:1; margin-right:1rem;">
+                <option value="bubble">01. BUBBLE SORT</option>
+                <option value="complexity">02. TIME COMPLEXITY</option>
+                <option value="binary_search">03. BINARY SEARCH</option>
+            </select>
+            <button id="quiz-run-btn" disabled>INITIALIZING...</button>
+        </div>
+        <textarea id="quiz-editor" style="width:100%; height:200px; background:#0a0a0a; color:#fff; border:1px solid #333; font-family:'Courier New', monospace; padding:1rem; outline:none;"></textarea>
+        <div class="output-console" id="quiz-output" style="margin-top:1rem; background:#050505; color:#00ffff; padding:1rem; border:1px solid #333; font-family:'Courier New', monospace; min-height:60px; white-space:pre-wrap;">Awaiting Python Kernel...</div>
+    </div>
+
+    <footer>
+        <p>© 2026 COMPUTER SCIENCE FIRST PRINCIPLES</p>
+    </footer>
+
+    <script src="../js/cs_visuals.js"></script>
+    <script src="../js/cs_quiz.js"></script>
+</body>
+</html>

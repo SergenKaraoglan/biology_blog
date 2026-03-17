@@ -6,10 +6,14 @@
     --ai-accent: #00e5ff;
     --phys-accent: #ffaa00;
     --chem-accent: #ff00ff;
+    --econ-accent: #ffcc00;
     --bio-glow: rgba(0, 255, 170, 0.2);
     --ai-glow: rgba(0, 229, 255, 0.2);
     --phys-glow: rgba(255, 170, 0, 0.2);
     --chem-glow: rgba(255, 0, 255, 0.2);
+    --econ-glow: rgba(255, 204, 0, 0.2);
+    --cs-accent: #00ffff;
+    --cs-glow: rgba(0, 255, 255, 0.2);
     --font-header: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -47,7 +51,7 @@ body {
     font-weight: 800;
     letter-spacing: -1px;
     margin-bottom: 0.5rem;
-    background: linear-gradient(to right, var(--bio-accent), var(--ai-accent), var(--phys-accent), var(--chem-accent));
+    background: linear-gradient(to right, var(--bio-accent), var(--ai-accent), var(--phys-accent), var(--chem-accent), var(--econ-accent), var(--cs-accent));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -80,7 +84,7 @@ body {
     z-index: 1;
 }
 
-.bg-quarter {
+.bg-sixth {
     flex: 1;
 }
 
@@ -100,9 +104,17 @@ body {
     background: radial-gradient(circle at center, var(--chem-accent), transparent 70%);
 }
 
+.econ-bg {
+    background: radial-gradient(circle at center, var(--econ-accent), transparent 70%);
+}
+
+.cs-bg {
+    background: radial-gradient(circle at center, var(--cs-accent), transparent 70%);
+}
+
 .cards-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
     max-width: 1100px;
     width: 100%;
@@ -168,14 +180,28 @@ body {
     background: linear-gradient(to top, var(--phys-glow), transparent);
 }
 
-.chem-card:hover {
-    border-color: var(--chem-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--chem-glow);
-}
-
 .chem-card::before {
     background: linear-gradient(to top, var(--chem-glow), transparent);
+}
+
+.econ-card:hover {
+    border-color: var(--econ-accent);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--econ-glow);
+}
+
+.econ-card::before {
+    background: linear-gradient(to top, var(--econ-glow), transparent);
+}
+
+.cs-card:hover {
+    border-color: var(--cs-accent);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--cs-glow);
+}
+
+.cs-card::before {
+    background: linear-gradient(to top, var(--cs-glow), transparent);
 }
 
 .portal-card:hover::before {
@@ -195,6 +221,8 @@ body {
 .ai-card .category-tag { color: var(--ai-accent); }
 .phys-card .category-tag { color: var(--phys-accent); }
 .chem-card .category-tag { color: var(--chem-accent); }
+.econ-card .category-tag { color: var(--econ-accent); }
+.cs-card .category-tag { color: var(--cs-accent); }
 
 .portal-card h2 {
     font-family: var(--font-header);

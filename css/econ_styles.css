@@ -1,0 +1,207 @@
+:root {
+    --econ-gold: #ffcc00;
+    --econ-green: #00ff88;
+    --econ-red: #ff3366;
+    --econ-bg: #0a0a0a;
+    --econ-card: #151515;
+    --text-primary: #ffffff;
+    --text-secondary: #888888;
+}
+
+body {
+    background-color: var(--econ-bg);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0 10%;
+    padding-bottom: 100px;
+}
+
+h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    margin-top: 60px;
+    letter-spacing: -2px;
+    text-align: center;
+    background: linear-gradient(135deg, #fff 0%, #888 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2rem;
+    margin-top: 80px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 15px;
+}
+
+p {
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 1.5rem auto;
+    color: #ccc;
+}
+
+.home-nav {
+    padding: 2rem 0;
+}
+
+.home-nav a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+}
+
+.home-nav a:hover {
+    color: #fff;
+}
+
+.hero-canvas-container {
+    width: 100%;
+    height: 300px;
+    margin: 40px 0;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.toc {
+    background: var(--econ-card);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid #333;
+    max-width: 600px;
+    margin: 4rem auto;
+}
+
+.toc-title {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+}
+
+.toc-part {
+    font-weight: bold;
+    color: var(--econ-gold);
+    margin-top: 1.5rem;
+}
+
+.toc ol {
+    list-style: none;
+    padding-left: 0;
+}
+
+.toc li {
+    margin: 0.8rem 0;
+}
+
+.toc a {
+    color: #fff;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.toc a:hover {
+    opacity: 0.7;
+}
+
+.interactive-container {
+    background: #0d0d0d;
+    border: 1px solid #333;
+    border-radius: 12px;
+    margin: 3rem 0;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.controls {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.slider-group label {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+button {
+    background: transparent;
+    border: 1px solid #444;
+    color: #fff;
+    padding: 10px 20px;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+button:hover {
+    border-color: #fff;
+    background: #fff;
+    color: #000;
+}
+
+.section-tag {
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+}
+
+.tag-value { background: rgba(255, 204, 0, 0.1); color: var(--econ-gold); }
+.tag-choice { background: rgba(0, 255, 136, 0.1); color: var(--econ-green); }
+.tag-incentives { background: rgba(255, 51, 102, 0.1); color: var(--econ-red); }
+.tag-cooperation { background: rgba(0, 229, 255, 0.1); color: #00e5ff; }
+
+.matrix-cell {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    padding: 20px;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+}
+
+.matrix-cell.active {
+    background: rgba(0, 255, 136, 0.2);
+    border-color: var(--econ-green);
+}
+
+.payoff {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--econ-gold);
+}
+
+footer {
+    margin-top: 100px;
+    border-top: 1px solid #222;
+    padding-top: 40px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+}
