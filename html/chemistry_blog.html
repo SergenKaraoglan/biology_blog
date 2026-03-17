@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A first-principles guide to chemistry. Explore atomic shells, chemical bonding, and molecular architecture through interactive visualizations.">
+    <title>Chemistry: First Principles — The Language of Matter</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/monokai.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <link rel="stylesheet" href="../css/chem_styles.css">
+</head>
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← BACK TO HOME</a>
+    </nav>
+
+    <h1>Chemistry</h1>
+
+    <div class="hero-canvas-container">
+        <canvas id="heroCanvas" class="hero-canvas" width="800" height="300"></canvas>
+    </div>
+
+    <p>Chemistry is the bridge between the absolute laws of physics and the complex machinery of biology. It is the study of how atoms—the building blocks of reality—shake hands, fight, and combine to create everything we see, touch, and breathe.</p>
+
+    <p>At its core, chemistry is the science of <strong>Electrons</strong>. Every explosion, every heartbeat, and every color is the result of electrons moving between shells, seeking the ultimate prize of all matter: <strong>Stability</strong>.</p>
+
+    <p>Let's look at the universe through the lens of the molecule.</p>
+
+    <nav class="toc">
+        <p class="toc-title">CONTENTS</p>
+        
+        <p class="toc-part">Part I — Atomic Structure</p>
+        <ol>
+            <li><a href="#sec-shells">The Electron Fence (Atomic Shells)</a></li>
+        </ol>
+
+        <p class="toc-part">Part II — Interaction</p>
+        <ol start="2">
+            <li><a href="#sec-bonding">The Atomic Handshake (Chemical Bonding)</a></li>
+        </ol>
+
+        <p class="toc-part">Part III — Molecular Geometry</p>
+        <ol start="3">
+            <li><a href="#sec-polarity">Shapes of Life (Polarity & Geometry)</a></li>
+            <li><a href="#sec-quiz">Test Your Chemical Intuition</a></li>
+        </ol>
+    </nav>
+
+    <span class="section-tag tag-atoms">ATOMIC STRUCTURE</span>
+    <h2 id="sec-shells">1. The Electron Fence (Atomic Shells)</h2>
+    <p>Atoms are mostly empty space, but they feel solid because of the <strong>Electron Shells</strong>. Electrons don't just orbit like planets; they occupy specific energy levels—like floors in a hotel.</p>
+    
+    <p>The outermost floor is called the <strong>Valence Shell</strong>. Atoms are obsessed with filling this shell. An atom with a full shell is "happy" (inert, like Neon). An atom with one missing electron is "hungry" (reactive, like Fluorine). This hunger for stability drives all of chemistry.</p>
+
+    <div class="interactive-container">
+        <canvas id="shellCanvas" width="600" height="400"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>ELECTRONS: <span id="shell-count-val">6</span> (Carbon)</label>
+                <input type="range" id="shell-count-slider" min="1" max="18" step="1" value="6">
+            </div>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Toggle the electron count to see how shells (K, L, M) fill up. Watch the valence shell determine the atom's personality.
+        </p>
+    </div>
+
+    <span class="section-tag tag-bonding">BONDING</span>
+    <h2 id="sec-bonding">2. The Atomic Handshake (Chemical Bonding)</h2>
+    <p>When two atoms meet, they negotiate. If one is strong (Electronegative) and the other is weak, it simply steals an electron. This is an <strong>Ionic Bond</strong>—a relationship based on attraction between opposite charges.</p>
+
+    <p>But when atoms of similar strength meet, they share. This is a <strong>Covalent Bond</strong>. They lock their electron probability clouds together, effectively sharing part of themselves to achieve stability. Most of the complex molecules of life—including DNA—are held together by these covalent handshakes.</p>
+
+    <div class="interactive-container">
+        <canvas id="bondCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+             <div style="display:flex; align-items:center; gap:20px;">
+                <span style="font-family:'Courier New', monospace; font-size:14px; color:#888;">IONIC</span>
+                <label class="switch"><input type="checkbox" id="bond-toggle"><span class="slider-switch"></span></label>
+                <span style="font-family:'Courier New', monospace; font-size:14px; color:#fff; font-weight:bold;">COVALENT</span>
+            </div>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Toggle the bond type. In Ionic bonding, the electron resides on one side. In Covalent, it pulses between both nuclei.
+        </p>
+    </div>
+
+    <span class="section-tag tag-geometry">GEOMETRY</span>
+    <h2 id="sec-polarity">3. Shapes of Life (Polarity & Geometry)</h2>
+    <p>Water shouldn't be a liquid at room temperature. It's too light. It only stays liquid because water molecules are "sticky." This stickiness comes from <strong>Polarity</strong>.</p>
+
+    <p>In a water molecule, the Oxygen atom is a greedy electron hog. Even though it shares electrons with Hydrogen, it pulls them closer to its side. This creates a partial negative charge on one end and a partial positive charge on the other. Water is a tiny magnet. This simple asymmetry is the reason life exists.</p>
+
+    <div class="interactive-container">
+        <canvas id="polarityCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <button id="polarity-align-btn">APPLY EXTERNAL FIELD</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Observe the polar water molecules (dipoles). Like tiny compasses, they align themselves to minimize energy.
+        </p>
+    </div>
+
+    <h2 id="sec-quiz">4. Test Your Chemical Intuition</h2>
+    <p>Can you predict the behavior of electrons? Use the Python environment to calculate the valence electrons for different elements.</p>
+
+    <div class="interactive-container" style="align-items: stretch; padding: 2rem;">
+        <div class="controls" style="justify-content: space-between; margin-top: 0; margin-bottom: 1rem;">
+            <select id="quiz-select" style="background:#111; color:#fff; border:1px solid #444; padding:0.5rem; font-family:'Courier New', monospace; flex-grow:1; margin-right:1rem;">
+                <option value="valence">01. VALENCE CHECK</option>
+                <option value="bonding">02. BOND TYPE PREDICTOR</option>
+                <option value="stoichiometry">03. REACTION BALANCER</option>
+            </select>
+            <button id="quiz-run-btn" disabled>INITIALIZING...</button>
+        </div>
+        <textarea id="quiz-editor" style="width:100%; height:200px; background:#0a0a0a; color:#fff; border:1px solid #333; font-family:'Courier New', monospace; padding:1rem; outline:none;"></textarea>
+        <div class="output-console" id="quiz-output" style="margin-top:1rem; background:#050505; color:#ff00ff; padding:1rem; border:1px solid #333; font-family:'Courier New', monospace; min-height:60px; white-space:pre-wrap;">Awaiting Python Kernel...</div>
+    </div>
+
+    <footer>
+        <p>© 2026 CHEMISTRY FIRST PRINCIPLES</p>
+    </footer>
+
+    <script src="../js/chem_visuals.js"></script>
+    <script src="../js/chem_quiz.js"></script>
+</body>
+</html>
