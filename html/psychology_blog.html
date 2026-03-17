@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A first-principles guide to psychology. Explore the biological machine of the brain, the tricks of perception, and the hidden biases of decision making.">
+    <title>Psychology: First Principles — The Ghost in the Machine</title>
+    <link rel="stylesheet" href="../css/psych_styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← BACK TO HOME</a>
+    </nav>
+
+    <h1>Psychology</h1>
+
+    <div class="hero-canvas-container">
+        <canvas id="heroCanvas"></canvas>
+    </div>
+
+    <p>Psychology is the study of the most complex object in the known universe: the human brain. It is the attempt to understand how three pounds of biological tissue can generate thoughts, emotions, and the profound sense of <strong>Self</strong>.</p>
+
+    <p>At its heart, psychology is about <strong>Information Processing</strong>. It is the study of how our hardware (neurons and synapses) runs the software of our minds. To understand psychology is to recognize that our experience of the world is not a direct recording, but a highly edited and often biased construction.</p>
+
+    <p>Let's peel back the layers of consciousness from absolute first principles.</p>
+
+    <nav class="toc">
+        <p class="toc-title">CONTENTS</p>
+        
+        <p class="toc-part">Part I — The Biological Machine</p>
+        <ol>
+            <li><a href="#sec-neurons">The Spark (Neuron Function)</a></li>
+        </ol>
+
+        <p class="toc-part">Part II — Constructing Reality</p>
+        <ol start="2">
+            <li><a href="#sec-perception">Lying Eyes (Perception & Illusion)</a></li>
+        </ol>
+
+        <p class="toc-part">Part III — The Faulty Engine</p>
+        <ol start="3">
+            <li><a href="#sec-bias">Neural Shortcuts (Cognitive Biases)</a></li>
+        </ol>
+    </nav>
+
+    <span class="section-tag tag-bio">THE BIOLOGICAL MACHINE</span>
+    <h2 id="sec-neurons">1. The Spark (Neuron Function)</h2>
+    <p>The brain communicates through <strong>Electro-chemical Signals</strong>. Every thought you have is a ripple of electricity traveling down an axon and triggering a chemical release across a synapse. This is binary at its most organic: a neuron either fires, or it doesn't.</p>
+    
+    <p>The complexity emerges from the network. With roughly 86 billion neurons and trillions of connections, the brain is the ultimate parallel computer.</p>
+
+    <div class="interactive-container">
+        <canvas id="neuronCanvas" width="600" height="200"></canvas>
+        <div class="controls">
+            <button id="fire-neuron">TRIGGER NEURAL FIRE</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click to trigger a signal. In the brain, this happens thousands of times per second across billions of pathways.
+        </p>
+    </div>
+
+    <span class="section-tag tag-perception">CONSTRUCTING REALITY</span>
+    <h2 id="sec-perception">2. Lying Eyes (Perception & Illusion)</h2>
+    <p>You don't see with your eyes; you see with your brain. Evolution hasn't optimized for "truth," but for **Survival**. To save energy, the brain takes massive shortcuts, filling in gaps based on what it *expects* to see.</p>
+
+    <p>Visual illusions aren't "mistakes"; they are the brain's internal rules being exposed. The brain prioritizes depth and movement clues even when they aren't actually there.</p>
+
+    <div class="interactive-container">
+        <canvas id="perceptionCanvas" width="600" height="400"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>DISTORTION CURVE: </label>
+                <input type="range" id="illusion-slider" min="-50" max="50" step="1" value="0">
+            </div>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Even when the pink lines are perfectly straight (slider at 0), the radiating background makes them appear curved. The brain is "over-correcting" for depth.
+        </p>
+    </div>
+
+    <span class="section-tag tag-bias">THE FAULTY ENGINE</span>
+    <h2 id="sec-bias">3. Neural Shortcuts (Cognitive Biases)</h2>
+    <p>Our brains are ancient machines living in a modern world. To make split-second decisions, we use <strong>Heuristics</strong>—mental shortcuts that are often wrong. These "Cognitive Biases" affect everything from what we buy to how we vote.</p>
+
+    <p>The <strong>Confirmation Bias</strong> makes us favor information that proves us right. <strong>Availability Heuristic</strong> makes us overestimate the risks of things we see often in the news. We are not as rational as we think.</p>
+
+    <div class="interactive-container">
+        <canvas id="decisionCanvas" width="600" height="300" style="cursor: pointer;"></canvas>
+        <div class="controls">
+            <button id="start-test">START RESPONSE TEST</button>
+        </div>
+        <p id="test-result" style="font-family: 'Courier New', monospace; color: #ff0080; margin-top: 10px;">Awaiting test...</p>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Test your "system 1" thinking. Your brain has to switch between waiting and acting instantly. This delay reveals the processing overhead of conscious attention.
+        </p>
+    </div>
+
+    <footer>
+        <p>© 2026 PSYCHOLOGY FIRST PRINCIPLES</p>
+    </footer>
+
+    <script src="../js/psych_visuals.js"></script>
+</body>
+</html>

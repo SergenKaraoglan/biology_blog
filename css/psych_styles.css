@@ -1,0 +1,188 @@
+:root {
+    --psych-rose: #ff0080;
+    --psych-violet: #8a2be2;
+    --psych-bg: #0a0508;
+    --psych-card: #150a0d;
+    --text-primary: #ffffff;
+    --text-secondary: #999999;
+}
+
+body {
+    background-color: var(--psych-bg);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0 10%;
+    padding-bottom: 100px;
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(255, 0, 128, 0.05), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(138, 43, 226, 0.05), transparent 40%);
+}
+
+h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    margin-top: 60px;
+    letter-spacing: -2px;
+    text-align: center;
+    background: linear-gradient(135deg, #fff 0%, #ff0080 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2rem;
+    margin-top: 80px;
+    border-bottom: 1px solid #331122;
+    padding-bottom: 15px;
+}
+
+p {
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 1.5rem auto;
+    color: #ccc;
+}
+
+.home-nav {
+    padding: 2rem 0;
+}
+
+.home-nav a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+}
+
+.home-nav a:hover {
+    color: #fff;
+}
+
+.hero-canvas-container {
+    width: 100%;
+    height: 350px;
+    margin: 40px 0;
+    background: #000;
+    border: 1px solid #221118;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 40px rgba(255, 0, 128, 0.1);
+}
+
+.toc {
+    background: var(--psych-card);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid #331122;
+    max-width: 600px;
+    margin: 4rem auto;
+}
+
+.toc-title {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+}
+
+.toc-part {
+    font-weight: bold;
+    color: var(--psych-rose);
+    margin-top: 1.5rem;
+}
+
+.toc ol {
+    list-style: none;
+    padding-left: 0;
+}
+
+.toc li {
+    margin: 0.8rem 0;
+}
+
+.toc a {
+    color: #fff;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.toc a:hover {
+    opacity: 0.7;
+}
+
+.interactive-container {
+    background: #0d060a;
+    border: 1px solid #331122;
+    border-radius: 12px;
+    margin: 3rem 0;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.controls {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.slider-group label {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+button {
+    background: transparent;
+    border: 1px solid #442233;
+    color: #fff;
+    padding: 10px 20px;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+button:hover {
+    border-color: var(--psych-rose);
+    background: rgba(255, 0, 128, 0.1);
+}
+
+.section-tag {
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+}
+
+.tag-bio { background: rgba(255, 0, 128, 0.1); color: var(--psych-rose); }
+.tag-perception { background: rgba(138, 43, 226, 0.1); color: var(--psych-violet); }
+.tag-bias { background: #1a1a1a; color: #fff; }
+
+footer {
+    margin-top: 100px;
+    border-top: 1px solid #221118;
+    padding-top: 40px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+}

@@ -18,6 +18,8 @@
     --astro-glow: rgba(138, 43, 226, 0.2);
     --math-accent: #ff3e3e;
     --math-glow: rgba(255, 62, 62, 0.2);
+    --psych-accent: #ff0080;
+    --psych-glow: rgba(255, 0, 128, 0.2);
     --font-header: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -55,7 +57,7 @@ body {
     font-weight: 800;
     letter-spacing: -1px;
     margin-bottom: 0.5rem;
-    background: linear-gradient(to right, var(--bio-accent), var(--ai-accent), var(--phys-accent), var(--chem-accent), var(--econ-accent), var(--cs-accent), var(--astro-accent), var(--math-accent));
+    background: linear-gradient(to right, var(--bio-accent), var(--ai-accent), var(--phys-accent), var(--chem-accent), var(--econ-accent), var(--cs-accent), var(--astro-accent), var(--math-accent), var(--psych-accent));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -88,7 +90,7 @@ body {
     z-index: 1;
 }
 
-.bg-eighth {
+.bg-ninth {
     flex: 1;
 }
 
@@ -122,6 +124,10 @@ body {
 
 .math-bg {
     background: radial-gradient(circle at center, var(--math-accent), transparent 70%);
+}
+
+.psych-bg {
+    background: radial-gradient(circle at center, var(--psych-accent), transparent 70%);
 }
 
 .cards-container {
@@ -236,6 +242,16 @@ body {
     background: linear-gradient(to top, var(--math-glow), transparent);
 }
 
+.psych-card:hover {
+    border-color: var(--psych-accent);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--psych-glow);
+}
+
+.psych-card::before {
+    background: linear-gradient(to top, var(--psych-glow), transparent);
+}
+
 .portal-card:hover::before {
     opacity: 1;
 }
@@ -257,6 +273,7 @@ body {
 .cs-card .category-tag { color: var(--cs-accent); }
 .astro-card .category-tag { color: var(--astro-accent); }
 .math-card .category-tag { color: var(--math-accent); }
+.psych-card .category-tag { color: var(--psych-accent); }
 
 .portal-card h2 {
     font-family: var(--font-header);
