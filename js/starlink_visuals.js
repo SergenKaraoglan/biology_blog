@@ -279,11 +279,11 @@ function drawConstellation() {
     }
 }
 
-function constLoop() {
-    drawConstellation();
-    requestAnimationFrame(constLoop);
-}
-constLoop();
+// function constLoop() { // This will be handled by the global tick
+//     drawConstellation();
+//     requestAnimationFrame(constLoop);
+// }
+// constLoop(); // This will be handled by the global tick
 
 // --- DEORBIT PLASMA SIMULATION ---
 const deorbitCanvas = document.getElementById('deorbit-canvas');
@@ -479,5 +479,80 @@ document.getElementById('re-route').onclick = () => {
 
 initRouting();
 drawRouting();
+
+// --- STARSHIELD TARGET TRACKING ---
+const shieldCanvas = document.getElementById('starshield-canvas');
+const shieldCtx = shieldCanvas.getContext('2d');
+let trackingSats = [];
+let shieldTargets = [];
+
+function initShield() {
+    trackingSats = Array.from({ length: 12 }, (_, i) => ({
+        x: (i / 12) * 800,
+        y: 100,
+        id: i
+    }));
+}
+
+function drawShield() {
+    const w = shieldCanvas.width, h = shieldCanvas.height;
+    shieldCtx.fillStyle = '#050a10';
+    shieldCtx.fillRect(0, 0, w, h);
+
+    // Ground
+    shieldCtx.fillStyle = '#111';
+    shieldCtx.fillRect(0, h - 20, w, 20);
+
+    // Satellites
+    trackingSats.forEach(sat => {
+        sat.x = (sat.x + 1) % w;
+        shieldCtx.fillStyle = '#3b82f6';
+        shieldCtx.fillRect(sat.x - 5, sat.y - 5, 10, 10);
+        
+        // FOV
+        shieldCtx.strokeStyle = 'rgba(59, 130, 246, 0.05)';
+        shieldCtx.beginPath();
+        shieldCtx.moveTo(sat.x, sat.y);
+        shieldCtx.lineTo(sat.x - 150, h - 20);
+        shieldCtx.lineTo(sat.x + 150, h - 20);
+        shieldCtx.stroke();
+
+        // Trackers
+        shieldTargets.forEach(t => {
+            const dx = Math.abs(sat.x - t.x);
+            if (dx < 150) {
+                shieldCtx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+                shieldCtx.beginPath();
+                shieldCtx.moveTo(sat.x, sat.y);
+                shieldCtx.lineTo(t.x, t.y);
+                shieldCtx.stroke();
+                
+                shieldCtx.fillStyle = 'rgba(59, 130, 246, 0.2)';
+                shieldCtx.beginPath();
+                shieldCtx.arc(t.x, t.y, 20, 0, Math.PI * 2);
+                shieldCtx.fill();
+            }
+        });
+    });
+
+    // Targets
+    shieldTargets = shieldTargets.filter(t => {
+        t.x += t.vx;
+        shieldCtx.fillStyle = '#ef4444';
+        shieldCtx.beginPath();
+        shieldCtx.arc(t.x, t.y, 4, 0, Math.PI * 2);
+        shieldCtx.fill();
+        return t.x < w + 50;
+    });
+
+    requestAnimationFrame(drawShield);
+}
+
+document.getElementById('add-target').onclick = () => {
+    shieldTargets.push({ x: -20, y: 350, vx: 5 + Math.random() * 5 });
+};
+
+initShield();
+drawShield();
 
 drawLatency();

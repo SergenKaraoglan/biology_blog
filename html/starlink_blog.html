@@ -44,6 +44,7 @@
                 <div class="toc-part">III. THE SPEED OF LIGHT</div>
                 <ol>
                     <li><a href="#laser-isl">Laser ISL: The Space Mesh</a></li>
+                    <li><a href="#starshield">Starshield: Orbital Security</a></li>
                     <li><a href="#vacuum-vs-fiber">Vacuum vs. Fiber: The Latency War</a></li>
                 </ol>
             </li>
@@ -145,6 +146,20 @@
                 <div class="controls">
                     <button id="run-latency-test" style="background:var(--accent-primary); color:#000; border:none; padding:1rem 2rem; font-weight:700; cursor:pointer; font-family:var(--font-header);">INITIALIZE SIGNAL PACKET</button>
                 </div>
+            </div>
+        </section>
+
+        <section id="starshield">
+            <h2>Starshield: Orbital Security</h2>
+            <p>While Starlink serves the consumer, <strong>Starshield</strong> is built for the government. It leverages the same orbital bus and laser mesh as the commercial constellation but adds <strong>Earth Observation</strong> and <strong>National Security</strong> payloads. With thousands of eyes in low-Earth orbit, Starshield provides persistent, low-latency intelligence that is nearly impossible to degrade or destroy.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Multi-Satellite Target Tracking</div>
+                <canvas id="starshield-canvas" width="800" height="400"></canvas>
+                <div class="controls">
+                    <button id="add-target" style="background:#ef4444; color:#fff; border:none; padding:1rem 2rem; font-weight:700; cursor:pointer; font-family:var(--font-header);">INJECT HYPERSONIC TARGET</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">Observe how multiple satellites (blue) coordinate to maintain a persistent track on a high-speed target (red). Unlike traditional GEO satellites, the dense LEO mesh ensures the target is never out of sight.</p>
             </div>
         </section>
 
