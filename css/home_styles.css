@@ -28,6 +28,8 @@
     --emu-glow: rgba(124, 77, 255, 0.2);
     --starlink-accent: #f59e0b;
     --starlink-glow: rgba(245, 158, 11, 0.2);
+    --spacex-accent: #cbd5e1;
+    --spacex-glow: rgba(203, 213, 225, 0.1);
     --font-header: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -78,7 +80,8 @@ body {
         var(--graphics-accent),
         var(--procedural-accent),
         var(--emu-accent),
-        var(--starlink-accent)
+        var(--starlink-accent),
+        var(--spacex-accent)
     );
     -webkit-background-clip: text;
     background-clip: text;
@@ -166,6 +169,10 @@ body {
 
 .starlink-bg {
     background: radial-gradient(circle at center, var(--starlink-accent), transparent 70%);
+}
+
+.spacex-bg {
+    background: radial-gradient(circle at center, var(--spacex-accent), transparent 70%);
 }
 
 .cards-container {
@@ -324,6 +331,16 @@ body {
     background: linear-gradient(to top, var(--starlink-glow), transparent);
 }
 
+.spacex-card:hover {
+    border-color: var(--spacex-accent);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--spacex-glow);
+}
+
+.spacex-card::before {
+    background: linear-gradient(to top, var(--spacex-glow), transparent);
+}
+
 .portal-card:hover::before {
     opacity: 1;
 }
@@ -350,6 +367,7 @@ body {
 .procedural-card .category-tag { color: var(--procedural-accent); }
 .emulation-card .category-tag { color: var(--emu-accent); }
 .starlink-card .category-tag { color: var(--starlink-accent); }
+.spacex-card .category-tag { color: var(--spacex-accent); }
 
 .portal-card h2 {
     font-family: var(--font-header);

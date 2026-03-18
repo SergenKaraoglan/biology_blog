@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mars Ark: Engineering SpaceX | Polymath</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/spacex_styles.css">
+</head>
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← RETURN TO CORE</a>
+    </nav>
+
+    <header>
+        <h1>SpaceX</h1>
+        <p>Rewriting the laws of aerospace economics. Discover how vertical landing, cryogenic propulsion, and mass-manufacturing are building the bridge to Mars.</p>
+    </header>
+
+    <div class="hero-canvas-container">
+        <canvas id="hero-spacex-canvas"></canvas>
+    </div>
+
+    <section class="toc">
+        <span class="toc-title">Flight Plan</span>
+        <ol>
+            <li>
+                <div class="toc-part">I. THE REUSABILITY REVOLUTION</div>
+                <ol>
+                    <li><a href="#vertical-landing">Vertical Landing: The Suicide Burn</a></li>
+                    <li><a href="#economics">The Cost of Orbit</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">II. STARSHIP & RAPTOR</div>
+                <ol>
+                    <li><a href="#raptor">Raptor: Full-Flow Staged Combustion</a></li>
+                    <li><a href="#belly-flop">The Belly Flop Maneuver</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">III. BEYOND EARTH</div>
+                <ol>
+                    <li><a href="#mars-transit">The Interplanetary Transport System</a></li>
+                    <li><a href="#multi-planetary">Becoming Multi-Planetary</a></li>
+                </ol>
+            </li>
+        </ol>
+    </section>
+
+    <main>
+        <section id="vertical-landing">
+            <h2>The Suicide Burn</h2>
+            <p>Landing a 15-story orbital booster on a target the size of a postage stamp requires more than just retro-propulsion. It requires <strong>Hoverslam</strong>—a maneuver where the engine's thrust is so great that the rocket cannot hover. It must hit zero velocity at the exact moment it touches the ground.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Landing Burn Simulator (Falcon 9)</div>
+                <canvas id="landing-canvas" width="800" height="500"></canvas>
+                <div class="controls">
+                    <button id="launch-btn" class="action-btn">INITIALIZE DESCENT</button>
+                    <div class="slider-group">
+                        <label>Thrust Control (%)</label>
+                        <input type="range" id="thrust-slider" min="0" max="100" value="0">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #444; margin-top: 1.5rem;">Throttle the engine to counteract gravity. If you burn too late, you'll hit the deck. Too early, and you'll run out of fuel before reaching the surface.</p>
+            </div>
+        </section>
+
+        <section id="#raptor">
+            <h2>Raptor: The Engine of Mars</h2>
+            <p>The Raptor is the first <strong>Full-Flow Staged Combustion</strong> engine to reach flight. Unlike traditional engines that dump excess gas, Raptor cycles every molecule of propellant through the combustion chamber, maximizing efficiency and generating over 230 tons of thrust using liquid methane and oxygen.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Cryogenic Propellant Cycle</div>
+                <canvas id="raptor-canvas" width="800" height="400"></canvas>
+                <p style="font-size: 0.9rem; color: #444; margin-top: 1.5rem;">Observe the flow: liquid methane (blue) and oxygen (green) are gasified before entering the high-pressure combustion chamber (white pulse).</p>
+            </div>
+        </section>
+
+        <section id="belly-flop">
+            <h2>The Belly Flop</h2>
+            <p>Starship doesn't return like a capsule or a space shuttle. It falls "belly-down" using four giant flaps to maintain pitch and roll. At the last second, it performs a radical <strong>Flip Maneuver</strong>, swinging its tail around to land vertically.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Aero-Braking & Flip Sim</div>
+                <canvas id="flop-canvas" width="800" height="300"></canvas>
+                <div class="controls">
+                    <button id="flip-btn" class="action-btn">TRIGGER FLIP MANEUVER</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 POLYMATH SERIES — SPACEX MODULE</p>
+    </footer>
+
+    <script src="../js/spacex_visuals.js"></script>
+</body>
+</html>
