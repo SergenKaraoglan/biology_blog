@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procedural Generation: The Architects of Infinity | Polymath</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/procedural_styles.css">
+</head>
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← RETURN TO CORE</a>
+    </nav>
+
+    <header>
+        <h1>The Architects of Infinity</h1>
+        <p>Mathematics as the ultimate creator. Discover how algorithms build vast universes, intricate landscapes, and living ecosystems from a single seed.</p>
+    </header>
+
+    <div class="hero-canvas-container">
+        <canvas id="hero-noise-canvas"></canvas>
+    </div>
+
+    <section class="toc">
+        <div class="toc-title">Structured Principles</div>
+        <ol>
+            <li>
+                <div class="toc-part">PART I: THE RAW MATERIAL</div>
+                <ol>
+                    <li><a href="#coherent-noise"><span class="section-tag">NOISE</span> Coherent Noise & Perlin Streams</a></li>
+                    <li><a href="#fractal-octaves">Fractal Brown Motion (fBm)</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">PART II: ORGANIC STRUCTURES</div>
+                <ol>
+                    <li><a href="#cellular-automata"><span class="section-tag">LIFE</span> Cellular Automata: Cave Systems</a></li>
+                    <li><a href="#growth-rules">The Rules of Emergence</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">PART III: THE BOTANY OF CHANCE</div>
+                <ol>
+                    <li><a href="#l-systems"><span class="section-tag">成長</span> L-Systems & Fractal Flora</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">PART V: ARCHITECTURAL SPACE</div>
+                <ol>
+                    <li><a href="#bsp"><span class="section-tag">DUNGEON</span> Binary Space Partitioning</a></li>
+                </ol>
+            </li>
+        </ol>
+    </section>
+
+    <main>
+        <section id="coherent-noise">
+            <h2>The Geometry of Noise</h2>
+            <p>True randomness is chaotic—a "white noise" of static. But for games, we need <strong>Coherent Noise</strong>. Imagine a landscape where every point is related to its neighbor. This is the foundation of digital terrain, clouds, and textures.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Interactive Perlin Map</div>
+                <canvas id="noise-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <div class="slider-group">
+                        <label>Scale (Frequency)</label>
+                        <input type="range" id="noise-scale" min="10" max="200" step="1" value="50">
+                    </div>
+                    <div class="slider-group">
+                        <label>Octaves</label>
+                        <input type="range" id="noise-octaves" min="1" max="8" step="1" value="4">
+                    </div>
+                    <div class="slider-group">
+                        <label>Persistence</label>
+                        <input type="range" id="noise-persistence" min="0" max="1" step="0.05" value="0.5">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Adjust the octaves and scale to see how simple gradients layer into complex terrain.</p>
+            </div>
+        </section>
+
+        <section id="cellular-automata">
+            <h2>The Caves of Life</h2>
+            <p>How do we create natural-looking cave systems? We use <strong>Cellular Automata</strong>. By applying simple rules repeatedly—like "if a pixel has more than 4 neighbors, it becomes a wall"—we can transform chaos into organic structures that mimic the carving of water or the growth of mold.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Cave Evolution Simulation</div>
+                <canvas id="cave-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <button id="reset-cave">Seed Random</button>
+                    <button id="step-cave">Iterate Rules (1x)</button>
+                    <button id="auto-cave">Smooth Automatically</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Watch how simple local rules emerge into a global structural network.</p>
+            </div>
+        </section>
+
+        <section id="l-systems">
+            <h2>The Alchemy of Flora</h2>
+            <p>Plants don't grow randomly; they follow recursive grammars. <strong>Lindenmayer Systems</strong> (L-Systems) use string replacement rules to simulate the branching patterns of trees, ferns, and coral. A single "seed" string grows into a complex, infinite fractal.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">L-System Recursive Growth</div>
+                <canvas id="tree-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <div class="slider-group">
+                        <label>Recursion Depth</label>
+                        <input type="range" id="tree-depth" min="1" max="6" step="1" value="4">
+                    </div>
+                    <div class="slider-group">
+                        <label>Branch Angle</label>
+                        <input type="range" id="tree-angle" min="10" max="90" step="1" value="25">
+                    </div>
+                    <button id="regenerate-tree">New Species</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Each iteration applies a geometric rule to every branch, creating organic symmetry.</p>
+            </div>
+        </section>
+
+        <section id="wfc">
+            <h2>Wave Function Collapse</h2>
+            <p>How do we build complex, rule-based levels like cities or dungeons? <strong>Wave Function Collapse</strong> (WFC) treats every tile as a "superposition" of possibilities. By observing (choosing) one tile, we force its neighbors to "collapse" into states that satisfy local constraints, creating a perfectly coherent world from a set of simple tiles.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Tile Constraint Solver</div>
+                <canvas id="wfc-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <button id="reset-wfc">Clear Possibilities</button>
+                    <button id="step-wfc">Observe One Tile</button>
+                    <button id="auto-wfc">Collapse Entire World</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Tiles are Grass, Water, Coast, and Road. Watch how choosing one tile propagates constraints across the grid.</p>
+            </div>
+        </section>
+
+        <section id="bsp">
+            <h2>The Architecture of Chaos</h2>
+            <p>How do games like <em>Doom</em> or <em>Rogue</em> create balanced, structured dungeons? <strong>Binary Space Partitioning</strong> (BSP) recursively divides a large space into smaller "containers." By placing rooms within these leaf nodes and carving corridors to connect siblings, we generate layouts that feel intentional and organized rather than purely random.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Recursive Dungeon Architect</div>
+                <canvas id="bsp-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <button id="reset-bsp">New Large Hall</button>
+                    <button id="step-bsp">Split Recursively</button>
+                    <button id="auto-bsp">Generate Full Dungeon</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Watch how the infinite void is carved into a hierarchy of rooms and corridors.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 POLYMATH SERIES — PROCEDURAL GENERATION MODULE</p>
+    </footer>
+
+    <script src="../js/procedural_visuals.js"></script>
+</body>
+</html>
