@@ -43,8 +43,9 @@
             <li>
                 <div class="toc-part">III. BEYOND EARTH</div>
                 <ol>
+                    <li><a href="#mechazilla">Mechazilla: Catching the Booster</a></li>
+                    <li><a href="#heatshield">TPS: The 3000°C Shield</a></li>
                     <li><a href="#mars-transit">The Interplanetary Transport System</a></li>
-                    <li><a href="#multi-planetary">Becoming Multi-Planetary</a></li>
                 </ol>
             </li>
         </ol>
@@ -69,7 +70,7 @@
             </div>
         </section>
 
-        <section id="#raptor">
+        <section id="raptor">
             <h2>Raptor: The Engine of Mars</h2>
             <p>The Raptor is the first <strong>Full-Flow Staged Combustion</strong> engine to reach flight. Unlike traditional engines that dump excess gas, Raptor cycles every molecule of propellant through the combustion chamber, maximizing efficiency and generating over 230 tons of thrust using liquid methane and oxygen.</p>
             
@@ -91,6 +92,34 @@
                     <button id="flip-btn" class="action-btn">TRIGGER FLIP MANEUVER</button>
                 </div>
             </div>
+        <section id="mechazilla">
+            <h2>Mechazilla</h2>
+            <p>Weight is the enemy of orbit. To maximize payload, SpaceX removed the landing legs from the Super Heavy booster entirely. Instead, the booster returns to the launch site where a pair of massive mechanical arms—known as <strong>"The Chopsticks"</strong>—catch it mid-air. This allows for near-instant turnaround and refueling.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Booster Catch Simulator</div>
+                <canvas id="catch-canvas" width="800" height="400"></canvas>
+                <div class="controls">
+                    <button id="catch-btn" class="action-btn">TRIGGER CATCH SEQUENCE</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #444; margin-top: 1.5rem;">The booster (silver) must hover with zero lateral velocity while the chopsticks (white) synchronize their closing speed to secure the vehicle.</p>
+            </div>
+        </section>
+
+        <section id="heatshield">
+            <h2>The TPS Shield</h2>
+            <p>Reentering from orbit generates plasma at temperatures exceeding <strong>3000°C</strong>. Starship uses 18,000 hexagonal ceramic tiles. Unlike the Shuttle, which had unique tiles for every spot, Starship uses mass-produced hexagonal shapes that are mechanically fastened for rapid refurbishment.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Reentry Plasma Simulation</div>
+                <canvas id="heat-canvas" width="800" height="300"></canvas>
+                <p style="font-size: 0.9rem; color: #444; margin-top: 1.5rem;">Watch the stagnation point (white) where air is compressed into plasma, and notice how the hexagonal tiling (grid) dissipates heat away from the steel hull.</p>
+            </div>
+        </section>
+
+        <section id="mars-transit">
+            <h2>The Mars Transit</h2>
+            <p>To reach Mars, Starship must be refilled in low Earth orbit. A "Tanker" Starship docks and transfers cryogenic propellants, enabling the deep-space Starship to depart with a full tank. This <strong>In-Orbit Refilling</strong> is the linchpin of multi-planetary civilization.</p>
         </section>
     </main>
 

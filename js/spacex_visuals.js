@@ -256,6 +256,128 @@ function drawFlop() {
     flopCtx.restore();
 }
 
+// --- MECHAZILLA CATCH ---
+const catchCanvas = document.getElementById('catch-canvas');
+const catchCtx = catchCanvas.getContext('2d');
+const catchBtn = document.getElementById('catch-btn');
+
+let booster = { x: 400, y: -50, vy: 2, active: false, caught: false };
+let armsWidth = 150;
+let targetArmsWidth = 150;
+
+catchBtn.onclick = () => {
+    booster = { x: 400, y: -50, vy: 2, active: true, caught: false };
+    targetArmsWidth = 150;
+};
+
+function drawCatch() {
+    const w = catchCanvas.width, h = catchCanvas.height;
+    catchCtx.fillStyle = '#050505';
+    catchCtx.fillRect(0, 0, w, h);
+
+    // Tower
+    catchCtx.fillStyle = '#111';
+    catchCtx.fillRect(w/2 - 120, 0, 40, h);
+
+    // Arms
+    armsWidth += (targetArmsWidth - armsWidth) * 0.1;
+    catchCtx.strokeStyle = '#fff';
+    catchCtx.lineWidth = 10;
+    
+    // Left Arm
+    catchCtx.beginPath();
+    catchCtx.moveTo(w/2 - 80, 200);
+    catchCtx.lineTo(w/2 - 80 + armsWidth, 200);
+    catchCtx.stroke();
+    
+    // Right Arm
+    catchCtx.beginPath();
+    catchCtx.moveTo(w/2 - 80, 250);
+    catchCtx.lineTo(w/2 - 80 + armsWidth, 250);
+    catchCtx.stroke();
+
+    if (booster.active) {
+        booster.y += booster.vy;
+        if (booster.y > 180 && !booster.caught) {
+            booster.vy *= 0.9; // Decelerate to hover
+            if (booster.vy < 0.2) {
+                targetArmsWidth = 100; // Close arms
+                if (armsWidth < 110) {
+                    booster.caught = true;
+                    booster.vy = 0;
+                }
+            }
+        }
+        
+        // Booster
+        catchCtx.fillStyle = '#cbd5e1';
+        catchCtx.fillRect(booster.x - 15, booster.y - 100, 30, 200);
+        
+        if (!booster.caught) {
+            // Flame
+            catchCtx.fillStyle = '#3b82f6';
+            catchCtx.beginPath();
+            catchCtx.moveTo(booster.x - 10, booster.y + 100);
+            catchCtx.lineTo(booster.x + 10, booster.y + 100);
+            catchCtx.lineTo(booster.x, booster.y + 140 + Math.random() * 20);
+            catchCtx.fill();
+        }
+    }
+
+    if (booster.caught) {
+        catchCtx.fillStyle = '#22c55e';
+        catchCtx.font = 'bold 20px Outfit';
+        catchCtx.fillText('BOOSTER SECURED', w/2 - 250, 230);
+    }
+}
+
+// --- HEAT SHIELD TPS ---
+const heatCanvas = document.getElementById('heat-canvas');
+const heatCtx = heatCanvas.getContext('2d');
+
+function drawHeat() {
+    const w = heatCanvas.width, h = heatCanvas.height;
+    heatCtx.fillStyle = '#0a0a0a';
+    heatCtx.fillRect(0, 0, w, h);
+
+    const bx = w / 2, by = h / 2;
+
+    // Hexagonal Grid (Abstract)
+    heatCtx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    for (let i = 0; i < 20; i++) {
+        for (let j = 0; j < 10; j++) {
+            const hx = i * 40 + (j % 2) * 20;
+            const hy = j * 35;
+            heatCtx.beginPath();
+            heatCtx.moveTo(hx, hy);
+            heatCtx.lineTo(hx + 20, hy);
+            heatCtx.lineTo(hx + 30, hy + 15);
+            heatCtx.lineTo(hx + 20, hy + 30);
+            heatCtx.lineTo(hx, hy + 30);
+            heatCtx.lineTo(hx - 10, hy + 15);
+            heatCtx.closePath();
+            heatCtx.stroke();
+        }
+    }
+
+    // Plasma Flow
+    const pSize = 100 + Math.sin(time * 5) * 10;
+    const pGrad = heatCtx.createRadialGradient(bx - 100, by, 0, bx - 100, by, pSize * 2);
+    pGrad.addColorStop(0, '#fff');
+    pGrad.addColorStop(0.3, '#3b82f6');
+    pGrad.addColorStop(0.6, '#ef4444');
+    pGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+    
+    heatCtx.fillStyle = pGrad;
+    heatCtx.beginPath();
+    heatCtx.arc(bx - 100, by, pSize * 2, 0, Math.PI * 2);
+    heatCtx.fill();
+
+    // Steel Hull (Glow)
+    heatCtx.fillStyle = 'rgba(203, 213, 225, 0.1)';
+    heatCtx.fillRect(bx - 50, by - 100, 200, 200);
+}
+
 // --- MAIN LOOP ---
 function tick() {
     time += 0.01;
@@ -263,6 +385,8 @@ function tick() {
     drawLanding();
     drawRaptor();
     drawFlop();
+    drawCatch();
+    drawHeat();
     requestAnimationFrame(tick);
 }
 
