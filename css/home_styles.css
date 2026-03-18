@@ -26,6 +26,8 @@
     --procedural-glow: rgba(0, 230, 118, 0.2);
     --emu-accent: #7c4dff;
     --emu-glow: rgba(124, 77, 255, 0.2);
+    --starlink-accent: #f59e0b;
+    --starlink-glow: rgba(245, 158, 11, 0.2);
     --font-header: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -75,7 +77,8 @@ body {
         var(--psych-accent),
         var(--graphics-accent),
         var(--procedural-accent),
-        var(--emu-accent)
+        var(--emu-accent),
+        var(--starlink-accent)
     );
     -webkit-background-clip: text;
     background-clip: text;
@@ -159,6 +162,10 @@ body {
 
 .emulation-bg {
     background: radial-gradient(circle at center, var(--emu-accent), transparent 70%);
+}
+
+.starlink-bg {
+    background: radial-gradient(circle at center, var(--starlink-accent), transparent 70%);
 }
 
 .cards-container {
@@ -307,6 +314,16 @@ body {
     background: linear-gradient(to top, var(--emu-glow), transparent);
 }
 
+.starlink-card:hover {
+    border-color: var(--starlink-accent);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--starlink-glow);
+}
+
+.starlink-card::before {
+    background: linear-gradient(to top, var(--starlink-glow), transparent);
+}
+
 .portal-card:hover::before {
     opacity: 1;
 }
@@ -332,6 +349,7 @@ body {
 .graphics-card .category-tag { color: var(--graphics-accent); }
 .procedural-card .category-tag { color: var(--procedural-accent); }
 .emulation-card .category-tag { color: var(--emu-accent); }
+.starlink-card .category-tag { color: var(--starlink-accent); }
 
 .portal-card h2 {
     font-family: var(--font-header);

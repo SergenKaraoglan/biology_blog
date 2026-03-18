@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Orbital Web: Engineering Starlink | Polymath</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/starlink_styles.css">
+</head>
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← RETURN TO CORE</a>
+    </nav>
+
+    <header>
+        <h1>Orbital Web</h1>
+        <p>Decoding the physics of a planetary nervous system. Discover how thousands of satellites in the void create a seamless grid of global connectivity.</p>
+    </header>
+
+    <div class="hero-canvas-container">
+        <canvas id="hero-starlink-canvas"></canvas>
+    </div>
+
+    <section class="toc">
+        <span class="toc-title">Mission Parameters</span>
+        <ol>
+            <li>
+                <div class="toc-part">I. THE GRAVITY WELL</div>
+                <ol>
+                    <li><a href="#leo-dynamics">LEO: Decoding Orbital Velocity</a></li>
+                    <li><a href="#constellation-geometry">Shells & Inclinations</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">II. THE SIGNAL</div>
+                <ol>
+                    <li><a href="#phased-array">Phased Arrays: Steering Without Moving</a></li>
+                    <li><a href="#beamforming">Constructive Interference & Beamforming</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">III. THE SPEED OF LIGHT</div>
+                <ol>
+                    <li><a href="#vacuum-vs-fiber">Vacuum vs. Fiber: The Latency War</a></li>
+                    <li><a href="#laser-interlinks">Laser Mesh: Building a Space Internet</a></li>
+                </ol>
+            </li>
+        </ol>
+    </section>
+
+    <main>
+        <section id="leo-dynamics">
+            <h2>The Low Earth Advantage</h2>
+            <p>Traditional internet satellites sit in <strong>Geostationary Orbit (GEO)</strong>, 35,000 kilometers up. At that distance, light takes nearly a quarter-second for a round trip. Starlink operates in <strong>Low Earth Orbit (LEO)</strong>, just 550 kilometers above the surface—over 60 times closer.</p>
+            <p>But proximity comes with a price: velocity. To stay in orbit at this altitude, a satellite must travel at <strong>7.5 kilometers per second</strong>, circling the entire planet every 90 minutes.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Orbital Altitude vs. Velocity</div>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-val" id="val-altitude">550 km</span>
+                        <span class="stat-label">Altitude</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-val" id="val-velocity">7.58 km/s</span>
+                        <span class="stat-label">Orbital Velocity</span>
+                    </div>
+                </div>
+                <canvas id="orbit-canvas" width="800" height="400"></canvas>
+                <div class="controls">
+                    <div class="slider-group">
+                        <label>Target Altitude (km)</label>
+                        <input type="range" id="orbit-slider" min="300" max="2000" value="550">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">Observe the inverse relationship: as altitude increases, the gravitational pull weakens, requiring less velocity to maintain a stable orbit.</p>
+            </div>
+        </section>
+
+        <section id="phased-array">
+            <h2>Steering with Pure Math</h2>
+            <p>A Starlink dish has no moving parts to "track" a satellite moving at 17,000 mph. Instead, it uses a <strong>Phased Array</strong>. By slightly delaying the signal sent from thousands of tiny antennas, it creates a "wavefront" that can be steered electronically in nanoseconds.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Beamforming Interference Visualizer</div>
+                <canvas id="beam-canvas" width="800" height="300"></canvas>
+                <div class="controls">
+                    <div class="slider-group">
+                        <label>Beam Steering Angle</label>
+                        <input type="range" id="beam-slider" min="-60" max="60" value="0">
+                    </div>
+                    <div class="slider-group">
+                        <label>Frequency (GHz)</label>
+                        <input type="range" id="freq-slider" min="1" max="10" value="5">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">The bright regions represent <strong>Constructive Interference</strong>—where waves align to create a high-power beam. By shifting the phase of each emitter, we steer the signal without turning a single screw.</p>
+            </div>
+        </section>
+
+        <section id="laser-interlinks">
+            <h2>The Space Mesh</h2>
+            <p>Early Starlink satellites had to communicate with a ground station directly. The new generation uses <strong>Space Lasers</strong> to bounce data between satellites. Light travels ~47% faster through the vacuum of space than through glass fiber-optic cables, potentially making Starlink the fastest path for global data.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Latency Comparison: Space vs Earth</div>
+                <canvas id="laser-canvas" width="800" height="200"></canvas>
+                <div class="controls">
+                    <button id="run-latency-test" style="background:var(--accent-primary); color:#000; border:none; padding:1rem 2rem; font-weight:700; cursor:pointer; font-family:var(--font-header);">INITIALIZE SIGNAL PACKET</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 POLYMATH SERIES — STARLINK MODULE</p>
+    </footer>
+
+    <script src="../js/starlink_visuals.js"></script>
+</body>
+</html>
