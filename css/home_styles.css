@@ -30,6 +30,8 @@
     --starlink-glow: rgba(245, 158, 11, 0.2);
     --spacex-accent: #cbd5e1;
     --spacex-glow: rgba(203, 213, 225, 0.1);
+    --nato-accent: #004990;
+    --nato-glow: rgba(0, 73, 144, 0.2);
     --font-header: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -81,7 +83,8 @@ body {
         var(--procedural-accent),
         var(--emu-accent),
         var(--starlink-accent),
-        var(--spacex-accent)
+        var(--spacex-accent),
+        var(--nato-accent)
     );
     -webkit-background-clip: text;
     background-clip: text;
@@ -173,6 +176,10 @@ body {
 
 .spacex-bg {
     background: radial-gradient(circle at center, var(--spacex-accent), transparent 70%);
+}
+
+.nato-bg {
+    background: radial-gradient(circle at center, var(--nato-accent), transparent 70%);
 }
 
 .cards-container {
@@ -341,6 +348,16 @@ body {
     background: linear-gradient(to top, var(--spacex-glow), transparent);
 }
 
+.nato-card:hover {
+    border-color: var(--nato-accent);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--nato-glow);
+}
+
+.nato-card::before {
+    background: linear-gradient(to top, var(--nato-glow), transparent);
+}
+
 .portal-card:hover::before {
     opacity: 1;
 }
@@ -368,6 +385,7 @@ body {
 .emulation-card .category-tag { color: var(--emu-accent); }
 .starlink-card .category-tag { color: var(--starlink-accent); }
 .spacex-card .category-tag { color: var(--spacex-accent); }
+.nato-card .category-tag { color: var(--nato-accent); }
 
 .portal-card h2 {
     font-family: var(--font-header);

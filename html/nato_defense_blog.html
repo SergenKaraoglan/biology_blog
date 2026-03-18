@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shield of Nations: NATO Defense & Security | Polymath</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/nato_styles.css">
+</head>
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← RETURN TO CORE</a>
+    </nav>
+
+    <header>
+        <h1>NATO DEFENSE</h1>
+        <p>Decoding the physics of protection. Explore the engineering of Integrated Air and Missile Defence (IAMD) and the electronics of modern drone warfare.</p>
+    </header>
+
+    <div class="hero-canvas-container">
+        <canvas id="hero-nato-canvas"></canvas>
+    </div>
+
+    <section class="toc">
+        <span class="toc-title">Strategic Overview</span>
+        <ol>
+            <li>
+                <div class="toc-part">I. MISSILE DEFENSE</div>
+                <ol>
+                    <li><a href="#intercept-logic">The Hit-to-Kill Intercept</a></li>
+                    <li><a href="#layered-defense">Layered Integrated Air Defence</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">II. COUNTER-DRONE (C-UAS)</div>
+                <ol>
+                    <li><a href="#drone-swarms">Defeating the Swarm</a></li>
+                    <li><a href="#directed-energy">Directed Energy & Lasers</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">III. ELECTRONIC WARFARE</div>
+                <ol>
+                    <li><a href="#jamming">Spectrum Dominance: Jamming & Spoofing</a></li>
+                </ol>
+            </li>
+        </ol>
+    </section>
+
+    <main>
+        <section id="intercept-logic">
+            <h2>The Hit-to-Kill Intercept</h2>
+            <p>Modern missile defense systems like the <strong>Patriot</strong> or <strong>Aegis</strong> don't rely on explosions to destroy incoming threats. They use <strong>Kinetic Energy</strong>. By maneuvering a "kill vehicle" into the path of an incoming ballistic missile at combined speeds exceeding Mach 10, the sheer kinetic energy vaporizes the target.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Ballistic Intercept Simulator</div>
+                <canvas id="intercept-canvas" width="800" height="400"></canvas>
+                <div class="controls">
+                    <button id="launch-intercept" class="action-btn">FIRE INTERCEPTOR</button>
+                    <button id="inject-target" class="action-btn" style="background:#ef4444;">INJECT THREAT</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 1.5rem;">The interceptor (blue) must calculate the future position of the threat (red) and adjust its vector using divert thrusters for a direct collision.</p>
+            </div>
+        </section>
+
+        <section id="drone-swarms">
+            <h2>Defeating the Swarm</h2>
+            <p>Traditional missiles are too expensive for 500-dollar drones. Modern <strong>C-UAS</strong> systems use a combination of electronic jamming, microwave pulses, and high-energy lasers to neutralize hundreds of incoming drones simultaneously at a fraction of the cost.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Swarm Defense Visualizer</div>
+                <canvas id="swarm-canvas" width="800" height="400"></canvas>
+                <div class="controls">
+                    <button id="pulse-btn" class="action-btn">ACTIVATE MICROWAVE PULSE</button>
+                    <button id="add-swarm" class="action-btn" style="background:#ef4444;">LAUNCH SWARM</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="jamming">
+            <h2>Spectrum Dominance</h2>
+            <p>Electronic Warfare (EW) is the invisible battle for the electromagnetic spectrum. By <strong>Jamming</strong> a drone's GPS or control signal, operators can force a "return to home" or a soft crash, effectively creating an invisible shield over critical infrastructure.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">GPS Jamming Field</div>
+                <canvas id="jamming-canvas" width="800" height="300"></canvas>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 1.5rem;">The white noise ripples represent localized signal jamming. Notice how the drone's navigation path breaks when it enters the high-density interference zone.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 POLYMATH SERIES — NATO DEFENSE MODULE</p>
+    </footer>
+
+    <script src="../js/nato_visuals.js"></script>
+</body>
+</html>
