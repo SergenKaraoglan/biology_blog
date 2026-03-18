@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A first-principles guide to molecular biology. Explore DNA, RNA, proteins, and the code of life through interactive visualizations.">
+    <meta name="description"
+        content="A first-principles guide to molecular biology. Explore DNA, RNA, proteins, and the code of life through interactive visualizations.">
     <title>Biology: First Principles — The Digital Code of Life</title>
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
@@ -12,6 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
     <link rel="stylesheet" href="../css/bio_styles.css">
 </head>
+
 <body>
     <nav class="home-nav">
         <a href="../index.html">← BACK TO HOME</a>
@@ -23,15 +26,19 @@
         <canvas id="heroCanvas" class="hero-canvas" width="800" height="300"></canvas>
     </div>
 
-    <p>Life is not a miracle; it is an algorithm. At its most fundamental level, biology is information science. Every living thing on this planet—from the smallest bacteria to the blue whale—is running on the same digital code.</p>
+    <p>At its most fundamental level, biology is information science. Every living thing on this planet—from the
+        smallest bacteria to the blue whale—is running on the same digital code.</p>
 
-    <p>This code is not written in bits and bytes, but in a four-letter chemical alphabet. It is a system of instructions that can build nanomachines, regulate energy, and replicate itself with staggering precision. To understand life, we must look past the pulse and the breath, and into the mathematics of the <strong>Genome</strong>.</p>
+    <p>This code is not written in bits and bytes, but in a four-letter chemical alphabet. It is a system of
+        instructions that can build nanomachines, regulate energy, and replicate itself with staggering precision. To
+        understand life, we must look past the pulse and the breath, and into the mathematics of the
+        <strong>Genome</strong>.</p>
 
     <p>Let's explore the architecture of life from absolute first principles.</p>
 
     <nav class="toc">
         <p class="toc-title">CONTENTS</p>
-        
+
         <p class="toc-part">Part I — Information</p>
         <ol>
             <li><a href="#sec-dna">The Language of Life (DNA & Base Pairing)</a></li>
@@ -53,9 +60,14 @@
 
     <span class="section-tag tag-genetics">GENETICS</span>
     <h2 id="sec-dna">1. The Language of Life (DNA)</h2>
-    <p>If you were to stretch out the DNA in a single human cell, it would be two meters long. Yet it is packed into a space smaller than a speck of dust. This molecule, the <strong>Double Helix</strong>, is the most efficient data storage system in the known universe.</p>
-    
-    <p>DNA consists of two strands twisting around each other. Each strand is a sequence of four chemical bases: <strong>Adenine (A)</strong>, <strong>Thymine (T)</strong>, <strong>Cytosine (C)</strong>, and <strong>Guanine (G)</strong>. The "magic" of DNA is in its pairing rules: A always binds with T, and C always binds with G.</p>
+    <p>If you were to stretch out the DNA in a single human cell, it would be two meters long. Yet it is packed into a
+        space smaller than a speck of dust. This molecule, the <strong>Double Helix</strong>, is the most efficient data
+        storage system in the known universe <a href="#ref-4" style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[4]</a>.</p>
+
+    <p>DNA consists of two strands twisting around each other. Each strand is a sequence of four chemical bases:
+        <strong>Adenine (A)</strong>, <strong>Thymine (T)</strong>, <strong>Cytosine (C)</strong>, and <strong>Guanine
+            (G)</strong>. The "magic" of DNA is in its pairing rules: A always binds with T, and C always binds with G.
+    </p>
 
     <div class="interactive-container">
         <canvas id="dnaCanvas" width="600" height="400"></canvas>
@@ -65,14 +77,18 @@
                 <label>NUCLEOTIDE COUNT: <span id="dna-count-val">24</span></label>
             </div>
         </div>
-        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
-            Observe the base-pairing symmetry. The red and green rungs represent the hydrogen bonds holding the G-C and A-T pairs together.
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Observe the base-pairing symmetry. The red and green rungs represent the hydrogen bonds holding the G-C and
+            A-T pairs together.
         </p>
     </div>
 
     <span class="section-tag tag-molecular">MOLECULAR</span>
     <h2 id="sec-code">2. The Digital Script (The Genetic Code)</h2>
-    <p>Each codon represents one specific <strong>Amino Acid</strong>. For example, the sequence <span class="term">ATG</span> is the universal "START" signal. This mapping between 3-letter DNA sequences and amino acids is known as the <strong>Genetic Code</strong>.</p>
+    <p>Each codon represents one specific <strong>Amino Acid</strong>. For example, the sequence <span
+            class="term">ATG</span> is the universal "START" signal. This mapping between 3-letter DNA sequences and
+        amino acids is known as the <strong>Genetic Code</strong> <a href="#ref-3" style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[3]</a>.</p>
 
     <div class="interactive-container">
         <canvas id="codonCanvas" width="600" height="250"></canvas>
@@ -89,72 +105,113 @@
                 <label>AMINO ACID: <span id="amino-val" style="color:var(--bio-green)">Methionine (START)</span></label>
             </div>
         </div>
-        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
-            Click the bases to cycle through A, T, C, G and see how the genetic code maps 3-letter sequences to amino acids.
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click the bases to cycle through A, T, C, G and see how the genetic code maps 3-letter sequences to amino
+            acids.
         </p>
     </div>
 
     <span class="section-tag tag-molecular">MOLECULAR</span>
     <h2 id="sec-transcription">3. Copying the Code (RNA & Transcription)</h2>
-    <p>The mRNA is essentially a mirror image of the DNA, with one small change: instead of Thymine (T), it uses <strong>Uracil (U)</strong>. This copy is then shipped out of the cell's nucleus to the protein factories.</p>
+    <p>The mRNA is essentially a mirror image of the DNA, with one small change: instead of Thymine (T), it uses
+        <strong>Uracil (U)</strong>. This copy is then shipped out of the cell's nucleus to the protein factories.</p>
 
     <div class="interactive-container">
         <canvas id="transcriptionCanvas" width="600" height="300"></canvas>
         <div class="controls">
             <button id="transcription-run-btn">START TRANSCRIPTION</button>
         </div>
-        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
             Watch RNA Polymerase (the grey scanner) unzip the DNA and build a complementary mRNA strand (purple).
         </p>
     </div>
 
     <span class="section-tag tag-molecular">MOLECULAR</span>
     <h2 id="sec-translation">4. Building the Machine (Proteins & Translation)</h2>
-    <p>This shape is everything. A protein's function is determined entirely by how it folds. Some become structural bricks (collagen), others become scanners (antibodies), and others become specialized tools (enzymes).</p>
+    <p>This shape is everything. A protein's function is determined entirely by how it folds. Some become structural
+        bricks (collagen), others become scanners (antibodies), and others become specialized tools (enzymes).</p>
 
     <div class="interactive-container">
         <canvas id="translationCanvas" width="600" height="300"></canvas>
         <div class="controls">
             <button id="translation-run-btn">ASSEMBLE PROTEIN</button>
         </div>
-        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
-            The ribosome reads the mRNA and links amino acids together. The resulting chain folds into a functional protein nanomachine.
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            The ribosome reads the mRNA and links amino acids together. The resulting chain folds into a functional
+            protein nanomachine <a href="#ref-1" style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[1]</a>.
         </p>
     </div>
 
     <span class="section-tag tag-regulation">REGULATION</span>
     <h2 id="sec-regulation">5. The Biological Logic (Gene Tuning)</h2>
-    <p>Every cell in your body has the exact same DNA. Why is a brain cell different from a skin cell? The answer is <strong>Gene Regulation</strong>. Not every gene is "on" at the same time. Cells use complex feedback loops—biological IF/THEN statements—to tune their behavior.</p>
+    <p>Every cell in your body has the exact same DNA. Why is a brain cell different from a skin cell? The answer is
+        <strong>Gene Regulation</strong>. Not every gene is "on" at the same time. Cells use complex feedback
+        loops—biological IF/THEN statements—to tune their behavior <a href="#ref-2" style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[2]</a>.</p>
 
     <div class="interactive-container" style="min-height: 400px;">
         <canvas id="regulationCanvas" width="600" height="300"></canvas>
         <div class="controls" style="align-items:center;">
-             <div style="display:flex; align-items:center; gap:20px;">
+            <div style="display:flex; align-items:center; gap:20px;">
                 <span style="font-family:'Courier New', monospace; font-size:14px; color:#888;">INDUCER ABSENT</span>
-                <button id="regulation-toggle-btn" style="background:var(--cell-pink); color:#fff; width:120px;">TURN ON</button>
-                <span style="font-family:'Courier New', monospace; font-size:14px; color:#fff; font-weight:bold;">INDUCER PRESENT</span>
+                <button id="regulation-toggle-btn" style="background:var(--cell-pink); color:#fff; width:120px;">TURN
+                    ON</button>
+                <span
+                    style="font-family:'Courier New', monospace; font-size:14px; color:#fff; font-weight:bold;">INDUCER
+                    PRESENT</span>
             </div>
         </div>
-        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
-            This is the <strong>Lac Operon</strong> model. When the inducer molecule is present, it removes the repressor (red block), allowing the cell to produce RNA.
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            This is the <strong>Lac Operon</strong> model. When the inducer molecule is present, it removes the
+            repressor (red block), allowing the cell to produce RNA.
         </p>
     </div>
 
     <h2 id="sec-quiz">6. Test Your Biology Knowledge</h2>
-    <p>Can you implement the core logic of the central dogma? Below is a live Python environment. Write the functions to simulate base-pairing and protein translation.</p>
+    <p>Can you implement the core logic of the central dogma? Below is a live Python environment. Write the functions to
+        simulate base-pairing and protein translation.</p>
 
     <div class="interactive-container" style="align-items: stretch; padding: 2rem;">
         <div class="controls" style="justify-content: space-between; margin-top: 0; margin-bottom: 1rem;">
-            <select id="quiz-select" style="background:#111; color:#fff; border:1px solid #444; padding:0.5rem; font-family:'Courier New', monospace; flex-grow:1; margin-right:1rem;">
+            <select id="quiz-select"
+                style="background:#111; color:#fff; border:1px solid #444; padding:0.5rem; font-family:'Courier New', monospace; flex-grow:1; margin-right:1rem;">
                 <option value="pairing">01. BASE PAIRING LOGIC</option>
                 <option value="transcription">02. RNA TRANSCRIPTION</option>
                 <option value="codon">03. CODON TRANSLATION</option>
             </select>
             <button id="quiz-run-btn" disabled>INITIALIZING...</button>
         </div>
-        <textarea id="quiz-editor" style="width:100%; height:200px; background:#0a0a0a; color:#fff; border:1px solid #333; font-family:'Courier New', monospace; padding:1rem; outline:none;"></textarea>
-        <div class="output-console" id="quiz-output" style="margin-top:1rem; background:#050505; color:var(--bio-green); padding:1rem; border:1px solid #333; font-family:'Courier New', monospace; min-height:60px; white-space:pre-wrap;">Awaiting Python Kernel...</div>
+        <textarea id="quiz-editor"
+            style="width:100%; height:200px; background:#0a0a0a; color:#fff; border:1px solid #333; font-family:'Courier New', monospace; padding:1rem; outline:none;"></textarea>
+        <div class="output-console" id="quiz-output"
+            style="margin-top:1rem; background:#050505; color:var(--bio-green); padding:1rem; border:1px solid #333; font-family:'Courier New', monospace; min-height:60px; white-space:pre-wrap;">
+            Awaiting Python Kernel...</div>
     </div>
+
+    <section id="references" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #222;">
+        <h3 style="font-family: 'Courier New', monospace; font-size: 0.85rem; letter-spacing: 0.3em; text-transform: uppercase; color: #555; margin-bottom: 2rem;">Academic References & Primary Sources</h3>
+        <ul style="list-style: none; padding: 0; font-size: 0.85rem; color: #777; line-height: 1.8; font-family: 'Inter', sans-serif;">
+            <li id="ref-1" style="margin-bottom: 1.2rem; padding-left: 1.5rem; text-indent: -1.5rem;">
+                [1] Alberts, B., Johnson, A., Lewis, J., Morgan, D., Raff, M., Roberts, K., & Walter, P. (2014). <em>Molecular Biology of the Cell</em> (6th ed.). Garland Science. 
+                <a href="https://www.ncbi.nlm.nih.gov/books/NBK21054/" target="_blank" style="color: var(--bio-green); text-decoration: none; margin-left: 10px; opacity: 0.8;">[NCBI Bookshelf]</a>
+            </li>
+            <li id="ref-2" style="margin-bottom: 1.2rem; padding-left: 1.5rem; text-indent: -1.5rem;">
+                [2] Campbell, N. A., Urry, L. A., Cain, S. L., Wasserman, S. A., Minorsky, P. V., & Orr, R. B. (2020). <em>Campbell Biology</em> (12th ed.). Pearson.
+                <a href="https://www.pearson.com/en-us/subject-catalog/p/campbell-biology/P200000002137" target="_blank" style="color: var(--bio-green); text-decoration: none; margin-left: 10px; opacity: 0.8;">[Publisher Link]</a>
+            </li>
+            <li id="ref-3" style="margin-bottom: 1.2rem; padding-left: 1.5rem; text-indent: -1.5rem;">
+                [3] Crick, F. (1970). Central dogma of molecular biology. <em>Nature</em>, 227(5258), 561-563. 
+                <a href="https://doi.org/10.1038/227561a0" target="_blank" style="color: var(--bio-green); text-decoration: none; margin-left: 10px; opacity: 0.8;">doi:10.1038/227561a0</a>
+            </li>
+            <li id="ref-4" style="margin-bottom: 1.2rem; padding-left: 1.5rem; text-indent: -1.5rem;">
+                [4] Watson, J. D., & Crick, F. H. (1953). Molecular structure of nucleic acids; a structure for deoxyribose nucleic acid. <em>Nature</em>, 171(4356), 737-738. 
+                <a href="https://doi.org/10.1038/171737a0" target="_blank" style="color: var(--bio-green); text-decoration: none; margin-left: 10px; opacity: 0.8;">doi:10.1038/171737a0</a>
+            </li>
+        </ul>
+    </section>
 
     <footer>
         <p>© 2026 BIOLOGY FIRST PRINCIPLES</p>
@@ -163,4 +220,5 @@
     <script src="../js/bio_visuals.js"></script>
     <script src="../js/bio_quiz.js"></script>
 </body>
+
 </html>
