@@ -1,0 +1,225 @@
+:root {
+    --bg-dark: #0a0510;
+    --text-primary: #f3e5f5;
+    --text-secondary: #b39ddb;
+    --accent-primary: #7c4dff;
+    --accent-secondary: #00e5ff;
+    --card-bg: #1a0b2e;
+    --border-color: #311b92;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, .toc-title {
+    font-family: 'Outfit', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.home-nav {
+    padding: 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.home-nav a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: color 0.3s ease;
+}
+
+.home-nav a:hover {
+    color: var(--accent-primary);
+}
+
+header {
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 2rem;
+    background: radial-gradient(circle at center, #2e1a47 0%, var(--bg-dark) 80%);
+}
+
+header h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, var(--text-primary), var(--accent-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+header p {
+    max-width: 800px;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+}
+
+.hero-canvas-container {
+    width: 100%;
+    height: 400px;
+    margin-bottom: 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+#hero-emu-canvas {
+    width: 100%;
+    height: 100%;
+}
+
+main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+section {
+    margin-bottom: 6rem;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: var(--accent-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 300;
+}
+
+strong {
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+.toc {
+    background: var(--card-bg);
+    padding: 3rem;
+    border-radius: 1px;
+    border: 1px solid var(--border-color);
+    margin: -100px auto 4rem;
+    max-width: 800px;
+    position: relative;
+    z-index: 10;
+}
+
+.toc-title {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    display: block;
+}
+
+.toc ol {
+    list-style: none;
+}
+
+.toc-part {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--accent-primary);
+    margin: 1.5rem 0 0.5rem;
+}
+
+.toc a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 400;
+    display: block;
+    padding: 0.4rem 0;
+    transition: transform 0.2s ease;
+}
+
+.toc a:hover {
+    transform: translateX(10px);
+    color: var(--accent-secondary);
+}
+
+.section-tag {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border: 1px solid currentColor;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.interactive-container {
+    background: #11051a;
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    margin: 2rem 0;
+}
+
+.visual-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+}
+
+canvas {
+    width: 100%;
+    background: #080310;
+    display: block;
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: #1a0b2e;
+    border-top: 1px solid var(--border-color);
+}
+
+.emu-state {
+    display: flex;
+    justify-content: space-around;
+    padding: 1rem;
+    background: #0a0510;
+    font-family: 'Courier New', monospace;
+    color: var(--accent-secondary);
+    font-size: 0.9rem;
+}
+
+.state-item span { color: var(--text-secondary); margin-right: 5px; }
+
+footer {
+    padding: 4rem 2rem;
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+}
+
+@media (max-width: 768px) {
+    header { height: 50vh; }
+    .toc { margin: -50px 1rem 4rem; padding: 2rem; }
+}

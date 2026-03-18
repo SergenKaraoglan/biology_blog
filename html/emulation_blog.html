@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardware Alchemy: The Art of Emulation | Polymath</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/emulation_styles.css">
+</head>
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← RETURN TO CORE</a>
+    </nav>
+
+    <header>
+        <h1>Hardware Alchemy</h1>
+        <p>The magic of translating the ghost of a machine into the language of another. Discover how software becomes silicon through the power of first principles.</p>
+    </header>
+
+    <div class="hero-canvas-container">
+        <canvas id="hero-emu-canvas"></canvas>
+    </div>
+
+    <section class="toc">
+        <div class="toc-title">Structured Principles</div>
+        <ol>
+            <li>
+                <div class="toc-part">PART I: THE BRAIN</div>
+                <ol>
+                    <li><a href="#instruction-cycle"><span class="section-tag">CPU</span> The Fetch-Decode-Execute Cycle</a></li>
+                    <li><a href="#registers">Registers & Arithmetic Logic Units</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">PART II: THE UNIVERSE</div>
+                <ol>
+                    <li><a href="#memory-mapping"><span class="section-tag">RAM</span> Memory Mapping & Buses</a></li>
+                    <li><a href="#banking">Bank Switching: Breaking Zero-Page</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">PART III: THE LIGHT</div>
+                <ol>
+                    <li><a href="#ppu-rendering"><span class="section-tag">GPU</span> PPU & Scanline Rendering</a></li>
+                </ol>
+            </li>
+        </ol>
+    </section>
+
+    <main>
+        <section id="instruction-cycle">
+            <h2>The Pulse of the Machine</h2>
+            <p>Every processor is a heartbeat. In each cycle, it <strong>fetches</strong> an opcode from memory, <strong>decodes</strong> what it means, and <strong>executes</strong> the logic. To emulate a CPU, we must recreate this cycle in software, often with a giant `switch` statement or a lookup table.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">CPU Step-Debugger</div>
+                <div class="emu-state">
+                    <div class="state-item"><span>PC:</span> <span id="reg-pc">0x8000</span></div>
+                    <div class="state-item"><span>A:</span> <span id="reg-a">0x00</span></div>
+                    <div class="state-item"><span>X:</span> <span id="reg-x">0x00</span></div>
+                    <div class="state-item"><span>Y:</span> <span id="reg-y">0x00</span></div>
+                </div>
+                <canvas id="cpu-canvas" width="600" height="200"></canvas>
+                <div class="controls">
+                    <button id="step-cpu">Step Instruction</button>
+                    <button id="reset-cpu">Reset ROM</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Watch how the Program Counter increments and registers change as the emulator "interprets" raw binary data.</p>
+            </div>
+        </section>
+
+        <section id="memory-mapping">
+            <h2>The Geometry of Information</h2>
+            <p>A CPU doesn't know what a "controller" or "screen" is. It only knows <strong>memory addresses</strong>. Through Memory-Mapped I/O, writing to a specific address like `0x2000` might actually be talking to the graphics chip. We must build a virtual "Bus" that routes data to the correct device.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Real-time Memory Map</div>
+                <canvas id="memory-canvas" width="600" height="300"></canvas>
+                <div class="controls">
+                    <button id="random-ram">Write Random RAM</button>
+                    <button id="clear-ram">Clear Memory</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">A visualization of 64KB address space. High-speed writes simulate a running game's data flow.</p>
+            </div>
+        </section>
+
+        <section id="ppu-rendering">
+            <h2>Drawing with Electrons</h2>
+            <p>Retro consoles didn't have "framebuffers" in the modern sense. They drew to the screen one <strong>scanline</strong> at a time, racing the electron beam of a CRT. Emulating a PPU (Picture Processing Unit) requires precise timing to match the horizontal and vertical synchronization of old displays.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Scanline Pulse Visualizer</div>
+                <canvas id="ppu-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <div class="slider-group">
+                        <label>Scanline Speed</label>
+                        <input type="range" id="scan-speed" min="1" max="20" step="1" value="5">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Observe the raster beam's journey as it reconstructs an image pixel by pixel.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 POLYMATH SERIES — HARDWARE EMULATION MODULE</p>
+    </footer>
+
+    <script src="../js/emulation_visuals.js"></script>
+</body>
+</html>
