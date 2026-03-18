@@ -335,4 +335,149 @@ function drawDeorbit() {
 }
 drawDeorbit();
 
+// --- COLLISION AVOIDANCE ---
+const collCanvas = document.getElementById('collision-canvas');
+const collCtx = collCanvas.getContext('2d');
+let debris = [];
+let satelliteY = 150;
+let targetSatelliteY = 150;
+let collisionWarning = false;
+
+function drawCollision() {
+    const w = collCanvas.width;
+    const h = collCanvas.height;
+    collCtx.fillStyle = '#050a10';
+    collCtx.fillRect(0, 0, w, h);
+
+    // Orbit Lines
+    collCtx.strokeStyle = '#1e293b';
+    collCtx.beginPath();
+    collCtx.moveTo(0, 150);
+    collCtx.lineTo(w, 150);
+    collCtx.stroke();
+
+    // Satellite (Gold)
+    satelliteY += (targetSatelliteY - satelliteY) * 0.1;
+    collCtx.fillStyle = '#f59e0b';
+    collCtx.fillRect(100, satelliteY - 5, 30, 10);
+    
+    // Detection cone
+    if (collisionWarning) {
+        collCtx.fillStyle = 'rgba(239, 68, 68, 0.1)';
+        collCtx.beginPath();
+        collCtx.moveTo(130, satelliteY);
+        collCtx.lineTo(w, satelliteY - 100);
+        collCtx.lineTo(w, satelliteY + 100);
+        collCtx.fill();
+    }
+
+    debris = debris.filter(d => {
+        d.x -= d.vx;
+        
+        // Detection logic
+        const dist = d.x - 100;
+        if (dist < 400 && dist > 0 && Math.abs(d.y - satelliteY) < 40) {
+            collisionWarning = true;
+            targetSatelliteY = d.y > 150 ? 80 : 220; // Move away
+        }
+
+        collCtx.fillStyle = '#ef4444';
+        collCtx.beginPath();
+        collCtx.arc(d.x, d.y, 4, 0, Math.PI * 2);
+        collCtx.fill();
+
+        return d.x > -10;
+    });
+
+    if (debris.length === 0) {
+        collisionWarning = false;
+        targetSatelliteY = 150;
+    }
+
+    requestAnimationFrame(drawCollision);
+}
+
+document.getElementById('trigger-debris').onclick = () => {
+    debris.push({
+        x: collCanvas.width,
+        y: 130 + Math.random() * 40,
+        vx: 8 + Math.random() * 4
+    });
+};
+
+drawCollision();
+
+// --- SPACE-BASED ROUTING ---
+const routeCanvas = document.getElementById('routing-canvas');
+const routeCtx = routeCanvas.getContext('2d');
+let nodes = [];
+let targetNode = null;
+
+function initRouting() {
+    nodes = [];
+    for (let i = 0; i < 20; i++) {
+        nodes.push({
+            x: 50 + Math.random() * (routeCanvas.width - 100),
+            y: 50 + Math.random() * (routeCanvas.height - 100),
+            active: true
+        });
+    }
+}
+
+function drawRouting() {
+    const w = routeCanvas.width;
+    const h = routeCanvas.height;
+    routeCtx.fillStyle = '#02050a';
+    routeCtx.fillRect(0, 0, w, h);
+
+    // Draw all links
+    routeCtx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
+    nodes.forEach((n1, i) => {
+        nodes.slice(i + 1).forEach(n2 => {
+            const d = Math.sqrt((n1.x - n2.x)**2 + (n1.y - n2.y)**2);
+            if (d < 150) {
+                routeCtx.beginPath();
+                routeCtx.moveTo(n1.x, n1.y);
+                routeCtx.lineTo(n2.x, n2.y);
+                routeCtx.stroke();
+            }
+        });
+    });
+
+    // Draw nodes
+    nodes.forEach(n => {
+        routeCtx.fillStyle = n.active ? '#3b82f6' : '#1e293b';
+        routeCtx.beginPath();
+        routeCtx.arc(n.x, n.y, 3, 0, Math.PI * 2);
+        routeCtx.fill();
+    });
+
+    // Shortest path (simulated for visual effect)
+    if (nodes.length > 0) {
+        routeCtx.strokeStyle = '#f59e0b';
+        routeCtx.lineWidth = 2;
+        routeCtx.beginPath();
+        routeCtx.moveTo(nodes[0].x, nodes[0].y);
+        let current = nodes[0];
+        for (let j = 0; j < 5; j++) {
+            const next = nodes.find(n => n !== current && Math.sqrt((n.x - current.x)**2 + (n.y - current.y)**2) < 200);
+            if (next) {
+                routeCtx.lineTo(next.x, next.y);
+                current = next;
+            }
+        }
+        routeCtx.stroke();
+        routeCtx.lineWidth = 1;
+    }
+
+    requestAnimationFrame(drawRouting);
+}
+
+document.getElementById('re-route').onclick = () => {
+    initRouting();
+};
+
+initRouting();
+drawRouting();
+
 drawLatency();

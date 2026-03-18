@@ -43,8 +43,8 @@
             <li>
                 <div class="toc-part">III. THE SPEED OF LIGHT</div>
                 <ol>
+                    <li><a href="#laser-isl">Laser ISL: The Space Mesh</a></li>
                     <li><a href="#vacuum-vs-fiber">Vacuum vs. Fiber: The Latency War</a></li>
-                    <li><a href="#laser-interlinks">Laser Mesh: Building a Space Internet</a></li>
                 </ol>
             </li>
         </ol>
@@ -121,9 +121,23 @@
             </div>
         </section>
 
-        <section id="laser-interlinks">
-            <h2>The Space Mesh</h2>
-            <p>Early Starlink satellites had to communicate with a ground station directly. The new generation uses <strong>Space Lasers</strong> to bounce data between satellites. Light travels ~47% faster through the vacuum of space than through glass fiber-optic cables, potentially making Starlink the fastest path for global data.</p>
+        <section id="laser-isl">
+            <h2>Laser Inter-satellite Links</h2>
+            <p>Traditional satellite internet requires a "Bent-Pipe" architecture: the satellite must see both the user and a ground gateway simultaneously. Starlink's <strong>Laser Inter-satellite Links (ISL)</strong> change the game. By using infrared lasers to mesh satellites together, data can hop across the constellation at the speed of light in a vacuum, bypassing ground stations entirely for thousands of miles.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Space-Based Routing Simulator</div>
+                <canvas id="routing-canvas" width="800" height="300"></canvas>
+                <div class="controls">
+                    <button id="re-route" style="background:var(--accent-secondary); color:#fff; border:none; padding:1rem 2rem; font-weight:700; cursor:pointer; font-family:var(--font-header);">DYNAMIC RE-ROUTE</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">Observe how the shortest path (in blue) is calculated across the mesh. If a link is blocked by Earth or atmospheric interference, the system autonomously re-calculates the route.</p>
+            </div>
+        </section>
+
+        <section id="vacuum-vs-fiber">
+            <h2>The Vacuum Advantage</h2>
+            <p>Light travels ~47% faster through the vacuum of space than through glass fiber-optic cables. By combining the proximity of LEO with the speed of vacuum lasers, Starlink can theoretically beat the latency of any terrestrial fiber network for long-distance communication (e.g., London to New York).</p>
             
             <div class="interactive-container">
                 <div class="visual-label">Latency Comparison: Space vs Earth</div>
@@ -131,6 +145,20 @@
                 <div class="controls">
                     <button id="run-latency-test" style="background:var(--accent-primary); color:#000; border:none; padding:1rem 2rem; font-weight:700; cursor:pointer; font-family:var(--font-header);">INITIALIZE SIGNAL PACKET</button>
                 </div>
+            </div>
+        </section>
+
+        <section id="collision-avoidance">
+            <h2>Autonomous Avoidance</h2>
+            <p>With thousands of satellites and decades of space junk orbiting at Mach 22, collisions are a statistical certainty without active management. Starlink satellites are equipped with an <strong>Autonomous Collision Avoidance System</strong>. By processing tracking data from the 18th Space Control Squadron, each satellite can decide—without a human in the loop—to fire its ion thrusters and drift into a safer trajectory.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Collision Avoidance Maneuver Simulator</div>
+                <canvas id="collision-canvas" width="800" height="300"></canvas>
+                <div class="controls">
+                    <button id="trigger-debris" style="background:#ef4444; color:#fff; border:none; padding:1rem 2rem; font-weight:700; cursor:pointer; font-family:var(--font-header);">INJECT PASSIVE DEBRIS</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">Watch the satellite (gold) detect an incoming threat (red) and autonomously adjust its altitude to maintain a safe <strong>Probability of Collision (PoC)</strong> threshold.</p>
             </div>
         </section>
 
