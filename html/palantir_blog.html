@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Digital Twin: Engineering Palantir | Polymath</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/palantir_styles.css">
+</head>
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← RETURN TO CORE</a>
+    </nav>
+
+    <header>
+        <h1>PALANTIR</h1>
+        <p>Bridging the gap between data and dynamic reality. Explore the engineering of ontologies, the art of forward-deployed engineering, and the future of AI-driven decision-making.</p>
+    </header>
+
+    <div class="hero-canvas-container">
+        <canvas id="hero-palantir-canvas"></canvas>
+    </div>
+
+    <section class="toc">
+        <span class="toc-title">Platform Architecture</span>
+        <ol>
+            <li>
+                <div class="toc-part">I. FOUNDRY & THE ONTOLOGY</div>
+                <ol>
+                    <li><a href="#ontology">The Ontology: Objects vs. Tables</a></li>
+                    <li><a href="#data-mesh">Integrating the Fragmented Enterprise</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">II. AIP: ARTIFICIAL INTELLIGENCE PLATFORM</div>
+                <ol>
+                    <li><a href="#aip-logic">Large Language Models (LLMs) on Core Data</a></li>
+                    <li><a href="#human-in-the-loop">Human-in-the-Loop Decision Flows</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">III. APOLLO: THE REVOLUTIONARY CD</div>
+                <ol>
+                    <li><a href="#apollo-deployment">Continuous Deployment to the Edge</a></li>
+                </ol>
+            </li>
+        </ol>
+    </section>
+
+    <main>
+        <section id="ontology">
+            <h2>The Ontology</h2>
+            <p>Unlike traditional data lakes that store raw rows and columns, Palantir <strong>Foundry</strong> creates a digital twin of the organization. Raw data is mapped to <strong>Objects</strong> (e.g., Planes, Pilots, Parts) and <strong>Relations</strong>. This allows decision-makers to interact with business logic instead of SQL queries.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Object-Relation Graph (Foundry)</div>
+                <canvas id="ontology-canvas" width="800" height="400"></canvas>
+                <div class="controls">
+                    <button id="add-relation" class="action-btn">INJECT NEW DATA SOURCE</button>
+                    <button id="reset-graph" class="action-btn" style="background:var(--accent-secondary); color:#fff;">RESET ONTOLOGY</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 1.5rem;">The graph shows how disparate data points (dots) are dynamically unified into semantic objects (hexagons), allowing for real-time operational awareness.</p>
+            </div>
+        </section>
+
+        <section id="aip-logic">
+            <h2>AIP: AI in Action</h2>
+            <p>Palantir's <strong>Artificial Intelligence Platform (AIP)</strong> allows LLMs to interact with the security-hardened Foundry Ontology. It doesn't just "chat"—it takes actions. AIP can suggest a logic-driven plan based on real-time inventory and logistics, then execute it via external systems with a human-in-the-loop.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Decision Flow Visualizer</div>
+                <canvas id="aip-canvas" width="800" height="400"></canvas>
+                <div class="controls">
+                    <button id="trigger-aip" class="action-btn">GENERATE DECISION PLAN</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="apollo-deployment">
+            <h2>The Edge & Apollo</h2>
+            <p>Modern software must run where the data is—sometimes on a factory floor or a deep-sea submersible. <strong>Apollo</strong> is the orchestration layer that provides continuous deployment and automated health management across every conceivable environment, from the cloud to the extreme edge.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Apollo Edge Propagation</div>
+                <canvas id="apollo-canvas" width="800" height="300"></canvas>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 1.5rem;">The center node (Apollo) pushes software updates (pulses) to decentralized edge environments, maintaining state consistency across the global mesh.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 POLYMATH SERIES — PALANTIR MODULE</p>
+    </footer>
+
+    <script src="../js/palantir_visuals.js"></script>
+</body>
+</html>

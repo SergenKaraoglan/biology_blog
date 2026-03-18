@@ -32,6 +32,8 @@
     --spacex-glow: rgba(203, 213, 225, 0.1);
     --nato-accent: #004990;
     --nato-glow: rgba(0, 73, 144, 0.2);
+    --palantir-accent: #d4af37;
+    --palantir-glow: rgba(212, 175, 55, 0.1);
     --font-header: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -84,7 +86,8 @@ body {
         var(--emu-accent),
         var(--starlink-accent),
         var(--spacex-accent),
-        var(--nato-accent)
+        var(--nato-accent),
+        var(--palantir-accent)
     );
     -webkit-background-clip: text;
     background-clip: text;
@@ -180,6 +183,10 @@ body {
 
 .nato-bg {
     background: radial-gradient(circle at center, var(--nato-accent), transparent 70%);
+}
+
+.palantir-bg {
+    background: radial-gradient(circle at center, var(--palantir-accent), transparent 70%);
 }
 
 .cards-container {
@@ -358,6 +365,16 @@ body {
     background: linear-gradient(to top, var(--nato-glow), transparent);
 }
 
+.palantir-card:hover {
+    border-color: var(--palantir-accent);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--palantir-glow);
+}
+
+.palantir-card::before {
+    background: linear-gradient(to top, var(--palantir-glow), transparent);
+}
+
 .portal-card:hover::before {
     opacity: 1;
 }
@@ -386,6 +403,7 @@ body {
 .starlink-card .category-tag { color: var(--starlink-accent); }
 .spacex-card .category-tag { color: var(--spacex-accent); }
 .nato-card .category-tag { color: var(--nato-accent); }
+.palantir-card .category-tag { color: var(--palantir-accent); }
 
 .portal-card h2 {
     font-family: var(--font-header);

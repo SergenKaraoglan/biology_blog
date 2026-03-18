@@ -75,42 +75,78 @@ launchBtn.onclick = () => { interceptor.x = 100; interceptor.y = 350; intercepto
 
 function drawIntercept() {
     const w = intCanvas.width, h = intCanvas.height;
-    intCtx.fillStyle = '#000c1a';
+    intCtx.fillStyle = '#01050a';
     intCtx.fillRect(0, 0, w, h);
+
+    // Ground Station
+    intCtx.fillStyle = '#1e3a5f';
+    intCtx.fillRect(80, h - 20, 40, 20);
 
     if (threat.active) {
         threat.x += threat.vx;
         threat.y += threat.vy;
+        
+        // Threat GLOW
+        const g = intCtx.createRadialGradient(threat.x, threat.y, 0, threat.x, threat.y, 20);
+        g.addColorStop(0, 'rgba(239, 68, 68, 0.4)');
+        g.addColorStop(1, 'rgba(239, 68, 68, 0)');
+        intCtx.fillStyle = g;
+        intCtx.beginPath(); intCtx.arc(threat.x, threat.y, 20, 0, Math.PI * 2); intCtx.fill();
+
         intCtx.fillStyle = '#ef4444';
-        intCtx.beginPath();
-        intCtx.arc(threat.x, threat.y, 4, 0, Math.PI * 2);
-        intCtx.fill();
-        // Threat trail
-        intCtx.strokeStyle = 'rgba(239, 68, 68, 0.2)';
-        intCtx.beginPath();
-        intCtx.moveTo(threat.x, threat.y);
-        intCtx.lineTo(threat.x + 50, threat.y - 12);
-        intCtx.stroke();
+        intCtx.beginPath(); intCtx.arc(threat.x, threat.y, 3, 0, Math.PI * 2); intCtx.fill();
+        
+        // Radar Lock (from ground)
+        intCtx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        intCtx.setLineDash([5, 5]);
+        intCtx.beginPath(); intCtx.moveTo(100, h - 20); intCtx.lineTo(threat.x, threat.y); intCtx.stroke();
+        intCtx.setLineDash([]);
     }
 
     if (interceptor.active) {
-        // Guidance
         const dx = threat.x - interceptor.x;
         const dy = threat.y - interceptor.y;
         const dist = Math.sqrt(dx*dx + dy*dy);
-        interceptor.vx = (dx / dist) * 8;
-        interceptor.vy = (dy / dist) * 8;
+        
+        // Stagewise Logic
+        const isKillVehicle = dist < 250;
+        const speed = isKillVehicle ? 10 : 7;
+        
+        interceptor.vx = (dx / dist) * speed;
+        interceptor.vy = (dy / dist) * speed;
         
         interceptor.x += interceptor.vx;
         interceptor.y += interceptor.vy;
 
-        intCtx.fillStyle = '#3b82f6';
+        // KV Divert Thrusters
+        if (isKillVehicle && Math.random() > 0.7) {
+            intCtx.fillStyle = '#fff';
+            // Pulsing side jets
+            intCtx.beginPath();
+            intCtx.arc(interceptor.x + (Math.random()-0.5)*10, interceptor.y + (Math.random()-0.5)*10, 2, 0, Math.PI*2);
+            intCtx.fill();
+        }
+
+        // Interceptor Body
+        intCtx.fillStyle = isKillVehicle ? '#fff' : '#3b82f6';
         intCtx.beginPath();
-        intCtx.arc(interceptor.x, interceptor.y, 3, 0, Math.PI * 2);
+        intCtx.arc(interceptor.x, interceptor.y, isKillVehicle ? 2 : 4, 0, Math.PI * 2);
         intCtx.fill();
 
-        // Collision
-        if (dist < 10) {
+        // Trail
+        intCtx.strokeStyle = isKillVehicle ? 'rgba(255,255,255,0.3)' : 'rgba(59, 130, 246, 0.5)';
+        intCtx.beginPath();
+        intCtx.moveTo(interceptor.x, interceptor.y);
+        intCtx.lineTo(interceptor.x - interceptor.vx * 3, interceptor.y - interceptor.vy * 3);
+        intCtx.stroke();
+
+        // Telemetry
+        intCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        intCtx.font = '10px Roboto Mono';
+        intCtx.fillText(`RANGE: ${Math.floor(dist)}km`, interceptor.x + 10, interceptor.y);
+        intCtx.fillText(`STAGE: ${isKillVehicle ? 'KV' : 'BOOSTER'}`, interceptor.x + 10, interceptor.y + 12);
+
+        if (dist < 8) {
             explosion = { x: threat.x, y: threat.y, r: 0, active: true };
             threat.active = false;
             interceptor.active = false;
@@ -118,13 +154,17 @@ function drawIntercept() {
     }
 
     if (explosion.active) {
-        explosion.r += 4;
-        intCtx.strokeStyle = `rgba(255, 255, 255, ${1 - explosion.r/100})`;
-        intCtx.lineWidth = 2;
-        intCtx.beginPath();
-        intCtx.arc(explosion.x, explosion.y, explosion.r, 0, Math.PI * 2);
-        intCtx.stroke();
-        if (explosion.r > 100) explosion.active = false;
+        explosion.r += 6;
+        // FLASH
+        intCtx.fillStyle = `rgba(255, 255, 255, ${1 - explosion.r/100})`;
+        intCtx.beginPath(); intCtx.arc(explosion.x, explosion.y, explosion.r * 1.5, 0, Math.PI * 2); intCtx.fill();
+        
+        // Rings
+        intCtx.strokeStyle = `rgba(239, 68, 68, ${1 - explosion.r/100})`;
+        intCtx.lineWidth = 3;
+        intCtx.beginPath(); intCtx.arc(explosion.x, explosion.y, explosion.r, 0, Math.PI * 2); intCtx.stroke();
+        
+        if (explosion.r > 120) explosion.active = false;
     }
 }
 
