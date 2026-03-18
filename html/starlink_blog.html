@@ -79,6 +79,27 @@
             </div>
         </section>
 
+        <section id="constellation-geometry">
+            <h2>The Global Grid</h2>
+            <p>A single LEO satellite is only "visible" to a ground user for a few minutes. To provide 24/7 internet, Starlink uses a <strong>Mega-Constellation</strong>. Satellites are organized into "Shells" at different inclinations. This ensures that as one satellite sets below the horizon, another is already rising to take its place.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Constellation Coverage Simulator</div>
+                <canvas id="constellation-canvas" width="800" height="400"></canvas>
+                <div class="controls">
+                    <div class="slider-group">
+                        <label>Satellites per Plane</label>
+                        <input type="range" id="sat-count-slider" min="5" max="50" value="22">
+                    </div>
+                    <div class="slider-group">
+                        <label>Number of Planes</label>
+                        <input type="range" id="plane-count-slider" min="1" max="20" value="12">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">Adjust the density to see how "gaps" in coverage disappear as the constellation fills out. Each dot represents a satellite orbiting at 550km.</p>
+            </div>
+        </section>
+
         <section id="phased-array">
             <h2>Steering with Pure Math</h2>
             <p>A Starlink dish has no moving parts to "track" a satellite moving at 17,000 mph. Instead, it uses a <strong>Phased Array</strong>. By slightly delaying the signal sent from thousands of tiny antennas, it creates a "wavefront" that can be steered electronically in nanoseconds.</p>
@@ -110,6 +131,17 @@
                 <div class="controls">
                     <button id="run-latency-test" style="background:var(--accent-primary); color:#000; border:none; padding:1rem 2rem; font-weight:700; cursor:pointer; font-family:var(--font-header);">INITIALIZE SIGNAL PACKET</button>
                 </div>
+            </div>
+        </section>
+
+        <section id="sustainability">
+            <h2>Atmospheric Demise</h2>
+            <p>Space debris is a major concern (the <strong>Kessler Syndrome</strong>). Starlink handles this through <strong>Controlled Deorbiting</strong>. Because they operate at such a low altitude, even a dead satellite will naturally be dragged back into the atmosphere by thin air within 5 years. Active satellites use krypton-fueled ion thrusters to intentionally dive and burn up completely upon end-of-life.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Deorbit Heat Shield Simulation</div>
+                <canvas id="deorbit-canvas" width="800" height="300"></canvas>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">At 7.5 km/s, the collision with atmospheric molecules creates plasma. Starlink satellites are designed to be "fully demisable," meaning 100% of the spacecraft vaporizes before reaching the ground.</p>
             </div>
         </section>
     </main>

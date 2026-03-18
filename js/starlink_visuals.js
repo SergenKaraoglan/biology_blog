@@ -43,7 +43,7 @@ function animateHero() {
     satellites.forEach(sat => {
         const x = centerX + Math.cos(sat.angle) * sat.orbit;
         const y = centerY + Math.sin(sat.angle) * sat.orbit * Math.cos(sat.tilt);
-        
+
         heroCtx.fillStyle = '#f59e0b';
         heroCtx.beginPath();
         heroCtx.arc(x, y, 1.5, 0, Math.PI * 2);
@@ -80,7 +80,7 @@ function drawOrbit() {
     const w = orbitCanvas.width;
     const h = orbitCanvas.height;
     const altitude = parseInt(orbitSlider.value);
-    
+
     // G = 6.674e-11, M = 5.972e24, R = 6371000m
     const R = 6371;
     const totalR = R + altitude;
@@ -114,7 +114,7 @@ function drawOrbit() {
     const satAngle = time * (velocity / totalR) * 200;
     const satX = centerX + Math.cos(satAngle) * (totalR * scale);
     const satY = centerY + Math.sin(satAngle) * (totalR * scale);
-    
+
     orbitCtx.fillStyle = '#f59e0b';
     orbitCtx.beginPath();
     orbitCtx.arc(satX, satY, 4, 0, Math.PI * 2);
@@ -159,7 +159,7 @@ function drawBeamforming() {
         for (let r = 1; r < 5; r++) {
             const radius = (time * 50 + phaseOffset) % 200 + r * 10;
             if (radius > 200) continue;
-            beamCtx.strokeStyle = `rgba(59, 130, 246, ${1 - radius/200})`;
+            beamCtx.strokeStyle = `rgba(59, 130, 246, ${1 - radius / 200})`;
             beamCtx.beginPath();
             beamCtx.arc(ex, ey, radius, Math.PI + angle - 0.5, Math.PI + angle + 0.5);
             beamCtx.stroke();
@@ -209,7 +209,7 @@ function drawLatency() {
     // Space Packet
     laserCtx.fillStyle = '#f59e0b';
     laserCtx.fillRect(50 + spaceProgress * (w - 110), 45, 10, 30);
-    
+
     // Fiber Packet
     laserCtx.fillStyle = '#3b82f6';
     laserCtx.fillRect(50 + fiberProgress * (w - 110), 125, 10, 30);
@@ -217,11 +217,122 @@ function drawLatency() {
     requestAnimationFrame(drawLatency);
 }
 
-document.getElementById('run-latency-test').onclick = () => {
-    testingLatency = true;
-    testStartTime = performance.now();
-    spaceProgress = 0;
-    fiberProgress = 0;
-};
+// --- CONSTELLATION COVERAGE ---
+const constCanvas = document.getElementById('constellation-canvas');
+const constCtx = constCanvas.getContext('2d');
+const satSlider = document.getElementById('sat-count-slider');
+const planeSlider = document.getElementById('plane-count-slider');
+
+function drawConstellation() {
+    const w = constCanvas.width;
+    const h = constCanvas.height;
+    const satsPerPlane = parseInt(satSlider.value);
+    const planes = parseInt(planeSlider.value);
+
+    constCtx.fillStyle = '#000';
+    constCtx.fillRect(0, 0, w, h);
+
+    const centerX = w / 2;
+    const centerY = h / 2;
+    const earthR = 80;
+
+    // Earth
+    constCtx.fillStyle = '#1e293b';
+    constCtx.beginPath();
+    constCtx.arc(centerX, centerY, earthR, 0, Math.PI * 2);
+    constCtx.fill();
+
+    for (let p = 0; p < planes; p++) {
+        const planeAngle = (p / planes) * Math.PI;
+
+        for (let s = 0; s < satsPerPlane; s++) {
+            const satPos = (s / satsPerPlane) * Math.PI * 2 + time * 0.5;
+
+            const orbitR = 120;
+            const x = centerX + Math.cos(satPos) * orbitR * Math.cos(planeAngle);
+            const y = centerY + Math.sin(satPos) * orbitR;
+            const z = Math.cos(satPos) * orbitR * Math.sin(planeAngle);
+
+            // Simple 3D projection
+            const scale = (z + 200) / 200;
+            const px = centerX + (x - centerX) * scale;
+            const py = centerY + (y - centerY) * scale;
+
+            if (z < 0) { // Behind Earth
+                constCtx.fillStyle = 'rgba(245, 158, 11, 0.2)';
+            } else {
+                constCtx.fillStyle = '#f59e0b';
+                // Signal cone
+                constCtx.fillStyle = 'rgba(59, 130, 246, 0.05)';
+                constCtx.beginPath();
+                constCtx.moveTo(px, py);
+                constCtx.lineTo(px - 20, py + 40);
+                constCtx.lineTo(px + 20, py + 40);
+                constCtx.fill();
+                constCtx.fillStyle = '#f59e0b';
+            }
+
+            constCtx.beginPath();
+            constCtx.arc(px, py, 2 * scale, 0, Math.PI * 2);
+            constCtx.fill();
+        }
+    }
+}
+
+function constLoop() {
+    drawConstellation();
+    requestAnimationFrame(constLoop);
+}
+constLoop();
+
+// --- DEORBIT PLASMA SIMULATION ---
+const deorbitCanvas = document.getElementById('deorbit-canvas');
+const deCtx = deorbitCanvas.getContext('2d');
+let particles = [];
+
+function drawDeorbit() {
+    const w = deorbitCanvas.width;
+    const h = deorbitCanvas.height;
+    deCtx.fillStyle = '#0a0510';
+    deCtx.fillRect(0, 0, w, h);
+
+    const satX = w / 4 + Math.sin(time) * 20;
+    const satY = h / 2 + Math.cos(time * 0.5) * 10;
+
+    // Satellite body (abstract)
+    deCtx.fillStyle = '#94a3b8';
+    deCtx.fillRect(satX, satY, 40, 10);
+    deCtx.fillRect(satX + 15, satY - 15, 10, 40); // Solar panel
+
+    // Plasma particles
+    if (Math.random() > 0.1) {
+        particles.push({
+            x: satX + 40,
+            y: satY + 5,
+            vx: Math.random() * 10 + 5,
+            vy: (Math.random() - 0.5) * 10,
+            life: 1,
+            color: Math.random() > 0.5 ? '#f59e0b' : '#3b82f6'
+        });
+    }
+
+    particles = particles.filter(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.02;
+
+        deCtx.fillStyle = p.color;
+        deCtx.globalAlpha = p.life;
+        deCtx.beginPath();
+        deCtx.arc(p.x, p.y, p.life * 5, 0, Math.PI * 2);
+        deCtx.fill();
+        deCtx.globalAlpha = 1;
+
+        return p.life > 0;
+    });
+
+    requestAnimationFrame(drawDeorbit);
+}
+drawDeorbit();
 
 drawLatency();
