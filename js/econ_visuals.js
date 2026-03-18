@@ -52,7 +52,7 @@ function initHero() {
     function animate() {
         ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
+
         particles.forEach(p => {
             p.update();
             p.draw();
@@ -61,11 +61,11 @@ function initHero() {
         // Draw node connections
         ctx.strokeStyle = '#ffcc0011';
         ctx.lineWidth = 0.5;
-        for(let i=0; i<particles.length; i++) {
-            for(let j=i+1; j<particles.length; j++) {
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
                 const dx = particles[i].x - particles[j].x;
                 const dy = particles[i].y - particles[j].y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
+                const dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < 100) {
                     ctx.beginPath();
                     ctx.moveTo(particles[i].x, particles[i].y);
@@ -130,8 +130,8 @@ function initMarket() {
         ctx.stroke();
 
         // Intersection (Equilibrium) - Approx for visual
-        const intersectX = padding + w/2 + (dPos - sPos) * w * 0.5;
-        const intersectY = padding + h/2 + ( (1-dPos) - (1-sPos) ) * h * 0.5;
+        const intersectX = padding + w / 2 + (dPos - sPos) * w * 0.5;
+        const intersectY = padding + h / 2 + ((1 - dPos) - (1 - sPos)) * h * 0.5;
 
         ctx.fillStyle = '#ffcc00';
         ctx.beginPath();
@@ -216,7 +216,7 @@ function initMarginal() {
     const btn = document.getElementById('drink-btn');
 
     let consumed = [];
-    
+
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const padding = 40;

@@ -20,6 +20,8 @@
     --math-glow: rgba(255, 62, 62, 0.2);
     --psych-accent: #ff0080;
     --psych-glow: rgba(255, 0, 128, 0.2);
+    --graphics-accent: #ccff00;
+    --graphics-glow: rgba(204, 255, 0, 0.2);
     --font-header: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -57,7 +59,18 @@ body {
     font-weight: 800;
     letter-spacing: -1px;
     margin-bottom: 0.5rem;
-    background: linear-gradient(to right, var(--bio-accent), var(--ai-accent), var(--phys-accent), var(--chem-accent), var(--econ-accent), var(--cs-accent), var(--astro-accent), var(--math-accent), var(--psych-accent));
+    background: linear-gradient(to right, 
+        var(--bio-accent), 
+        var(--ai-accent), 
+        var(--phys-accent), 
+        var(--chem-accent), 
+        var(--econ-accent), 
+        var(--cs-accent), 
+        var(--astro-accent), 
+        var(--math-accent), 
+        var(--psych-accent),
+        var(--graphics-accent)
+    );
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -128,6 +141,10 @@ body {
 
 .psych-bg {
     background: radial-gradient(circle at center, var(--psych-accent), transparent 70%);
+}
+
+.graphics-bg {
+    background: radial-gradient(circle at center, var(--graphics-accent), transparent 70%);
 }
 
 .cards-container {
@@ -252,6 +269,16 @@ body {
     background: linear-gradient(to top, var(--psych-glow), transparent);
 }
 
+.graphics-card:hover {
+    border-color: var(--graphics-accent);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--graphics-glow);
+}
+
+.graphics-card::before {
+    background: linear-gradient(to top, var(--graphics-glow), transparent);
+}
+
 .portal-card:hover::before {
     opacity: 1;
 }
@@ -274,6 +301,7 @@ body {
 .astro-card .category-tag { color: var(--astro-accent); }
 .math-card .category-tag { color: var(--math-accent); }
 .psych-card .category-tag { color: var(--psych-accent); }
+.graphics-card .category-tag { color: var(--graphics-accent); }
 
 .portal-card h2 {
     font-family: var(--font-header);

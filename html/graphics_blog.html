@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Graphics: The Alchemy of Light | Polymath</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Outfit:wght@300;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/graphics_styles.css">
+</head>
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← RETURN TO CORE</a>
+    </nav>
+
+    <header>
+        <h1>The Alchemy of Light</h1>
+        <p>How the brain of a machine converts abstract geometry into the vibrant pixels on your screen. A journey from first principles to real-time photorealism.</p>
+    </header>
+
+    <div class="hero-canvas-container">
+        <canvas id="hero-cube-canvas"></canvas>
+    </div>
+
+    <section class="toc">
+        <div class="toc-title">Structured Principles</div>
+        <ol>
+            <li>
+                <div class="toc-part">PART I: GEOMETRY</div>
+                <ol>
+                    <li><a href="#vertex-processing"><span class="section-tag tag-geometry">GEOMETRY</span> Vertex Processing & Matrices</a></li>
+                    <li><a href="#transformations">Transformations in 3D Space</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">PART II: THE RASTERIZER</div>
+                <ol>
+                    <li><a href="#rasterization"><span class="section-tag tag-raster">RASTER</span> Scan-line Conversion</a></li>
+                    <li><a href="#fragment-shading">Fragment Shaders: Painting the Pixels</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">PART III: BEYOND THE TRIANGLE</div>
+                <ol>
+                    <li><a href="#ray-tracing"><span class="section-tag tag-raytracing">LIGHT</span> Ray Tracing & Path Tracing</a></li>
+                </ol>
+            </li>
+        </ol>
+    </section>
+
+    <main>
+        <section id="vertex-processing">
+            <h2>The Geometry of Sight</h2>
+            <p>At its core, 3D graphics is an exercise in linear algebra. Every object is defined by a collection of <strong>vertices</strong>—points in 3D space. To render these on a 2D screen, we must project them. This involves multiplying them by a series of matrices: Model, View, and Projection.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Interactive Vertex Transformer</div>
+                <canvas id="vertex-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <div class="slider-group">
+                        <label>Rotation X</label>
+                        <input type="range" id="rot-x" min="0" max="6.28" step="0.01" value="0.5">
+                    </div>
+                    <div class="slider-group">
+                        <label>Rotation Y</label>
+                        <input type="range" id="rot-y" min="0" max="6.28" step="0.01" value="0.5">
+                    </div>
+                    <div class="slider-group">
+                        <label>Fov (Zoom)</label>
+                        <input type="range" id="fov" min="100" max="1000" step="10" value="400">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Drag the sliders to see how the mathematical transformation affects the cube's vertices.</p>
+            </div>
+        </section>
+
+        <section id="rasterization">
+            <h2>The Rasterization Engine</h2>
+            <p>Once our vertices are projected onto the screen, they form triangles. But a screen isn't made of triangles—it's made of a grid of <strong>pixels</strong>. Rasterization is the process of determining which pixels are covered by a triangle and interpolating values (like color or depth) across its surface.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Rasterization Visualizer</div>
+                <canvas id="raster-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <button id="toggle-grid">Toggle Pixel Grid</button>
+                    <button id="animate-triangle">Animate Triangle</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Watch how the continuous mathematical triangle is "sampled" into discrete pixel points.</p>
+            </div>
+        </section>
+
+        <section id="fragment-shading">
+            <h2>Fragment Shaders: Painting with Math</h2>
+            <p>Modern graphics hardware allows us to run small programs, called <strong>shaders</strong>, for every single pixel. Fragment shaders calculate the final color. By coding complex lighting equations, textures, and effects directly in GLSL, we can achieve stunning visual fidelity in real-time.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Live Shader Fragment (GLSL Emulation)</div>
+                <canvas id="shader-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <div class="slider-group">
+                        <label>Time Speed</label>
+                        <input type="range" id="shader-speed" min="0" max="5" step="0.1" value="1">
+                    </div>
+                    <div class="slider-group">
+                        <label>Complexity</label>
+                        <input type="range" id="shader-complexity" min="1" max="10" step="1" value="4">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">A procedural plasma effect generated entirely by mathematical logic for every pixel.</p>
+            </div>
+        </section>
+
+        <section id="ray-tracing">
+            <h2>The Future: Ray Tracing</h2>
+            <p>While rasterization is fast, it struggles with realistic shadows, reflections, and global illumination. <strong>Ray Tracing</strong> simulates the physical path of light rays. By shooting millions of rays into a scene and calculating their bounces, we reach the holy grail of graphics: indistinguishable-from-reality rendering.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 POLYMATH SERIES — 3D GRAPHICS MODULE</p>
+    </footer>
+
+    <script src="../js/graphics_visuals.js"></script>
+</body>
+</html>
