@@ -160,159 +160,103 @@ body {
     z-index: -1;
 }
 
-.bio-card:hover {
-    border-color: var(--bio-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--bio-glow);
-}
+
 
 .bio-card::before {
     background: linear-gradient(to top, var(--bio-glow), transparent);
 }
 
-.ai-card:hover {
-    border-color: var(--ai-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--ai-glow);
-}
+
 
 .ai-card::before {
     background: linear-gradient(to top, var(--ai-glow), transparent);
 }
 
-.phys-card:hover {
-    border-color: var(--phys-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--phys-glow);
-}
+
 
 .phys-card::before {
     background: linear-gradient(to top, var(--phys-glow), transparent);
 }
 
+
+
 .chem-card::before {
     background: linear-gradient(to top, var(--chem-glow), transparent);
 }
 
-.econ-card:hover {
-    border-color: var(--econ-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--econ-glow);
-}
+
 
 .econ-card::before {
     background: linear-gradient(to top, var(--econ-glow), transparent);
 }
 
-.cs-card:hover {
-    border-color: var(--cs-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--cs-glow);
-}
+
 
 .cs-card::before {
     background: linear-gradient(to top, var(--cs-glow), transparent);
 }
 
-.astro-card:hover {
-    border-color: var(--astro-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--astro-glow);
-}
+
 
 .astro-card::before {
     background: linear-gradient(to top, var(--astro-glow), transparent);
 }
 
-.math-card:hover {
-    border-color: var(--math-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--math-glow);
-}
+
 
 .math-card::before {
     background: linear-gradient(to top, var(--math-glow), transparent);
 }
 
-.psych-card:hover {
-    border-color: var(--psych-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--psych-glow);
-}
+
 
 .psych-card::before {
     background: linear-gradient(to top, var(--psych-glow), transparent);
 }
 
+
+
 .graphics-card::before {
     background: linear-gradient(to top, var(--graphics-glow), transparent);
 }
 
-.procedural-card:hover {
-    border-color: var(--procedural-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--procedural-glow);
-}
+
 
 .procedural-card::before {
     background: linear-gradient(to top, var(--procedural-glow), transparent);
 }
 
-.emulation-card:hover {
-    border-color: var(--emu-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--emu-glow);
-}
+
 
 .emulation-card::before {
     background: linear-gradient(to top, var(--emu-glow), transparent);
 }
 
-.starlink-card:hover {
-    border-color: var(--starlink-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--starlink-glow);
-}
+
 
 .starlink-card::before {
     background: linear-gradient(to top, var(--starlink-glow), transparent);
 }
 
-.spacex-card:hover {
-    border-color: var(--spacex-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--spacex-glow);
-}
+
 
 .spacex-card::before {
     background: linear-gradient(to top, var(--spacex-glow), transparent);
 }
 
-.nato-card:hover {
-    border-color: var(--nato-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--nato-glow);
-}
+
 
 .nato-card::before {
     background: linear-gradient(to top, var(--nato-glow), transparent);
 }
 
-.palantir-card:hover {
-    border-color: var(--palantir-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--palantir-glow);
-}
+
 
 .palantir-card::before {
     background: linear-gradient(to top, var(--palantir-glow), transparent);
 }
 
-.neuro-card:hover {
-    border-color: var(--neuro-accent);
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px var(--neuro-glow);
-}
+
 
 .neuro-card::before {
     background: linear-gradient(to top, var(--neuro-glow), transparent);
@@ -401,7 +345,7 @@ body {
 
 .portal-card h2 {
     font-family: 'Press Start 2P', cursive;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     margin-bottom: 2rem;
     line-height: 1.8;
     letter-spacing: 1px;
