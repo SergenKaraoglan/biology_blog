@@ -1,0 +1,185 @@
+:root {
+    --neuro-bg: #05070a;
+    --neuro-surface: #0a0e16;
+    --neuro-accent: #00f2ff;
+    --neuro-electric: #7000ff;
+    --neuro-text: #e0e6ed;
+    --neuro-dim-text: #8892b0;
+    --neuro-border: #1e293b;
+    --neuron-cell: #00f2ff;
+    --neuron-axon: #7000ff;
+    --synapse-neurotransmitter: #ff007a;
+}
+
+body {
+    background-color: var(--neuro-bg);
+    color: var(--neuro-text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.7;
+    margin: 0;
+    padding: 2rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.home-nav a {
+    color: var(--neuro-accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+}
+
+h1 {
+    font-size: 4rem;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, var(--neuro-accent), var(--neuro-electric));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -2px;
+}
+
+p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: var(--neuro-dim-text);
+}
+
+strong {
+    color: var(--neuro-accent);
+}
+
+.section-tag {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    background: rgba(0, 242, 255, 0.1);
+    color: var(--neuro-accent);
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+}
+
+.interactive-container {
+    background: var(--neuro-surface);
+    border: 1px solid var(--neuro-border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 3rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.interactive-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neuro-accent), transparent);
+}
+
+canvas {
+    max-width: 100%;
+    cursor: crosshair;
+}
+
+.controls {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+}
+
+button {
+    background: rgba(112, 0, 255, 0.1);
+    border: 1px solid var(--neuro-electric);
+    color: var(--neuro-text);
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+button:hover {
+    background: var(--neuro-electric);
+    box-shadow: 0 0 15px rgba(112, 0, 255, 0.5);
+}
+
+.toc {
+    border-left: 2px solid var(--neuro-border);
+    padding-left: 2rem;
+    margin: 4rem 0;
+}
+
+.toc-title {
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    color: #444;
+    text-transform: uppercase;
+}
+
+.toc-part {
+    margin-top: 1.5rem;
+    color: var(--neuro-text);
+    font-weight: bold;
+}
+
+.toc ol {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.toc li {
+    margin-bottom: 0.5rem;
+}
+
+.toc a {
+    color: var(--neuro-dim-text);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+}
+
+.toc a:hover {
+    color: var(--neuro-accent);
+}
+
+footer {
+    padding: 4rem 0;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: #444;
+    border-top: 1px solid var(--neuro-border);
+}
+
+/* Specific labels in visuals */
+.visual-label {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    fill: var(--neuro-dim-text);
+}
+
+.visual-title {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    fill: var(--neuro-accent);
+}

@@ -3,7 +3,8 @@
     --text-primary: #e2e8f0;
     --text-secondary: #94a3b8;
     --accent-primary: #d4af37; /* Foundry Gold */
-    --accent-secondary: #10b981; /* Gotham Emerald */
+    --accent-secondary: #10b981; /* Gotham Emerald - Old, switching to Red for modern Gotham */
+    --gotham-accent: #ef4444; /* Modern Gotham Red */
     --card-bg: #111827;
     --border-color: #1f2937;
     --font-header: 'Outfit', sans-serif;

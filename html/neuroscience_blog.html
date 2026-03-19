@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Exploring the frontier of the mind. A first-principles guide to neuroscience, neural networks, and synaptic transmission.">
+    <title>Neuroscience: The Frontier of the Mind — Polymath Series</title>
+    <link rel="stylesheet" href="../css/neuro_styles.css">
+</head>
+
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← BACK TO HOME</a>
+    </nav>
+
+    <h1>Neuroscience</h1>
+
+    <div class="hero-canvas-container" style="border-bottom: 1px solid var(--neuro-border); margin-bottom: 3rem; padding-bottom: 3rem;">
+        <p style="font-family: 'Courier New', monospace; font-size: 0.9rem; color: var(--neuro-accent);">[ SYSTEM INITIALIZED: MAPPING NEURAL CONNECTIVITY ]</p>
+    </div>
+
+    <p>The human brain is the most complex structure in the known universe. With approximately 86 billion neurons and 100 trillion synapses, it is a biological computer of staggering sophistication.</p>
+
+    <p>To understand the mind, we must begin at the smallest scale: the <strong>Neuron</strong>. This specialized cell is the fundamental unit of communication, using electrical and chemical signals to process information at speeds of up to 120 meters per second.</p>
+
+    <nav class="toc">
+        <p class="toc-title">CONTENTS</p>
+
+        <p class="toc-part">Part I — The Individual Unit</p>
+        <ol>
+            <li><a href="#sec-neuron">The Biological Circuit (The Neuron)</a></li>
+            <li><a href="#sec-potential">Electric Storms (Action Potentials)</a></li>
+        </ol>
+
+        <p class="toc-part">Part II — The Connection</p>
+        <ol start="3">
+            <li><a href="#sec-synapse">The Chemical Bridge (The Synapse)</a></li>
+            <li><a href="#sec-networks">Emergent Complexity (Neural Networks)</a></li>
+        </ol>
+
+        <p class="toc-part">Part III — The Architecture</p>
+        <ol start="5">
+            <li><a href="#sec-regions">Mapping the Mind (Brain Regions)</a></li>
+        </ol>
+    </nav>
+
+    <span class="section-tag">THE UNIT</span>
+    <h2 id="sec-neuron">1. The Biological Circuit</h2>
+    <p>A neuron consists of three main parts: the <strong>Soma</strong> (cell body), the <strong>Dendrites</strong> (receivers), and the <strong>Axon</strong> (transmitter). Information flows in one direction: received by dendrites, processed in the soma, and fired down the axon.</p>
+
+    <div class="interactive-container">
+        <canvas id="actionPotentialCanvas" width="800" height="300"></canvas>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Click the neuron to trigger an <strong>Action Potential</strong>. Watch as the electrical pulse travels down the axon toward the terminal.
+        </p>
+    </div>
+
+    <span class="section-tag">SIGNALING</span>
+    <h2 id="sec-potential">2. Electric Storms</h2>
+    <p>The action potential is an "all-or-nothing" event. When the voltage inside the neuron reaches a critical threshold (approx. -55mV), ion channels snap open, allowing sodium to flood in and triggering a massive electrical spike.</p>
+
+    <span class="section-tag">COMMUNICATION</span>
+    <h2 id="sec-synapse">3. The Chemical Bridge</h2>
+    <p>Neurons do not actually touch. Between them lies a tiny gap called the <strong>Synapse</strong>. To cross this gap, the electrical signal is converted into a chemical one: <strong>Neurotransmitters</strong>.</p>
+
+    <div class="interactive-container">
+        <canvas id="synapseCanvas" width="800" height="300"></canvas>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Observe neurotransmitters (pink) diffusing across the synaptic cleft from the pre-synaptic terminal to the receptors on the post-synaptic side.
+        </p>
+    </div>
+
+    <span class="section-tag">COMPLEXITY</span>
+    <h2 id="sec-networks">4. Emergent Complexity</h2>
+    <p>A single neuron is just a switch. But when 86 billion of them connect, consciousness emerges. <strong>Neuroplasticity</strong> allows these connections to strengthen or weaken over time—the physical basis of learning and memory.</p>
+
+    <div class="interactive-container">
+        <canvas id="networkCanvas" width="800" height="400"></canvas>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            A simulation of spontaneous neural activity. Glowing nodes represent firing neurons, triggering ripples of activity across the network.
+        </p>
+    </div>
+
+    <h2 id="sec-regions">5. Mapping the Mind</h2>
+    <p>The brain is organized into functional regions. The <strong>Frontal Lobe</strong> handles executive function and logic, the <strong>Occipital Lobe</strong> processes vision, and the <strong>Hippocampus</strong> serves as the gateway to long-term memory.</p>
+
+    <section id="references" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--neuro-border);">
+        <h3 style="font-family: 'Courier New', monospace; font-size: 0.85rem; letter-spacing: 0.3em; text-transform: uppercase; color: #555; margin-bottom: 2rem;">Academic References</h3>
+        <ul style="list-style: none; padding: 0; font-size: 0.85rem; color: #777; line-height: 1.8;">
+            <li style="margin-bottom: 1.2rem;">
+                [1] Kandel, E. R., Schwartz, J. H., & Jessell, T. M. (2021). <em>Principles of Neural Science</em> (6th ed.). McGraw-Hill.
+            </li>
+            <li style="margin-bottom: 1.2rem;">
+                [2] Purves, D., Augustine, G. J., Fitzpatrick, D., Hall, W. C., LaMantia, A. S., Mooney, R. D., ... & White, L. E. (2018). <em>Neuroscience</em> (6th ed.). Sinauer Associates.
+            </li>
+        </ul>
+    </section>
+
+    <footer>
+        <p>© 2026 NEUROSCIENCE — THE POLYMATH SERIES</p>
+    </footer>
+
+    <script src="../js/neuro_visuals.js"></script>
+</body>
+
+</html>

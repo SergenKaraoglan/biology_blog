@@ -208,6 +208,57 @@ function drawApollo() {
     drawHex(apolloCtx, cx, cy, 20);
 }
 
+// --- TITAN KNOWLEDGE GRAPH ---
+const titanCanvas = document.getElementById('titan-canvas');
+const titanCtx = titanCanvas.getContext('2d');
+
+let intelParticles = [];
+function drawTitan() {
+    const w = titanCanvas.width, h = titanCanvas.height;
+    titanCtx.fillStyle = '#030712';
+    titanCtx.fillRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2;
+
+    // Titan Core
+    titanCtx.strokeStyle = '#ef4444'; // Gotham Red
+    titanCtx.lineWidth = 2;
+    drawHex(titanCtx, cx, cy, 40 + Math.sin(time * 3) * 5);
+    titanCtx.fillStyle = '#fff';
+    titanCtx.font = 'bold 12px Outfit';
+    titanCtx.textAlign = 'center';
+    titanCtx.fillText('TITAN', cx, cy + 5);
+
+    // Intake pulses
+    if (Math.random() < 0.1) {
+        const side = Math.floor(Math.random() * 4);
+        let px, py;
+        if (side === 0) { px = 0; py = Math.random() * h; }
+        else if (side === 1) { px = w; py = Math.random() * h; }
+        else if (side === 2) { px = Math.random() * w; py = 0; }
+        else { px = Math.random() * w; py = h; }
+        
+        intelParticles.push({ x: px, y: py, type: ['SIGINT', 'GEOINT', 'HUMINT', 'OSINT'][Math.floor(Math.random() * 4)] });
+    }
+
+    intelParticles.forEach((p, i) => {
+        const dx = cx - p.x;
+        const dy = cy - p.y;
+        p.x += dx * 0.02;
+        p.y += dy * 0.02;
+
+        titanCtx.fillStyle = '#ef4444';
+        titanCtx.beginPath(); titanCtx.arc(p.x, p.y, 2, 0, Math.PI * 2); titanCtx.fill();
+        
+        titanCtx.strokeStyle = 'rgba(239, 68, 68, 0.1)';
+        titanCtx.beginPath(); titanCtx.moveTo(p.x, p.y); titanCtx.lineTo(cx, cy); titanCtx.stroke();
+
+        if (Math.hypot(cx - p.x, cy - p.y) < 40) {
+            intelParticles.splice(i, 1);
+        }
+    });
+}
+
 // --- MAIN LOOP ---
 function tick() {
     time += 0.01;
@@ -215,6 +266,7 @@ function tick() {
     drawOntology();
     drawAIP();
     drawApollo();
+    if (titanCanvas) drawTitan();
     requestAnimationFrame(tick);
 }
 
