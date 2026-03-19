@@ -173,7 +173,7 @@ function beamLoop() {
 }
 beamLoop();
 
-// --- LASER INTERLINK LATENCY ---
+// --- VACUUM vs FIBER LATENCY ---
 const laserCanvas = document.getElementById('laser-canvas');
 const laserCtx = laserCanvas.getContext('2d');
 let testingLatency = false;
@@ -181,41 +181,218 @@ let testStartTime = 0;
 let fiberProgress = 0;
 let spaceProgress = 0;
 
+// Route geometry
+const LON_X = 80;           // London endpoint
+const NYC_X = 720;          // New York endpoint
+const MID_X = (LON_X + NYC_X) / 2;
+const HALF_SPAN = (NYC_X - LON_X) / 2;
+
+// Relay satellite positions (3 hops)
+const relaySats = [
+    { x: 240, y: 35 },
+    { x: 400, y: 25 },
+    { x: 560, y: 35 }
+];
+
+function earthY(x) {
+    // Gentle arc: highest at center (y=155), lowest at edges (y=195)
+    const t = (x - MID_X) / HALF_SPAN; // -1 to 1
+    return 155 + t * t * 40;
+}
+
 function drawLatency() {
     const w = laserCanvas.width;
     const h = laserCanvas.height;
-    laserCtx.fillStyle = '#000';
+    laserCtx.fillStyle = '#02050a';
     laserCtx.fillRect(0, 0, w, h);
 
-    // Tracks
-    laserCtx.strokeStyle = '#1e293b';
+    // --- Earth surface arc ---
+    laserCtx.strokeStyle = '#2d4a6f';
+    laserCtx.lineWidth = 2;
+    laserCtx.beginPath();
+    for (let x = LON_X - 30; x <= NYC_X + 30; x += 2) {
+        const y = earthY(x);
+        if (x === LON_X - 30) laserCtx.moveTo(x, y);
+        else laserCtx.lineTo(x, y);
+    }
+    laserCtx.stroke();
+
+    // Earth fill (below the arc)
+    laserCtx.fillStyle = '#0d1b2a';
+    laserCtx.beginPath();
+    for (let x = LON_X - 30; x <= NYC_X + 30; x += 2) {
+        const y = earthY(x);
+        if (x === LON_X - 30) laserCtx.moveTo(x, y);
+        else laserCtx.lineTo(x, y);
+    }
+    laserCtx.lineTo(NYC_X + 30, h);
+    laserCtx.lineTo(LON_X - 30, h);
+    laserCtx.closePath();
+    laserCtx.fill();
+
+    // --- City markers ---
+    const lonY = earthY(LON_X);
+    const nycY = earthY(NYC_X);
+
+    // London
+    laserCtx.fillStyle = '#f59e0b';
+    laserCtx.beginPath();
+    laserCtx.arc(LON_X, lonY - 5, 5, 0, Math.PI * 2);
+    laserCtx.fill();
+    laserCtx.font = 'bold 9px monospace';
+    laserCtx.textAlign = 'center';
+    laserCtx.fillText('LONDON', LON_X, lonY - 15);
+
+    // New York
+    laserCtx.fillStyle = '#f59e0b';
+    laserCtx.beginPath();
+    laserCtx.arc(NYC_X, nycY - 5, 5, 0, Math.PI * 2);
+    laserCtx.fill();
+    laserCtx.fillText('NEW YORK', NYC_X, nycY - 15);
+
+    // --- Fiber cable path (along Earth surface) ---
+    laserCtx.strokeStyle = 'rgba(59, 130, 246, 0.4)';
+    laserCtx.lineWidth = 3;
+    laserCtx.beginPath();
+    for (let x = LON_X; x <= NYC_X; x += 2) {
+        const y = earthY(x) + 8;
+        if (x === LON_X) laserCtx.moveTo(x, y);
+        else laserCtx.lineTo(x, y);
+    }
+    laserCtx.stroke();
+
+    // --- Satellite relay path (arcing through space) ---
+    // Draw path: London → Sat1 → Sat2 → Sat3 → NYC
+    const spaceNodes = [
+        { x: LON_X, y: lonY - 5 },
+        ...relaySats,
+        { x: NYC_X, y: nycY - 5 }
+    ];
+
+    laserCtx.strokeStyle = 'rgba(245, 158, 11, 0.15)';
     laserCtx.lineWidth = 1;
-    laserCtx.strokeRect(50, 40, w - 100, 40); // Space
-    laserCtx.strokeRect(50, 120, w - 100, 40); // Earth
+    laserCtx.setLineDash([4, 4]);
+    laserCtx.beginPath();
+    laserCtx.moveTo(spaceNodes[0].x, spaceNodes[0].y);
+    for (let i = 1; i < spaceNodes.length; i++) {
+        laserCtx.lineTo(spaceNodes[i].x, spaceNodes[i].y);
+    }
+    laserCtx.stroke();
+    laserCtx.setLineDash([]);
 
-    laserCtx.fillStyle = '#94a3b8';
-    laserCtx.font = '10px Outfit';
-    laserCtx.fillText('VACUUM (SPACE LASER) - 300,000 km/s', 50, 35);
-    laserCtx.fillText('GLASS FIBER (EARTH) - ~204,000 km/s', 50, 115);
+    // Draw relay satellites
+    relaySats.forEach(sat => {
+        laserCtx.fillStyle = '#f59e0b';
+        laserCtx.fillRect(sat.x - 4, sat.y - 2, 8, 4);
+        // Solar panels
+        laserCtx.fillStyle = '#334155';
+        laserCtx.fillRect(sat.x - 10, sat.y - 1, 5, 2);
+        laserCtx.fillRect(sat.x + 5, sat.y - 1, 5, 2);
+    });
 
+    // --- Latency test animation ---
     if (testingLatency) {
         const elapsed = performance.now() - testStartTime;
-        spaceProgress = Math.min(1, elapsed / 1000);
-        fiberProgress = Math.min(1, elapsed / 1470); // Space is ~1.47x faster
+        spaceProgress = Math.min(1, elapsed / 1200);
+        fiberProgress = Math.min(1, elapsed / 1760);  // 1.47x slower
 
         if (fiberProgress >= 1) testingLatency = false;
     }
 
-    // Space Packet
-    laserCtx.fillStyle = '#f59e0b';
-    laserCtx.fillRect(50 + spaceProgress * (w - 110), 45, 10, 30);
+    // --- Fiber signal packet ---
+    if (fiberProgress > 0) {
+        const fx = LON_X + fiberProgress * (NYC_X - LON_X);
+        const fy = earthY(fx) + 8;
+        // Trail
+        const trailLen = 40;
+        laserCtx.strokeStyle = '#3b82f6';
+        laserCtx.lineWidth = 3;
+        laserCtx.beginPath();
+        const trailStart = Math.max(LON_X, fx - trailLen);
+        for (let x = trailStart; x <= fx; x += 2) {
+            const y = earthY(x) + 8;
+            if (x === trailStart) laserCtx.moveTo(x, y);
+            else laserCtx.lineTo(x, y);
+        }
+        laserCtx.stroke();
+        // Packet head
+        laserCtx.fillStyle = '#3b82f6';
+        laserCtx.beginPath();
+        laserCtx.arc(fx, fy, 4, 0, Math.PI * 2);
+        laserCtx.fill();
+    }
 
-    // Fiber Packet
-    laserCtx.fillStyle = '#3b82f6';
-    laserCtx.fillRect(50 + fiberProgress * (w - 110), 125, 10, 30);
+    // --- Space signal packet ---
+    if (spaceProgress > 0) {
+        // Interpolate along the polyline path
+        const totalSegs = spaceNodes.length - 1;
+        const segFloat = spaceProgress * totalSegs;
+        const segIdx = Math.min(Math.floor(segFloat), totalSegs - 1);
+        const segFrac = segFloat - segIdx;
+        const a = spaceNodes[segIdx];
+        const b = spaceNodes[segIdx + 1];
+        const sx = a.x + (b.x - a.x) * segFrac;
+        const sy = a.y + (b.y - a.y) * segFrac;
+
+        // Active laser link glow
+        laserCtx.strokeStyle = 'rgba(245, 158, 11, 0.6)';
+        laserCtx.lineWidth = 2;
+        laserCtx.beginPath();
+        laserCtx.moveTo(a.x, a.y);
+        laserCtx.lineTo(sx, sy);
+        laserCtx.stroke();
+
+        // Packet head
+        laserCtx.fillStyle = '#f59e0b';
+        laserCtx.beginPath();
+        laserCtx.arc(sx, sy, 4, 0, Math.PI * 2);
+        laserCtx.fill();
+        // Glow
+        laserCtx.beginPath();
+        laserCtx.arc(sx, sy, 8, 0, Math.PI * 2);
+        laserCtx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+        laserCtx.fill();
+    }
+
+    // --- Live latency counters ---
+    if (spaceProgress > 0 || fiberProgress > 0) {
+        const spaceMs = Math.floor(spaceProgress * 28);  // ~28ms one-way London→NYC via LEO
+        const fiberMs = Math.floor(fiberProgress * 41);   // ~41ms one-way via fiber
+
+        laserCtx.font = 'bold 10px monospace';
+        laserCtx.textAlign = 'right';
+
+        // Space time
+        laserCtx.fillStyle = spaceProgress >= 1 ? '#22c55e' : '#f59e0b';
+        laserCtx.fillText(`SPACE: ${spaceMs}ms`, w - 20, 20);
+        if (spaceProgress >= 1 && fiberProgress < 1) {
+            laserCtx.fillStyle = '#22c55e';
+            laserCtx.font = 'bold 8px monospace';
+            laserCtx.fillText('✓ ARRIVED', w - 20, 32);
+        }
+
+        // Fiber time
+        laserCtx.font = 'bold 10px monospace';
+        laserCtx.fillStyle = fiberProgress >= 1 ? '#22c55e' : '#3b82f6';
+        laserCtx.fillText(`FIBER: ${fiberMs}ms`, w - 20, 50);
+    }
+
+    // --- Labels ---
+    laserCtx.fillStyle = 'rgba(255,255,255,0.1)';
+    laserCtx.font = '7px monospace';
+    laserCtx.textAlign = 'left';
+    laserCtx.fillText('c = 299,792 km/s (VACUUM)', 20, h - 8);
+    laserCtx.fillText('c/n ≈ 204,000 km/s (GLASS)', 20, h - 18);
 
     requestAnimationFrame(drawLatency);
 }
+
+document.getElementById('run-latency-test').onclick = () => {
+    testingLatency = true;
+    testStartTime = performance.now();
+    spaceProgress = 0;
+    fiberProgress = 0;
+};
 
 // --- CONSTELLATION COVERAGE ---
 const constCanvas = document.getElementById('constellation-canvas');
@@ -339,59 +516,226 @@ drawDeorbit();
 const collCanvas = document.getElementById('collision-canvas');
 const collCtx = collCanvas.getContext('2d');
 let debris = [];
-let satelliteY = 150;
-let targetSatelliteY = 150;
+let satAltitude = 150;       // Current Y position
+let targetAltitude = 150;    // Target Y position
 let collisionWarning = false;
+let collTime = 0;
+let pocValue = 0;            // Probability of Collision (0-1)
+let thrusterParticles = [];
+let maneuverActive = false;
+
+// Orbit bands
+const orbits = [
+    { y: 90,  label: '580km', color: 'rgba(59, 130, 246, 0.04)' },
+    { y: 150, label: '550km', color: 'rgba(59, 130, 246, 0.06)' },
+    { y: 210, label: '520km', color: 'rgba(59, 130, 246, 0.04)' },
+];
 
 function drawCollision() {
     const w = collCanvas.width;
     const h = collCanvas.height;
-    collCtx.fillStyle = '#050a10';
+    collCtx.fillStyle = '#020810';
     collCtx.fillRect(0, 0, w, h);
+    collTime += 0.016;
 
-    // Orbit Lines
-    collCtx.strokeStyle = '#1e293b';
-    collCtx.beginPath();
-    collCtx.moveTo(0, 150);
-    collCtx.lineTo(w, 150);
-    collCtx.stroke();
-
-    // Satellite (Gold)
-    satelliteY += (targetSatelliteY - satelliteY) * 0.1;
-    collCtx.fillStyle = '#f59e0b';
-    collCtx.fillRect(100, satelliteY - 5, 30, 10);
-    
-    // Detection cone
-    if (collisionWarning) {
-        collCtx.fillStyle = 'rgba(239, 68, 68, 0.1)';
+    // --- Orbit bands ---
+    orbits.forEach(o => {
+        // Band fill
+        collCtx.fillStyle = o.color;
+        collCtx.fillRect(0, o.y - 15, w, 30);
+        // Center line
+        collCtx.strokeStyle = 'rgba(59, 130, 246, 0.08)';
+        collCtx.setLineDash([8, 12]);
         collCtx.beginPath();
-        collCtx.moveTo(130, satelliteY);
-        collCtx.lineTo(w, satelliteY - 100);
-        collCtx.lineTo(w, satelliteY + 100);
+        collCtx.moveTo(0, o.y);
+        collCtx.lineTo(w, o.y);
+        collCtx.stroke();
+        collCtx.setLineDash([]);
+        // Label
+        collCtx.fillStyle = 'rgba(59, 130, 246, 0.15)';
+        collCtx.font = '7px monospace';
+        collCtx.textAlign = 'right';
+        collCtx.fillText(o.label, w - 8, o.y - 8);
+    });
+
+    // --- Satellite position (smooth transition) ---
+    const prevAlt = satAltitude;
+    satAltitude += (targetAltitude - satAltitude) * 0.04;
+    maneuverActive = Math.abs(targetAltitude - satAltitude) > 2;
+
+    // --- Thruster particles (emit when maneuvering) ---
+    if (maneuverActive) {
+        const dir = targetAltitude > satAltitude ? -1 : 1; // Thrust opposite to movement
+        for (let i = 0; i < 2; i++) {
+            thrusterParticles.push({
+                x: 140 + (Math.random() - 0.5) * 10,
+                y: satAltitude + dir * 8,
+                vx: (Math.random() - 0.5) * 1.5,
+                vy: dir * (1 + Math.random() * 2),
+                life: 1,
+                size: 1 + Math.random() * 2
+            });
+        }
+    }
+
+    // Draw & update thruster particles
+    thrusterParticles = thrusterParticles.filter(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.03;
+        collCtx.globalAlpha = p.life * 0.6;
+        collCtx.fillStyle = p.life > 0.5 ? '#60a5fa' : '#38bdf8';
+        collCtx.beginPath();
+        collCtx.arc(p.x, p.y, Math.max(0, p.size * p.life), 0, Math.PI * 2);
+        collCtx.fill();
+        collCtx.globalAlpha = 1;
+        return p.life > 0;
+    });
+
+    // --- Detection cone (forward-looking threat zone) ---
+    let closestDist = Infinity;
+    let closestDebris = null;
+    debris.forEach(d => {
+        const dist = d.x - 150;
+        if (dist > 0 && dist < closestDist) {
+            closestDist = dist;
+            closestDebris = d;
+        }
+    });
+
+    if (closestDebris && closestDist < 500) {
+        const threatAlpha = Math.max(0.02, 0.12 * (1 - closestDist / 500));
+        collCtx.fillStyle = `rgba(239, 68, 68, ${threatAlpha})`;
+        collCtx.beginPath();
+        collCtx.moveTo(170, satAltitude);
+        collCtx.lineTo(closestDebris.x, closestDebris.y - 30);
+        collCtx.lineTo(closestDebris.x, closestDebris.y + 30);
+        collCtx.closePath();
         collCtx.fill();
     }
 
+    // --- Debris ---
+    pocValue = 0;
     debris = debris.filter(d => {
         d.x -= d.vx;
-        
-        // Detection logic
-        const dist = d.x - 100;
-        if (dist < 400 && dist > 0 && Math.abs(d.y - satelliteY) < 40) {
-            collisionWarning = true;
-            targetSatelliteY = d.y > 150 ? 80 : 220; // Move away
+
+        // PoC calculation
+        const dist = d.x - 140;
+        const vertDist = Math.abs(d.y - satAltitude);
+        if (dist > 0 && dist < 500) {
+            const proximity = 1 - dist / 500;
+            const vertThreat = Math.max(0, 1 - vertDist / 60);
+            const thisPoc = proximity * vertThreat;
+            pocValue = Math.max(pocValue, thisPoc);
+
+            // Trigger avoidance if PoC too high
+            if (thisPoc > 0.3 && dist < 400) {
+                collisionWarning = true;
+                targetAltitude = d.y > 150 ? 90 : 210;
+            }
         }
 
-        collCtx.fillStyle = '#ef4444';
+        // Predicted trajectory line
+        collCtx.strokeStyle = 'rgba(239, 68, 68, 0.15)';
+        collCtx.setLineDash([2, 4]);
         collCtx.beginPath();
-        collCtx.arc(d.x, d.y, 4, 0, Math.PI * 2);
-        collCtx.fill();
+        collCtx.moveTo(d.x, d.y);
+        collCtx.lineTo(d.x - 120, d.y);
+        collCtx.stroke();
+        collCtx.setLineDash([]);
 
-        return d.x > -10;
+        // Debris body (irregular shape)
+        collCtx.fillStyle = '#94a3b8';
+        collCtx.save();
+        collCtx.translate(d.x, d.y);
+        collCtx.rotate(collTime * 3 + d.x);
+        collCtx.fillRect(-4, -3, 8, 6);
+        collCtx.fillRect(-2, -5, 4, 2);
+        collCtx.restore();
+
+        // Danger halo
+        if (Math.abs(d.x - 140) < 80 && Math.abs(d.y - satAltitude) < 40) {
+            collCtx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+            collCtx.lineWidth = 1;
+            collCtx.beginPath();
+            collCtx.arc(d.x, d.y, 10, 0, Math.PI * 2);
+            collCtx.stroke();
+        }
+
+        // Speed label
+        collCtx.fillStyle = 'rgba(148, 163, 184, 0.3)';
+        collCtx.font = '6px monospace';
+        collCtx.textAlign = 'center';
+        collCtx.fillText(`${Math.floor(d.vx * 1000)}m/s`, d.x, d.y - 10);
+
+        return d.x > -20;
     });
 
     if (debris.length === 0) {
         collisionWarning = false;
-        targetSatelliteY = 150;
+        targetAltitude = 150;
+        pocValue = 0;
+    }
+
+    // --- Satellite ---
+    // Body
+    collCtx.fillStyle = '#f59e0b';
+    collCtx.fillRect(130, satAltitude - 4, 20, 8);
+    // Solar panels
+    collCtx.fillStyle = '#78350f';
+    collCtx.fillRect(118, satAltitude - 2, 11, 4);
+    collCtx.fillRect(151, satAltitude - 2, 11, 4);
+    // Antenna
+    collCtx.strokeStyle = '#f59e0b';
+    collCtx.lineWidth = 1;
+    collCtx.beginPath();
+    collCtx.moveTo(140, satAltitude - 4);
+    collCtx.lineTo(140, satAltitude - 12);
+    collCtx.stroke();
+
+    // --- PoC Gauge ---
+    const gaugeX = 20, gaugeY = 20, gaugeW = 120, gaugeH = 10;
+    collCtx.fillStyle = '#111';
+    collCtx.fillRect(gaugeX, gaugeY, gaugeW, gaugeH);
+    collCtx.strokeStyle = '#333';
+    collCtx.strokeRect(gaugeX, gaugeY, gaugeW, gaugeH);
+
+    // Fill color based on value
+    let pocColor;
+    if (pocValue < 0.3) pocColor = '#22c55e';
+    else if (pocValue < 0.6) pocColor = '#f59e0b';
+    else pocColor = '#ef4444';
+    collCtx.fillStyle = pocColor;
+    collCtx.fillRect(gaugeX + 1, gaugeY + 1, (gaugeW - 2) * pocValue, gaugeH - 2);
+
+    // Label
+    collCtx.fillStyle = 'rgba(255,255,255,0.3)';
+    collCtx.font = '8px monospace';
+    collCtx.textAlign = 'left';
+    collCtx.fillText(`PoC: ${(pocValue * 100).toFixed(1)}%`, gaugeX, gaugeY - 5);
+
+    // Threshold line
+    collCtx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+    collCtx.setLineDash([2, 2]);
+    collCtx.beginPath();
+    const threshX = gaugeX + (gaugeW - 2) * 0.3;
+    collCtx.moveTo(threshX, gaugeY);
+    collCtx.lineTo(threshX, gaugeY + gaugeH);
+    collCtx.stroke();
+    collCtx.setLineDash([]);
+
+    // --- Status ---
+    collCtx.font = '8px monospace';
+    collCtx.textAlign = 'left';
+    if (maneuverActive) {
+        collCtx.fillStyle = 'rgba(96, 165, 250, 0.6)';
+        collCtx.fillText('ION THRUSTER BURN — ALTITUDE CHANGE IN PROGRESS', 20, h - 12);
+    } else if (collisionWarning) {
+        collCtx.fillStyle = 'rgba(239, 68, 68, 0.5)';
+        collCtx.fillText('THREAT DETECTED — MANEUVER AUTHORIZED', 20, h - 12);
+    } else {
+        collCtx.fillStyle = 'rgba(34, 197, 94, 0.3)';
+        collCtx.fillText('NOMINAL ORBIT — 550km ALTITUDE', 20, h - 12);
     }
 
     requestAnimationFrame(drawCollision);
@@ -399,9 +743,9 @@ function drawCollision() {
 
 document.getElementById('trigger-debris').onclick = () => {
     debris.push({
-        x: collCanvas.width,
+        x: collCanvas.width + 20,
         y: 130 + Math.random() * 40,
-        vx: 8 + Math.random() * 4
+        vx: 6 + Math.random() * 6
     });
 };
 
@@ -485,71 +829,211 @@ const shieldCanvas = document.getElementById('starshield-canvas');
 const shieldCtx = shieldCanvas.getContext('2d');
 let trackingSats = [];
 let shieldTargets = [];
+let shieldTime = 0;
 
 function initShield() {
-    trackingSats = Array.from({ length: 12 }, (_, i) => ({
-        x: (i / 12) * 800,
-        y: 100,
-        id: i
+    trackingSats = Array.from({ length: 8 }, (_, i) => ({
+        x: (i / 8) * 800 + Math.random() * 60,
+        baseY: 55 + Math.random() * 30,
+        speed: 0.4 + Math.random() * 0.3,
+        fovHalf: 110 + Math.random() * 40,
+        id: i,
+        trackingTarget: null
     }));
 }
 
 function drawShield() {
     const w = shieldCanvas.width, h = shieldCanvas.height;
-    shieldCtx.fillStyle = '#050a10';
+    shieldCtx.fillStyle = '#020810';
     shieldCtx.fillRect(0, 0, w, h);
+    shieldTime += 0.016;
 
-    // Ground
-    shieldCtx.fillStyle = '#111';
-    shieldCtx.fillRect(0, h - 20, w, 20);
+    // --- Ground terrain ---
+    const groundY = h - 50;
+    // Terrain line
+    shieldCtx.strokeStyle = '#1a2a3a';
+    shieldCtx.lineWidth = 1;
+    shieldCtx.beginPath();
+    for (let x = 0; x <= w; x += 3) {
+        const ty = groundY + Math.sin(x * 0.02) * 5 + Math.sin(x * 0.007) * 8;
+        if (x === 0) shieldCtx.moveTo(x, ty);
+        else shieldCtx.lineTo(x, ty);
+    }
+    shieldCtx.stroke();
 
-    // Satellites
+    // Terrain fill
+    shieldCtx.fillStyle = '#0a1218';
+    shieldCtx.beginPath();
+    for (let x = 0; x <= w; x += 3) {
+        const ty = groundY + Math.sin(x * 0.02) * 5 + Math.sin(x * 0.007) * 8;
+        if (x === 0) shieldCtx.moveTo(x, ty);
+        else shieldCtx.lineTo(x, ty);
+    }
+    shieldCtx.lineTo(w, h);
+    shieldCtx.lineTo(0, h);
+    shieldCtx.closePath();
+    shieldCtx.fill();
+
+    // --- Orbit altitude line ---
+    shieldCtx.strokeStyle = 'rgba(59, 130, 246, 0.06)';
+    shieldCtx.setLineDash([6, 8]);
+    shieldCtx.beginPath();
+    shieldCtx.moveTo(0, 70);
+    shieldCtx.lineTo(w, 70);
+    shieldCtx.stroke();
+    shieldCtx.setLineDash([]);
+    shieldCtx.fillStyle = 'rgba(59, 130, 246, 0.1)';
+    shieldCtx.font = '7px monospace';
+    shieldCtx.textAlign = 'left';
+    shieldCtx.fillText('LEO 550km', 5, 65);
+
+    // --- Update & draw satellites ---
     trackingSats.forEach(sat => {
-        sat.x = (sat.x + 1) % w;
-        shieldCtx.fillStyle = '#3b82f6';
-        shieldCtx.fillRect(sat.x - 5, sat.y - 5, 10, 10);
-        
-        // FOV
-        shieldCtx.strokeStyle = 'rgba(59, 130, 246, 0.05)';
-        shieldCtx.beginPath();
-        shieldCtx.moveTo(sat.x, sat.y);
-        shieldCtx.lineTo(sat.x - 150, h - 20);
-        shieldCtx.lineTo(sat.x + 150, h - 20);
-        shieldCtx.stroke();
+        sat.x = (sat.x + sat.speed) % (w + 40);
+        const satY = sat.baseY + Math.sin(shieldTime * 0.5 + sat.id) * 4;
 
-        // Trackers
+        // FOV cone (to ground)
+        const fovL = sat.x - sat.fovHalf;
+        const fovR = sat.x + sat.fovHalf;
+
+        // Check if tracking any target
+        sat.trackingTarget = null;
         shieldTargets.forEach(t => {
-            const dx = Math.abs(sat.x - t.x);
-            if (dx < 150) {
-                shieldCtx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
-                shieldCtx.beginPath();
-                shieldCtx.moveTo(sat.x, sat.y);
-                shieldCtx.lineTo(t.x, t.y);
-                shieldCtx.stroke();
-                
-                shieldCtx.fillStyle = 'rgba(59, 130, 246, 0.2)';
-                shieldCtx.beginPath();
-                shieldCtx.arc(t.x, t.y, 20, 0, Math.PI * 2);
-                shieldCtx.fill();
+            if (t.x > fovL && t.x < fovR) {
+                sat.trackingTarget = t;
             }
         });
+
+        // FOV cone fill
+        const isTracking = sat.trackingTarget !== null;
+        shieldCtx.fillStyle = isTracking
+            ? 'rgba(239, 68, 68, 0.04)'
+            : 'rgba(59, 130, 246, 0.02)';
+        shieldCtx.beginPath();
+        shieldCtx.moveTo(sat.x, satY + 8);
+        shieldCtx.lineTo(fovL, groundY);
+        shieldCtx.lineTo(fovR, groundY);
+        shieldCtx.closePath();
+        shieldCtx.fill();
+
+        // FOV cone edges
+        shieldCtx.strokeStyle = isTracking
+            ? 'rgba(239, 68, 68, 0.12)'
+            : 'rgba(59, 130, 246, 0.06)';
+        shieldCtx.lineWidth = 1;
+        shieldCtx.beginPath();
+        shieldCtx.moveTo(sat.x, satY + 8);
+        shieldCtx.lineTo(fovL, groundY);
+        shieldCtx.moveTo(sat.x, satY + 8);
+        shieldCtx.lineTo(fovR, groundY);
+        shieldCtx.stroke();
+
+        // Tracking beam
+        if (isTracking) {
+            const t = sat.trackingTarget;
+            shieldCtx.strokeStyle = 'rgba(239, 68, 68, 0.35)';
+            shieldCtx.lineWidth = 1;
+            shieldCtx.setLineDash([3, 3]);
+            shieldCtx.beginPath();
+            shieldCtx.moveTo(sat.x, satY + 8);
+            shieldCtx.lineTo(t.x, t.y);
+            shieldCtx.stroke();
+            shieldCtx.setLineDash([]);
+
+            // Reticle around target
+            const pulse = 12 + Math.sin(shieldTime * 6) * 4;
+            shieldCtx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
+            shieldCtx.lineWidth = 1;
+            shieldCtx.beginPath();
+            shieldCtx.arc(t.x, t.y, pulse, 0, Math.PI * 2);
+            shieldCtx.stroke();
+
+            // Cross-hairs
+            shieldCtx.beginPath();
+            shieldCtx.moveTo(t.x - pulse - 3, t.y);
+            shieldCtx.lineTo(t.x - pulse + 5, t.y);
+            shieldCtx.moveTo(t.x + pulse - 5, t.y);
+            shieldCtx.lineTo(t.x + pulse + 3, t.y);
+            shieldCtx.moveTo(t.x, t.y - pulse - 3);
+            shieldCtx.lineTo(t.x, t.y - pulse + 5);
+            shieldCtx.moveTo(t.x, t.y + pulse - 5);
+            shieldCtx.lineTo(t.x, t.y + pulse + 3);
+            shieldCtx.stroke();
+        }
+
+        // Satellite body
+        shieldCtx.fillStyle = isTracking ? '#60a5fa' : '#3b82f6';
+        shieldCtx.fillRect(sat.x - 5, satY - 3, 10, 6);
+        // Solar panels
+        shieldCtx.fillStyle = '#1e3a5f';
+        shieldCtx.fillRect(sat.x - 13, satY - 1, 7, 2);
+        shieldCtx.fillRect(sat.x + 6, satY - 1, 7, 2);
     });
 
-    // Targets
+    // --- Targets ---
     shieldTargets = shieldTargets.filter(t => {
         t.x += t.vx;
+        t.y += Math.sin(shieldTime * 3 + t.x * 0.01) * 0.3;
+
+        // Exhaust trail
+        for (let i = 0; i < 3; i++) {
+            const trailX = t.x - i * 8 - t.vx * i * 0.5;
+            const alpha = 0.3 - i * 0.1;
+            shieldCtx.fillStyle = `rgba(239, 68, 68, ${alpha})`;
+            shieldCtx.beginPath();
+            shieldCtx.arc(trailX, t.y + (Math.random() - 0.5) * 3, 2 - i * 0.5, 0, Math.PI * 2);
+            shieldCtx.fill();
+        }
+
+        // Target body
         shieldCtx.fillStyle = '#ef4444';
         shieldCtx.beginPath();
-        shieldCtx.arc(t.x, t.y, 4, 0, Math.PI * 2);
+        // Arrowhead shape
+        shieldCtx.moveTo(t.x + 8, t.y);
+        shieldCtx.lineTo(t.x - 4, t.y - 4);
+        shieldCtx.lineTo(t.x - 2, t.y);
+        shieldCtx.lineTo(t.x - 4, t.y + 4);
+        shieldCtx.closePath();
         shieldCtx.fill();
-        return t.x < w + 50;
+
+        // Target label
+        shieldCtx.fillStyle = 'rgba(239, 68, 68, 0.5)';
+        shieldCtx.font = '7px monospace';
+        shieldCtx.textAlign = 'left';
+        shieldCtx.fillText(`TGT ${Math.floor(t.vx * 1000)}km/h`, t.x + 12, t.y - 6);
+
+        // Track count (how many sats see it)
+        let trackCount = 0;
+        trackingSats.forEach(s => {
+            const fovL = s.x - s.fovHalf;
+            const fovR = s.x + s.fovHalf;
+            if (t.x > fovL && t.x < fovR) trackCount++;
+        });
+        if (trackCount > 0) {
+            shieldCtx.fillStyle = 'rgba(59, 130, 246, 0.6)';
+            shieldCtx.fillText(`${trackCount}× TRACK`, t.x + 12, t.y + 6);
+        }
+
+        return t.x < w + 80;
     });
+
+    // --- Status overlay ---
+    shieldCtx.fillStyle = 'rgba(255,255,255,0.12)';
+    shieldCtx.font = '8px monospace';
+    shieldCtx.textAlign = 'left';
+    shieldCtx.fillText(`STARSHIELD OPS — ${trackingSats.length} SENSORS ACTIVE`, 10, 15);
+    shieldCtx.fillText(`TARGETS: ${shieldTargets.length}`, 10, 27);
 
     requestAnimationFrame(drawShield);
 }
 
 document.getElementById('add-target').onclick = () => {
-    shieldTargets.push({ x: -20, y: 350, vx: 5 + Math.random() * 5 });
+    const gY = shieldCanvas.height - 50;
+    shieldTargets.push({
+        x: -30,
+        y: gY - 20 - Math.random() * 60,
+        vx: 3 + Math.random() * 4
+    });
 };
 
 initShield();
