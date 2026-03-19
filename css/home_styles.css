@@ -68,30 +68,28 @@ body {
 }
 
 .main-title {
-    font-family: var(--font-header);
-    font-size: 4rem;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 2.5rem;
     font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 0.5rem;
-    background: linear-gradient(to right, 
-        var(--bio-accent), 
-        var(--ai-accent), 
-        var(--phys-accent), 
-        var(--chem-accent), 
-        var(--econ-accent), 
-        var(--cs-accent), 
-        var(--astro-accent), 
-        var(--math-accent), 
-        var(--psych-accent),
-        var(--graphics-accent),
-        var(--procedural-accent),
-        var(--emu-accent),
-        var(--starlink-accent),
-        var(--spacex-accent),
-        var(--nato-accent),
-        var(--palantir-accent),
-        var(--neuro-accent)
-    );
+    margin-bottom: 1.5rem;
+    background: linear-gradient(to right,
+            var(--bio-accent),
+            var(--ai-accent),
+            var(--phys-accent),
+            var(--chem-accent),
+            var(--econ-accent),
+            var(--cs-accent),
+            var(--astro-accent),
+            var(--math-accent),
+            var(--psych-accent),
+            var(--graphics-accent),
+            var(--procedural-accent),
+            var(--emu-accent),
+            var(--starlink-accent),
+            var(--spacex-accent),
+            var(--nato-accent),
+            var(--palantir-accent),
+            var(--neuro-accent));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -113,87 +111,15 @@ body {
     padding: 2rem;
 }
 
-.split-bg {
-    position: absolute;
+#life-bg-canvas {
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    display: flex;
-    opacity: 0.15;
-    z-index: 1;
-}
-
-.bg-ninth {
-    flex: 1;
-}
-
-.bio-bg {
-    background: radial-gradient(circle at center, var(--bio-accent), transparent 70%);
-}
-
-.ai-bg {
-    background: radial-gradient(circle at center, var(--ai-accent), transparent 70%);
-}
-
-.phys-bg {
-    background: radial-gradient(circle at center, var(--phys-accent), transparent 70%);
-}
-
-.chem-bg {
-    background: radial-gradient(circle at center, var(--chem-accent), transparent 70%);
-}
-
-.econ-bg {
-    background: radial-gradient(circle at center, var(--econ-accent), transparent 70%);
-}
-
-.cs-bg {
-    background: radial-gradient(circle at center, var(--cs-accent), transparent 70%);
-}
-
-.astro-bg {
-    background: radial-gradient(circle at center, var(--astro-accent), transparent 70%);
-}
-
-.math-bg {
-    background: radial-gradient(circle at center, var(--math-accent), transparent 70%);
-}
-
-.psych-bg {
-    background: radial-gradient(circle at center, var(--psych-accent), transparent 70%);
-}
-
-.graphics-bg {
-    background: radial-gradient(circle at center, var(--graphics-accent), transparent 70%);
-}
-
-.procedural-bg {
-    background: radial-gradient(circle at center, var(--procedural-accent), transparent 70%);
-}
-
-.emulation-bg {
-    background: radial-gradient(circle at center, var(--emu-accent), transparent 70%);
-}
-
-.starlink-bg {
-    background: radial-gradient(circle at center, var(--starlink-accent), transparent 70%);
-}
-
-.spacex-bg {
-    background: radial-gradient(circle at center, var(--spacex-accent), transparent 70%);
-}
-
-.nato-bg {
-    background: radial-gradient(circle at center, var(--nato-accent), transparent 70%);
-}
-
-.palantir-bg {
-    background: radial-gradient(circle at center, var(--palantir-accent), transparent 70%);
-}
-
-.neuro-bg {
-    background: radial-gradient(circle at center, var(--neuro-accent), transparent 70%);
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.5;
 }
 
 .cards-container {
@@ -405,29 +331,81 @@ body {
     display: block;
 }
 
-.bio-card h2 { color: var(--bio-accent); }
-.ai-card h2 { color: var(--ai-accent); }
-.phys-card h2 { color: var(--phys-accent); }
-.chem-card h2 { color: var(--chem-accent); }
-.econ-card h2 { color: var(--econ-accent); }
-.cs-card h2 { color: var(--cs-accent); }
-.astro-card h2 { color: var(--astro-accent); }
-.math-card h2 { color: var(--math-accent); }
-.psych-card h2 { color: var(--psych-accent); }
-.graphics-card h2 { color: var(--graphics-accent); }
-.procedural-card h2 { color: var(--procedural-accent); }
-.emulation-card h2 { color: var(--emu-accent); }
-.starlink-card h2 { color: var(--starlink-accent); }
-.spacex-card h2 { color: var(--spacex-accent); }
-.nato-card h2 { color: var(--nato-accent); }
-.palantir-card h2 { color: var(--palantir-accent); }
-.neuro-card h2 { color: var(--neuro-accent); }
+.bio-card h2 {
+    color: var(--bio-accent);
+}
+
+.ai-card h2 {
+    color: var(--ai-accent);
+}
+
+.phys-card h2 {
+    color: var(--phys-accent);
+}
+
+.chem-card h2 {
+    color: var(--chem-accent);
+}
+
+.econ-card h2 {
+    color: var(--econ-accent);
+}
+
+.cs-card h2 {
+    color: var(--cs-accent);
+}
+
+.astro-card h2 {
+    color: var(--astro-accent);
+}
+
+.math-card h2 {
+    color: var(--math-accent);
+}
+
+.psych-card h2 {
+    color: var(--psych-accent);
+}
+
+.graphics-card h2 {
+    color: var(--graphics-accent);
+}
+
+.procedural-card h2 {
+    color: var(--procedural-accent);
+}
+
+.emulation-card h2 {
+    color: var(--emu-accent);
+}
+
+.starlink-card h2 {
+    color: var(--starlink-accent);
+}
+
+.spacex-card h2 {
+    color: var(--spacex-accent);
+}
+
+.nato-card h2 {
+    color: var(--nato-accent);
+}
+
+.palantir-card h2 {
+    color: var(--palantir-accent);
+}
+
+.neuro-card h2 {
+    color: var(--neuro-accent);
+}
 
 .portal-card h2 {
-    font-family: var(--font-header);
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    line-height: 1.1;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.8;
+    letter-spacing: 1px;
+    transition: transform 0.3s ease;
 }
 
 .portal-card p {
@@ -437,9 +415,10 @@ body {
 }
 
 .card-action {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
     font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
+    letter-spacing: 0;
     transition: transform 0.3s ease;
 }
 
@@ -460,9 +439,11 @@ body {
         grid-template-columns: repeat(2, 1fr);
         gap: 1.5rem;
     }
+
     .main-title {
-        font-size: 3.5rem;
+        font-size: 1.8rem;
     }
+
     .portal-card {
         min-height: 320px;
         padding: 2rem;
@@ -473,12 +454,15 @@ body {
     .cards-container {
         grid-template-columns: 1fr;
     }
+
     .main-title {
-        font-size: 2.8rem;
+        font-size: 1.2rem;
     }
+
     .subtitle {
         font-size: 1rem;
     }
+
     .portal-card {
         min-height: auto;
     }
