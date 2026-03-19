@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electronic Engineering | Polymath</title>
+    <link rel="stylesheet" href="../css/fonts.css">
+    <link rel="stylesheet" href="../css/ee_styles.css">
+</head>
+
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← POLYMATH</a>
+    </nav>
+
+    <header>
+        <h1>Electronic Engineering</h1>
+        <p>Decoding the first principles of the spark. From electron flow to the architecture of logic.</p>
+    </header>
+
+    <div class="hero-canvas-container">
+        <canvas id="hero-ee-canvas"></canvas>
+    </div>
+
+    <main>
+        <div class="toc">
+            <span class="toc-title">Table of Contents</span>
+            <ol>
+                <li class="toc-part">Part I: THE SPARK</li>
+                <li><a href="#charge-flow">1. Charge & Potential</a></li>
+                <li><a href="#ohm-law">2. Ohm's Law: The Balancing Act</a></li>
+                
+                <li class="toc-part">Part II: COMPONENTS</li>
+                <li><a href="#capacitance">3. Capacitance & Energy Storage</a></li>
+                <li><a href="#inductance">4. Inductance & Magnetic Flux</a></li>
+                
+                <li class="toc-part">Part III: SOLID STATE</li>
+                <li><a href="#semiconductors">5. Semiconductors & Diodes</a></li>
+                <li><a href="#transistors">6. Transistors: The Universal Valve</a></li>
+                <li><a href="#logic-gates">7. Building Logic from Physics</a></li>
+            </ol>
+        </div>
+
+        <section id="charge-flow">
+            <h2>1. Charge & Potential</h2>
+            <p>At the center of electronic engineering is the <strong>electron</strong>. Electricity is not a mystical liquid, but the coordinated movement of charged particles. When we create a "potential difference" (Voltage), we are essentially creating a pressure that encourages electrons to move from a place of high density to a place of low density.</p>
+            <p>Imagine a pipe filled with marbles. To move the marbles, you must push from one end. In a circuit, the battery provides that push, and the conductor (like copper) provides the pipe.</p>
+        </section>
+
+        <section id="ohm-law">
+            <h2>2. Ohm's Law: The Balancing Act</h2>
+            <p>The relationship between <strong>Voltage (V)</strong>, <strong>Current (I)</strong>, and <strong>Resistance (R)</strong> is the bedrock of electronics. This is defined by Ohm's Law: <strong>V = I × R</strong>.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Ohm's Law Simulator</div>
+                <canvas id="ohm-canvas"></canvas>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Voltage (V): <span id="v-val">5.0V</span></label>
+                        <input type="range" id="voltage-slider" min="1" max="20" step="0.1" value="5">
+                    </div>
+                    <div class="control-group">
+                        <label>Resistance (R): <span id="r-val">100Ω</span></label>
+                        <input type="range" id="resistance-slider" min="10" max="500" step="1" value="100">
+                    </div>
+                </div>
+                <div class="formula-overlay">
+                    <span>Current (I) = <span id="i-val">0.05A</span></span>
+                </div>
+            </div>
+            
+            <p>In the simulation above, notice how increasing <strong>Voltage</strong> increases the velocity of the electrons, while increasing <strong>Resistance</strong> acts as a physical barrier, scattering the electrons and slowling the flow.</p>
+        </section>
+
+        <section id="transistors">
+            <h2>6. Transistors: The Universal Valve</h2>
+            <p>The most important invention of the 20th century is the <strong>Transistor</strong>. It is a solid-state device that can act as both an amplifier and a switch. By using a minuscule amount of charge at the "Base" terminal, we can control a much larger current flowing between the "Collector" and "Emitter".</p>
+            <p>This simple "control" mechanism allows us to build <strong>Logic Gates</strong>. If we can use one circuit to turn another circuit ON or OFF, we can perform computation.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Transistor Logic Switching</div>
+                <canvas id="transistor-canvas"></canvas>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Base Current (Control): <span id="base-status">OFF</span></label>
+                        <input type="range" id="base-slider" min="0" max="1" step="0.01" value="0">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="logic-gates">
+            <h2>7. Building Logic from Physics</h2>
+            <p>When you combine transistors, you transcend physics and enter the realm of information. An <strong>AND gate</strong> only outputs a signal if both its inputs are active. By chaining these basic operations, we can build adders, memory, and eventually, the processor you are using to read this.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 SERGEN KARAOGLAN — FIRST PRINCIPLES SERIES</p>
+    </footer>
+
+    <script src="../js/ee_visuals.js"></script>
+</body>
+
+</html>
