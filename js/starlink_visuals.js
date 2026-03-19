@@ -279,11 +279,11 @@ function drawConstellation() {
     }
 }
 
-// function constLoop() { // This will be handled by the global tick
-//     drawConstellation();
-//     requestAnimationFrame(constLoop);
-// }
-// constLoop(); // This will be handled by the global tick
+function constLoop() {
+    drawConstellation();
+    requestAnimationFrame(constLoop);
+}
+constLoop();
 
 // --- DEORBIT PLASMA SIMULATION ---
 const deorbitCanvas = document.getElementById('deorbit-canvas');
