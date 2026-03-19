@@ -46,6 +46,13 @@
                     <li><a href="#vacuum-vs-fiber">Vacuum vs. Fiber: The Latency War</a></li>
                 </ol>
             </li>
+            <li>
+                <div class="toc-part">IV. SUSTAINABILITY & SAFETY</div>
+                <ol>
+                    <li><a href="#collision-avoidance">Autonomous Collision Avoidance</a></li>
+                    <li><a href="#sustainability">Atmospheric Demise</a></li>
+                </ol>
+            </li>
         </ol>
     </section>
 
@@ -117,6 +124,28 @@
                     </div>
                 </div>
                 <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">The bright regions represent <strong>Constructive Interference</strong>—where waves align to create a high-power beam. By shifting the phase of each emitter, we steer the signal without turning a single screw.</p>
+            </div>
+        </section>
+
+        <section id="beamforming">
+            <h2>The Interference Engine</h2>
+            <p>Beamforming exploits a phenomenon called <strong>Constructive Interference</strong>. When two waves arrive at the same point perfectly in phase, their amplitudes add together—doubling the signal strength. When they arrive out of phase, they cancel to zero. A phased array orchestrates thousands of these interference events simultaneously, sculpting a focused beam in any direction.</p>
+            <p>The key insight: by controlling the <strong>phase delay</strong> between adjacent emitters, the wavefronts combine constructively only at the desired angle. Everywhere else, destructive interference suppresses the signal, creating a needle-like beam from a flat surface.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Wave Interference Pattern</div>
+                <canvas id="interference-canvas" width="800" height="300"></canvas>
+                <div class="controls">
+                    <div class="slider-group">
+                        <label>Source Separation</label>
+                        <input type="range" id="source-sep-slider" min="20" max="120" value="60">
+                    </div>
+                    <div class="slider-group">
+                        <label>Wavelength</label>
+                        <input type="range" id="wavelength-slider" min="10" max="60" value="30">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">Two point sources emit circular waves. Where the rings overlap in-phase, <strong>constructive interference</strong> (bright) creates a powerful beam. Out-of-phase regions show <strong>destructive interference</strong> (dark), canceling the signal.</p>
             </div>
         </section>
 

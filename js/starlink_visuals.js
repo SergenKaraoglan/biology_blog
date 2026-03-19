@@ -173,6 +173,89 @@ function beamLoop() {
 }
 beamLoop();
 
+// --- WAVE INTERFERENCE PATTERN ---
+const intfCanvas = document.getElementById('interference-canvas');
+const intfCtx = intfCanvas.getContext('2d');
+let intfTime = 0;
+const sourceSepSlider = document.getElementById('source-sep-slider');
+const wavelengthSlider = document.getElementById('wavelength-slider');
+
+function drawInterference() {
+    const w = intfCanvas.width;
+    const h = intfCanvas.height;
+    intfTime += 0.06;
+
+    const sep = parseInt(sourceSepSlider.value);
+    const wl = parseInt(wavelengthSlider.value);
+    const cx = w / 2;
+    const cy = h;
+
+    // Source positions (at bottom of canvas)
+    const s1x = cx - sep / 2;
+    const s1y = cy;
+    const s2x = cx + sep / 2;
+    const s2y = cy;
+
+    // Render interference pattern using ImageData for performance
+    const imgData = intfCtx.createImageData(w, h);
+    const data = imgData.data;
+    const k = (2 * Math.PI) / wl;
+
+    // Sample every 2 pixels for performance, then fill 2x2 blocks
+    for (let y = 0; y < h; y += 2) {
+        for (let x = 0; x < w; x += 2) {
+            const d1 = Math.sqrt((x - s1x) ** 2 + (y - s1y) ** 2);
+            const d2 = Math.sqrt((x - s2x) ** 2 + (y - s2y) ** 2);
+
+            // Wave amplitudes
+            const a1 = Math.sin(k * d1 - intfTime) / (1 + d1 * 0.005);
+            const a2 = Math.sin(k * d2 - intfTime) / (1 + d2 * 0.005);
+            const combined = (a1 + a2) * 0.5;
+
+            // Map to color: constructive = bright, destructive = dark
+            const intensity = (combined + 1) * 0.5; // 0 to 1
+            const r = Math.floor(intensity * 245 * 0.6);
+            const g = Math.floor(intensity * 158 * 0.4 + intensity * 130 * 0.3);
+            const b = Math.floor(intensity * 246 * 0.5);
+
+            // Fill 2x2 block
+            for (let dy = 0; dy < 2 && y + dy < h; dy++) {
+                for (let dx = 0; dx < 2 && x + dx < w; dx++) {
+                    const idx = ((y + dy) * w + (x + dx)) * 4;
+                    data[idx] = r;
+                    data[idx + 1] = g;
+                    data[idx + 2] = b;
+                    data[idx + 3] = 255;
+                }
+            }
+        }
+    }
+    intfCtx.putImageData(imgData, 0, 0);
+
+    // Draw source markers
+    [{ x: s1x, y: s1y }, { x: s2x, y: s2y }].forEach(s => {
+        intfCtx.fillStyle = '#f59e0b';
+        intfCtx.beginPath();
+        intfCtx.arc(s.x, s.y, 5, 0, Math.PI * 2);
+        intfCtx.fill();
+        intfCtx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
+        intfCtx.lineWidth = 1;
+        intfCtx.beginPath();
+        intfCtx.arc(s.x, s.y, 10, 0, Math.PI * 2);
+        intfCtx.stroke();
+    });
+
+    // Labels
+    intfCtx.fillStyle = 'rgba(255,255,255,0.5)';
+    intfCtx.font = '8px monospace';
+    intfCtx.textAlign = 'left';
+    intfCtx.fillText(`λ = ${wl}px  |  d = ${sep}px`, 10, 15);
+    intfCtx.fillText('BRIGHT = CONSTRUCTIVE  |  DARK = DESTRUCTIVE', 10, 27);
+
+    requestAnimationFrame(drawInterference);
+}
+drawInterference();
+
 // --- VACUUM vs FIBER LATENCY ---
 const laserCanvas = document.getElementById('laser-canvas');
 const laserCtx = laserCanvas.getContext('2d');
@@ -462,51 +545,201 @@ function constLoop() {
 }
 constLoop();
 
-// --- DEORBIT PLASMA SIMULATION ---
+// --- DEORBIT / ATMOSPHERIC DEMISE ---
 const deorbitCanvas = document.getElementById('deorbit-canvas');
 const deCtx = deorbitCanvas.getContext('2d');
-let particles = [];
+let deorbitTime = 0;
+let deorbitParticles = [];
+let debrisFragments = [];
 
 function drawDeorbit() {
     const w = deorbitCanvas.width;
     const h = deorbitCanvas.height;
-    deCtx.fillStyle = '#0a0510';
+    deCtx.fillStyle = '#02050a';
     deCtx.fillRect(0, 0, w, h);
+    deorbitTime += 0.004;
 
-    const satX = w / 4 + Math.sin(time) * 20;
-    const satY = h / 2 + Math.cos(time * 0.5) * 10;
+    // Cycle: 0→1 = descent, resets automatically
+    const cycle = deorbitTime % 1;
+    const altitude = 1 - cycle;  // 1 = space, 0 = burned up
 
-    // Satellite body (abstract)
-    deCtx.fillStyle = '#94a3b8';
-    deCtx.fillRect(satX, satY, 40, 10);
-    deCtx.fillRect(satX + 15, satY - 15, 10, 40); // Solar panel
+    // --- Atmospheric layers ---
+    const layers = [
+        { name: 'THERMOSPHERE', yStart: 0, yEnd: 0.33, color: 'rgba(15, 23, 42, 0.3)' },
+        { name: 'MESOSPHERE',   yStart: 0.33, yEnd: 0.66, color: 'rgba(30, 41, 59, 0.2)' },
+        { name: 'STRATOSPHERE', yStart: 0.66, yEnd: 1.0,  color: 'rgba(51, 65, 85, 0.15)' },
+    ];
 
-    // Plasma particles
-    if (Math.random() > 0.1) {
-        particles.push({
-            x: satX + 40,
-            y: satY + 5,
-            vx: Math.random() * 10 + 5,
-            vy: (Math.random() - 0.5) * 10,
-            life: 1,
-            color: Math.random() > 0.5 ? '#f59e0b' : '#3b82f6'
+    layers.forEach(l => {
+        const y0 = l.yStart * h;
+        const y1 = l.yEnd * h;
+        deCtx.fillStyle = l.color;
+        deCtx.fillRect(0, y0, w, y1 - y0);
+        // Layer boundary
+        deCtx.strokeStyle = 'rgba(255,255,255,0.04)';
+        deCtx.beginPath();
+        deCtx.moveTo(0, y1);
+        deCtx.lineTo(w, y1);
+        deCtx.stroke();
+        // Label
+        deCtx.fillStyle = 'rgba(255,255,255,0.06)';
+        deCtx.font = '7px monospace';
+        deCtx.textAlign = 'right';
+        deCtx.fillText(l.name, w - 10, y0 + 14);
+    });
+
+    // --- Satellite position ---
+    const satX = 200 + cycle * (w - 400);  // Moves right as it descends
+    const satY = 30 + cycle * (h - 80);    // Moves downward
+    const heatLevel = Math.max(0, cycle - 0.15) / 0.85;  // 0 to 1 as heating increases
+    const integrity = Math.max(0, 1 - cycle * 1.4);       // Breaks apart as it descends
+
+    // Reset fragments at start of new cycle
+    if (cycle < 0.02) {
+        debrisFragments = [];
+        deorbitParticles = [];
+    }
+
+    // --- Plasma sheath / heating glow ---
+    if (heatLevel > 0.05) {
+        const glowR = 30 + heatLevel * 40;
+        const glow = deCtx.createRadialGradient(satX, satY, 0, satX, satY, glowR);
+        const r = Math.floor(200 + heatLevel * 55);
+        const g = Math.floor(100 * (1 - heatLevel * 0.5));
+        const b = Math.floor(20 * (1 - heatLevel));
+        glow.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${heatLevel * 0.3})`);
+        glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        deCtx.fillStyle = glow;
+        deCtx.fillRect(satX - glowR, satY - glowR, glowR * 2, glowR * 2);
+    }
+
+    // --- Spawn plasma trail particles ---
+    if (heatLevel > 0.1) {
+        const numP = Math.floor(heatLevel * 6);
+        for (let i = 0; i < numP; i++) {
+            deorbitParticles.push({
+                x: satX - 10 - Math.random() * 20,
+                y: satY + (Math.random() - 0.5) * 15,
+                vx: -2 - Math.random() * 4,
+                vy: -1 + Math.random() * 2,
+                life: 1,
+                size: 1 + Math.random() * 3,
+                hot: Math.random() > 0.4
+            });
+        }
+    }
+
+    // --- Break off debris fragments ---
+    if (heatLevel > 0.3 && integrity > 0 && Math.random() > 0.92) {
+        debrisFragments.push({
+            x: satX + (Math.random() - 0.5) * 15,
+            y: satY + (Math.random() - 0.5) * 10,
+            vx: (Math.random() - 0.5) * 3,
+            vy: 1 + Math.random() * 2,
+            rot: Math.random() * Math.PI * 2,
+            rotV: (Math.random() - 0.5) * 0.2,
+            size: 2 + Math.random() * 4,
+            life: 1
         });
     }
 
-    particles = particles.filter(p => {
+    // --- Draw & update debris fragments ---
+    debrisFragments = debrisFragments.filter(f => {
+        f.x += f.vx;
+        f.y += f.vy;
+        f.rot += f.rotV;
+        f.life -= 0.015;
+        f.size *= 0.995;
+
+        // Fragment with heating
+        deCtx.save();
+        deCtx.translate(f.x, f.y);
+        deCtx.rotate(f.rot);
+        deCtx.fillStyle = f.life > 0.5
+            ? `rgba(245, 158, 11, ${f.life})`
+            : `rgba(148, 163, 184, ${f.life})`;
+        deCtx.fillRect(-f.size / 2, -f.size / 2, f.size, f.size);
+        deCtx.restore();
+
+        // Fragment trail
+        deCtx.beginPath();
+        deCtx.arc(f.x, f.y, Math.max(0, f.size * f.life * 0.5), 0, Math.PI * 2);
+        deCtx.fillStyle = `rgba(245, 158, 11, ${f.life * 0.2})`;
+        deCtx.fill();
+
+        return f.life > 0 && f.y < h;
+    });
+
+    // --- Draw & update plasma particles ---
+    deorbitParticles = deorbitParticles.filter(p => {
         p.x += p.vx;
         p.y += p.vy;
-        p.life -= 0.02;
+        p.life -= 0.025;
 
-        deCtx.fillStyle = p.color;
-        deCtx.globalAlpha = p.life;
         deCtx.beginPath();
-        deCtx.arc(p.x, p.y, p.life * 5, 0, Math.PI * 2);
+        deCtx.arc(p.x, p.y, Math.max(0, p.size * p.life), 0, Math.PI * 2);
+        deCtx.fillStyle = p.hot
+            ? `rgba(245, 158, 11, ${p.life * 0.6})`
+            : `rgba(59, 130, 246, ${p.life * 0.4})`;
         deCtx.fill();
-        deCtx.globalAlpha = 1;
 
         return p.life > 0;
     });
+
+    // --- Draw satellite (if still has integrity) ---
+    if (integrity > 0.05) {
+        const alpha = Math.min(1, integrity * 2);
+        deCtx.globalAlpha = alpha;
+
+        // Body color shifts with heat
+        const bodyR = Math.floor(148 + heatLevel * 107);
+        const bodyG = Math.floor(163 * (1 - heatLevel * 0.7));
+        const bodyB = Math.floor(184 * (1 - heatLevel * 0.8));
+        deCtx.fillStyle = `rgb(${bodyR}, ${bodyG}, ${bodyB})`;
+        deCtx.fillRect(satX - 12, satY - 3, 24, 6);
+
+        // Solar panels (shrink as they burn)
+        const panelW = 8 * integrity;
+        deCtx.fillStyle = `rgba(30, 58, 95, ${alpha})`;
+        deCtx.fillRect(satX - 12 - panelW, satY - 1, panelW, 2);
+        deCtx.fillRect(satX + 12, satY - 1, panelW, 2);
+
+        deCtx.globalAlpha = 1;
+    }
+
+    // --- Altitude & Temperature gauges ---
+    const altKm = Math.floor(altitude * 400 + 80);
+    const tempK = Math.floor(300 + heatLevel * 2500);
+
+    deCtx.fillStyle = 'rgba(255,255,255,0.5)';
+    deCtx.font = '8px monospace';
+    deCtx.textAlign = 'left';
+    deCtx.fillText(`ALT: ${altKm}km`, 10, 15);
+    deCtx.fillText(`TEMP: ${tempK}K`, 10, 27);
+    deCtx.fillText(`v = 7.5 km/s`, 10, 39);
+
+    // Integrity bar
+    deCtx.fillStyle = '#111';
+    deCtx.fillRect(10, 48, 80, 6);
+    deCtx.fillStyle = integrity > 0.3 ? '#22c55e' : '#ef4444';
+    deCtx.fillRect(10, 48, 80 * Math.max(0, integrity), 6);
+    deCtx.fillStyle = 'rgba(255,255,255,0.4)';
+    deCtx.font = '6px monospace';
+    deCtx.fillText('STRUCTURAL', 10, 44);
+
+    // --- Status ---
+    deCtx.font = '8px monospace';
+    deCtx.textAlign = 'left';
+    if (integrity > 0.7) {
+        deCtx.fillStyle = 'rgba(245, 158, 11, 0.6)';
+        deCtx.fillText('DEORBIT BURN — ENTERING ATMOSPHERE', 10, h - 10);
+    } else if (integrity > 0.05) {
+        deCtx.fillStyle = 'rgba(239, 68, 68, 0.7)';
+        deCtx.fillText('ABLATION IN PROGRESS — STRUCTURAL BREAKUP', 10, h - 10);
+    } else {
+        deCtx.fillStyle = 'rgba(34, 197, 94, 0.6)';
+        deCtx.fillText('FULL DEMISE — 0% GROUND IMPACT', 10, h - 10);
+    }
 
     requestAnimationFrame(drawDeorbit);
 }
@@ -526,7 +759,7 @@ let maneuverActive = false;
 
 // Orbit bands
 const orbits = [
-    { y: 90,  label: '580km', color: 'rgba(59, 130, 246, 0.04)' },
+    { y: 90, label: '580km', color: 'rgba(59, 130, 246, 0.04)' },
     { y: 150, label: '550km', color: 'rgba(59, 130, 246, 0.06)' },
     { y: 210, label: '520km', color: 'rgba(59, 130, 246, 0.04)' },
 ];
@@ -775,10 +1008,10 @@ function drawRouting() {
     routeCtx.fillRect(0, 0, w, h);
 
     // Draw all links
-    routeCtx.strokeStyle = 'rgba(59, 130, 246, 0.1)';
+    routeCtx.strokeStyle = 'rgba(59, 130, 246, 0.3)';
     nodes.forEach((n1, i) => {
         nodes.slice(i + 1).forEach(n2 => {
-            const d = Math.sqrt((n1.x - n2.x)**2 + (n1.y - n2.y)**2);
+            const d = Math.sqrt((n1.x - n2.x) ** 2 + (n1.y - n2.y) ** 2);
             if (d < 150) {
                 routeCtx.beginPath();
                 routeCtx.moveTo(n1.x, n1.y);
@@ -796,23 +1029,7 @@ function drawRouting() {
         routeCtx.fill();
     });
 
-    // Shortest path (simulated for visual effect)
-    if (nodes.length > 0) {
-        routeCtx.strokeStyle = '#f59e0b';
-        routeCtx.lineWidth = 2;
-        routeCtx.beginPath();
-        routeCtx.moveTo(nodes[0].x, nodes[0].y);
-        let current = nodes[0];
-        for (let j = 0; j < 5; j++) {
-            const next = nodes.find(n => n !== current && Math.sqrt((n.x - current.x)**2 + (n.y - current.y)**2) < 200);
-            if (next) {
-                routeCtx.lineTo(next.x, next.y);
-                current = next;
-            }
-        }
-        routeCtx.stroke();
-        routeCtx.lineWidth = 1;
-    }
+
 
     requestAnimationFrame(drawRouting);
 }
