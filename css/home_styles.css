@@ -405,23 +405,23 @@ body {
     display: block;
 }
 
-.bio-card .category-tag { color: var(--bio-accent); }
-.ai-card .category-tag { color: var(--ai-accent); }
-.phys-card .category-tag { color: var(--phys-accent); }
-.chem-card .category-tag { color: var(--chem-accent); }
-.econ-card .category-tag { color: var(--econ-accent); }
-.cs-card .category-tag { color: var(--cs-accent); }
-.astro-card .category-tag { color: var(--astro-accent); }
-.math-card .category-tag { color: var(--math-accent); }
-.psych-card .category-tag { color: var(--psych-accent); }
-.graphics-card .category-tag { color: var(--graphics-accent); }
-.procedural-card .category-tag { color: var(--procedural-accent); }
-.emulation-card .category-tag { color: var(--emu-accent); }
-.starlink-card .category-tag { color: var(--starlink-accent); }
-.spacex-card .category-tag { color: var(--spacex-accent); }
-.nato-card .category-tag { color: var(--nato-accent); }
-.palantir-card .category-tag { color: var(--palantir-accent); }
-.neuro-card .category-tag { color: var(--neuro-accent); }
+.bio-card h2 { color: var(--bio-accent); }
+.ai-card h2 { color: var(--ai-accent); }
+.phys-card h2 { color: var(--phys-accent); }
+.chem-card h2 { color: var(--chem-accent); }
+.econ-card h2 { color: var(--econ-accent); }
+.cs-card h2 { color: var(--cs-accent); }
+.astro-card h2 { color: var(--astro-accent); }
+.math-card h2 { color: var(--math-accent); }
+.psych-card h2 { color: var(--psych-accent); }
+.graphics-card h2 { color: var(--graphics-accent); }
+.procedural-card h2 { color: var(--procedural-accent); }
+.emulation-card h2 { color: var(--emu-accent); }
+.starlink-card h2 { color: var(--starlink-accent); }
+.spacex-card h2 { color: var(--spacex-accent); }
+.nato-card h2 { color: var(--nato-accent); }
+.palantir-card h2 { color: var(--palantir-accent); }
+.neuro-card h2 { color: var(--neuro-accent); }
 
 .portal-card h2 {
     font-family: var(--font-header);
@@ -431,7 +431,7 @@ body {
 }
 
 .portal-card p {
-    color: var(--text-dim);
+    color: rgba(255, 255, 255, 0.7);
     margin-bottom: 2rem;
     font-size: 1.1rem;
 }
