@@ -19,9 +19,9 @@ The Polymath series is designed to decode complex systems—from the molecular m
 ## Project Structure
 
 - `index.html`: The central hub and portal to the series.
-- `/html`: Comprehensive article pages covering 17+ different scientific and technical topics.
-- `/css`: Modular stylesheets including a central `css/fonts.css` for local asset management.
-- `/js`: Specialized visualization logic and background simulations.
+- `/articles`: Comprehensive article pages covering 17+ different scientific and technical topics.
+- `/styles`: Modular stylesheets including a central `styles/fonts.css` for local asset management.
+- `/scripts`: Specialized visualization logic and background simulations.
 - `/fonts`: Compressed local font binaries (WOFF2).
 
 ## How to Run
