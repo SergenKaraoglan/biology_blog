@@ -55,6 +55,11 @@
         <p class="toc-part">Part III — Complexity</p>
         <ol start="5">
             <li><a href="#sec-regulation">The Biological Logic (Gene Tuning)</a></li>
+        </ol>
+
+        <p class="toc-part">Part IV — Frontiers</p>
+        <ol start="6">
+            <li><a href="#sec-crispr">Search & Replace (CRISPR-Cas9)</a></li>
             <li><a href="#sec-quiz">Test Your Biology Knowledge</a></li>
         </ol>
     </nav>
@@ -172,6 +177,29 @@
             the repressor release and gene transcription begin.
         </p>
     </div>
+    <span class="section-tag tag-crispr">GENE EDITING</span>
+    <h2 id="sec-crispr">6. Search & Replace (CRISPR-Cas9)</h2>
+    <p>In 2012, researchers discovered a way to turn a bacterial immune system into the world's most precise pair of
+        molecular scissors. This system, <strong>CRISPR-Cas9</strong>, allows us to find a specific sequence of DNA
+        and cut it with surgical precision <a href="#ref-5" style="color:var(--crispr-red); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[5]</a>.</p>
+
+    <p>The system uses a <strong>Guide RNA (gRNA)</strong> to mirror the target DNA sequence. When the Cas9 protein
+        detects a match preceded by a short "PAM" sequence, it latches on and performs a double-strand break. Once the
+        DNA is cut, the cell's natural repair machinery kicks in, allowing scientists to disable genes or even insert
+        new code.</p>
+
+    <div class="interactive-container">
+        <canvas id="crisprCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <button id="crispr-cut-btn" style="background:var(--crispr-red); color:#fff;">INITIATE CUT</button>
+            <button id="crispr-reset-btn">RESET STRAND</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch the Cas9 enzyme (large grey blob) scan the DNA. When the Guide RNA (red) matches the target sequence,
+            click <strong>INITIATE CUT</strong> to trigger the molecular scissors.
+        </p>
+    </div>
 
     <h2 id="sec-quiz">6. Test Your Biology Knowledge</h2>
     <p>Can you implement the core logic of the central dogma? Below is a live Python environment. Write the functions to
@@ -212,6 +240,10 @@
             <li id="ref-4" style="margin-bottom: 1.2rem; padding-left: 1.5rem; text-indent: -1.5rem;">
                 [4] Watson, J. D., & Crick, F. H. (1953). Molecular structure of nucleic acids; a structure for deoxyribose nucleic acid. <em>Nature</em>, 171(4356), 737-738. 
                 <a href="https://doi.org/10.1038/171737a0" target="_blank" style="color: var(--bio-green); text-decoration: none; margin-left: 10px; opacity: 0.8;">doi:10.1038/171737a0</a>
+            </li>
+            <li id="ref-5" style="margin-bottom: 1.2rem; padding-left: 1.5rem; text-indent: -1.5rem;">
+                [5] Jinek, M., Chylinski, K., Fonfara, I., Hauer, M., Doudna, J. A., & Charpentier, E. (2012). A programmable dual-RNA-guided DNA endonuclease in adaptive bacterial immunity. <em>Science</em>, 337(6096), 816-821.
+                <a href="https://doi.org/10.1126/science.1225829" target="_blank" style="color: var(--crispr-red); text-decoration: none; margin-left: 10px; opacity: 0.8;">doi:10.1126/science.1225829</a>
             </li>
         </ul>
     </section>

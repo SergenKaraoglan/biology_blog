@@ -34,6 +34,7 @@
     --rna-purple: #a855f7; /* Transcription */
     --protein-gold: #fbbf24; /* Translation / Nanomachines */
     --cell-pink: #ff0055;  /* Membrane / Energy */
+    --crispr-red: #ff4d4d; /* CRISPR / Gene Editing */
     
     --success: var(--bio-green);
 }
@@ -255,6 +256,7 @@ button:hover {
 .tag-genetics { color: var(--bio-green); border-color: rgba(0, 255, 136, 0.2); }
 .tag-molecular { color: var(--dna-blue); border-color: rgba(0, 170, 255, 0.2); }
 .tag-regulation { color: var(--rna-purple); border-color: rgba(168, 85, 247, 0.2); }
+.tag-crispr { color: var(--crispr-red); border-color: rgba(255, 77, 77, 0.2); }
 
 /* Footer */
 footer {

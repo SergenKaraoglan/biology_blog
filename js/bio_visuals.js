@@ -869,6 +869,170 @@ regBtn.addEventListener('click', () => {
     if (!inducerPresent) mRNAParticles = [];
 });
 
+// --- Section 6: CRISPR-Cas9 (Molecular Scissors) ---
+const crisprCanvas = document.getElementById('crisprCanvas');
+const crisprCtx = crisprCanvas.getContext('2d');
+const cutBtn = document.getElementById('crispr-cut-btn');
+const resetBtn = document.getElementById('crispr-reset-btn');
+
+let crisprTime = 0;
+let isCutting = false;
+let hasCut = false;
+let cutAnimProgress = 0;
+let dnaScroll = 0;
+
+const crisprDNA = "ATGCGTAGCTAGCTAGCTAGCATGCGTAGCTAG".split('');
+const targetSeq = "TAGCTAG"; // The sequence the gRNA matches
+const targetIdx = 10;      // Index in crisprDNA where match starts
+
+function drawCRISPR() {
+    const w = crisprCanvas.width;
+    const h = crisprCanvas.height;
+    crisprCtx.clearRect(0, 0, w, h);
+    
+    const midY = h / 2;
+    const spacing = 25;
+    const startX = 50;
+
+    // --- Scrolling DNA ---
+    if (!isCutting && !hasCut) {
+        dnaScroll = (dnaScroll + 1) % (crisprDNA.length * spacing);
+    }
+
+    const currentX = (i) => startX + i * spacing - dnaScroll;
+
+    // --- Draw DNA Strand ---
+    crisprDNA.forEach((base, i) => {
+        let x = currentX(i);
+        if (x < -20 || x > w + 20) return;
+
+        let yGap = 25;
+        let xOffset = 0;
+
+        // If cut, push segments apart
+        if (hasCut) {
+            if (i >= targetIdx + 3) {
+                xOffset = cutAnimProgress * 150;
+            } else {
+                xOffset = -cutAnimProgress * 50;
+            }
+        }
+        
+        const finalX = x + xOffset;
+
+        // Backbone
+        crisprCtx.strokeStyle = 'rgba(255,255,255,0.1)';
+        crisprCtx.lineWidth = 2;
+        if (i > 0) {
+            const prevX = currentX(i-1) + (i > targetIdx + 3 && hasCut ? cutAnimProgress * 150 : (i <= targetIdx + 3 && hasCut ? -cutAnimProgress * 50 : 0));
+            // Only draw backbone if not at the cut point
+            if (!hasCut || i !== targetIdx + 4) {
+                crisprCtx.beginPath();
+                crisprCtx.moveTo(prevX, midY - yGap);
+                crisprCtx.lineTo(finalX, midY - yGap);
+                crisprCtx.stroke();
+                crisprCtx.beginPath();
+                crisprCtx.moveTo(prevX, midY + yGap);
+                crisprCtx.lineTo(finalX, midY + yGap);
+                crisprCtx.stroke();
+            }
+        }
+
+        // Rungs
+        crisprCtx.strokeStyle = 'rgba(255,255,255,0.05)';
+        crisprCtx.beginPath();
+        crisprCtx.moveTo(finalX, midY - yGap);
+        crisprCtx.lineTo(finalX, midY + yGap);
+        crisprCtx.stroke();
+
+        // Nodes
+        const r = 6;
+        crisprCtx.beginPath();
+        crisprCtx.arc(finalX, midY - yGap, r, 0, Math.PI * 2);
+        crisprCtx.fillStyle = baseColor[base] || '#888';
+        crisprCtx.fill();
+
+        crisprCtx.beginPath();
+        crisprCtx.arc(finalX, midY + yGap, r, 0, Math.PI * 2);
+        crisprCtx.fillStyle = baseColor[toRNA(base)] || '#888';
+        crisprCtx.fill();
+    });
+
+    // --- Cas9 Enzyme ---
+    const casX = w / 2;
+    const casY = midY;
+    const casW = 140, casH = 100;
+
+    // Enzyme Body (Semi-transparent blob)
+    crisprCtx.save();
+    crisprCtx.translate(casX, casY);
+    if (isCutting) {
+        crisprCtx.scale(1 + Math.sin(crisprTime * 10) * 0.05, 1);
+    }
+    
+    crisprCtx.beginPath();
+    crisprCtx.roundRect(-casW / 2, -casH / 2, casW, casH, 30);
+    crisprCtx.fillStyle = 'rgba(100, 100, 110, 0.4)';
+    crisprCtx.strokeStyle = 'rgba(200, 200, 210, 0.2)';
+    crisprCtx.lineWidth = 2;
+    crisprCtx.fill();
+    crisprCtx.stroke();
+
+    // Guide RNA (Red strand inside)
+    crisprCtx.strokeStyle = 'rgba(255, 77, 77, 0.8)';
+    crisprCtx.lineWidth = 4;
+    crisprCtx.beginPath();
+    crisprCtx.moveTo(-40, 0);
+    crisprCtx.bezierCurveTo(-20, -20, 20, 20, 40, 0);
+    crisprCtx.stroke();
+    
+    crisprCtx.fillStyle = '#fff';
+    crisprCtx.font = 'bold 8px monospace';
+    crisprCtx.textAlign = 'center';
+    crisprCtx.fillText('CAS9 ENZYME', 0, -35);
+    crisprCtx.fillStyle = 'rgba(255, 77, 77, 0.9)';
+    crisprCtx.fillText('GUIDE RNA', 0, 20);
+    crisprCtx.restore();
+
+    // --- Interaction Logic ---
+    if (isCutting) {
+        cutAnimProgress += 0.02;
+        if (cutAnimProgress >= 1) {
+            isCutting = false;
+            hasCut = true;
+        }
+        
+        // Flash effect at cut point
+        crisprCtx.beginPath();
+        crisprCtx.arc(casX, casY, cutAnimProgress * 100, 0, Math.PI * 2);
+        crisprCtx.strokeStyle = `rgba(255, 255, 255, ${1 - cutAnimProgress})`;
+        crisprCtx.stroke();
+    }
+
+    if (hasCut && cutAnimProgress < 2) {
+        cutAnimProgress += 0.01;
+    }
+
+    crisprTime += 0.02;
+    requestAnimationFrame(drawCRISPR);
+}
+
+cutBtn.addEventListener('click', () => {
+    if (!hasCut && !isCutting) {
+        isCutting = true;
+        cutAnimProgress = 0;
+        cutBtn.disabled = true;
+    }
+});
+
+resetBtn.addEventListener('click', () => {
+    hasCut = false;
+    isCutting = false;
+    cutAnimProgress = 0;
+    dnaScroll = 0;
+    cutBtn.disabled = false;
+});
+
 // Initialize
 drawHeroDNA();
 drawDnaSection();
@@ -876,3 +1040,4 @@ updateCodonReader();
 drawTranscription();
 drawTranslation();
 drawRegulation();
+drawCRISPR();
