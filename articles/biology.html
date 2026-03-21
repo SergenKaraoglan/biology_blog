@@ -40,32 +40,66 @@
     <nav class="toc">
         <p class="toc-title">CONTENTS</p>
 
-        <p class="toc-part">Part I — Information</p>
+        <p class="toc-part">Part I — The Foundations</p>
         <ol>
+            <li><a href="#sec-cell">The Container (Cell Theory)</a></li>
+            <li><a href="#sec-energy">The Engine (Energy & Entropy)</a></li>
+        </ol>
+
+        <p class="toc-part">Part II — Information</p>
+        <ol start="3">
             <li><a href="#sec-dna">The Language of Life (DNA & Base Pairing)</a></li>
             <li><a href="#sec-code">The Digital Script (The Genetic Code)</a></li>
         </ol>
 
-        <p class="toc-part">Part II — Transformation</p>
-        <ol start="3">
+        <p class="toc-part">Part III — Transformation</p>
+        <ol start="5">
             <li><a href="#sec-transcription">Copying the Code (RNA & Transcription)</a></li>
             <li><a href="#sec-translation">Building the Machine (Proteins & Translation)</a></li>
-        </ol>
-
-        <p class="toc-part">Part III — Complexity</p>
-        <ol start="5">
             <li><a href="#sec-regulation">The Biological Logic (Gene Tuning)</a></li>
         </ol>
 
-        <p class="toc-part">Part IV — Frontiers</p>
-        <ol start="6">
+        <p class="toc-part">Part IV — Complexity & Frontiers</p>
+        <ol start="8">
+            <li><a href="#sec-evolution">The Search Algorithm (Natural Selection)</a></li>
             <li><a href="#sec-crispr">Search & Replace (CRISPR-Cas9)</a></li>
             <li><a href="#sec-quiz">Test Your Biology Knowledge</a></li>
         </ol>
     </nav>
 
+    <span class="section-tag tag-cellular">CELLULAR</span>
+    <h2 id="sec-cell">1. The Container (Cell Theory)</h2>
+    <p>Life cannot exist without a boundary. Before you can have complex chemistry, you must separate the "inside" from the chaotic "outside". This boundary is the <strong>Cell Membrane</strong>, a lipid bilayer that acts as a selectively permeable wall.</p>
+    <p>By keeping necessary molecules close together and harmful ones out, the cell lowers local entropy, creating an environment where complex reactions can occur. Without this physical enclosure, the chemicals of life would simply diffuse away into the environment.</p>
+
+    <div class="interactive-container">
+        <canvas id="membraneCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <button id="membrane-permeability-btn">TOGGLE CHANNELS: CLOSED</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Observe standard diffusion. The membrane naturally blocks charged particles (blue) but allows neutral molecules (green). Click to open the protein channels and allow facilitated diffusion.
+        </p>
+    </div>
+
+    <span class="section-tag tag-energy">THERMODYNAMICS</span>
+    <h2 id="sec-energy">2. The Engine (Energy & Entropy)</h2>
+    <p>The second law of thermodynamics states that the universe tends toward disorder (entropy). Life is a localized rebellion against this law. To maintain structure and order, living systems must constantly process energy.</p>
+    <p>The universal currency for this energy is <strong>ATP (Adenosine Triphosphate)</strong>. When a cell needs to perform work—like moving a muscle or building a protein—it breaks a chemical bond in ATP, releasing a burst of usable energy and converting it to ADP. Cellular respiration is the process of recharging this biological battery.</p>
+
+    <div class="interactive-container">
+        <canvas id="atpCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <button id="atp-charge-btn">GLYCOLYSIS: CHARGE ADP</button>
+            <button id="atp-use-btn">WORK: USE ATP</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch the mitochondrion recharge ADP into energetic ATP. Click "USE ATP" to spend that energy on cellular work (moving a motor protein).
+        </p>
+    </div>
+
     <span class="section-tag tag-genetics">GENETICS</span>
-    <h2 id="sec-dna">1. The Language of Life (DNA)</h2>
+    <h2 id="sec-dna">3. The Language of Life (DNA)</h2>
     <p>If you were to stretch out the DNA in a single human cell, it would be two meters long. Yet it is packed into a
         space smaller than a speck of dust. This molecule, the <strong>Double Helix</strong>, is the most efficient data
         storage system in the known universe <a href="#ref-4" style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[4]</a>.</p>
@@ -91,7 +125,7 @@
     </div>
 
     <span class="section-tag tag-molecular">MOLECULAR</span>
-    <h2 id="sec-code">2. The Digital Script (The Genetic Code)</h2>
+    <h2 id="sec-code">4. The Digital Script (The Genetic Code)</h2>
     <p>Each codon represents one specific <strong>Amino Acid</strong>. For example, the sequence <span
             class="term">ATG</span> is the universal "START" signal. This mapping between 3-letter DNA sequences and
         amino acids is known as the <strong>Genetic Code</strong> <a href="#ref-3" style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[3]</a>.</p>
@@ -119,7 +153,7 @@
     </div>
 
     <span class="section-tag tag-molecular">MOLECULAR</span>
-    <h2 id="sec-transcription">3. Copying the Code (RNA & Transcription)</h2>
+    <h2 id="sec-transcription">5. Copying the Code (RNA & Transcription)</h2>
     <p>The mRNA is essentially a mirror image of the DNA, with one small change: instead of Thymine (T), it uses
         <strong>Uracil (U)</strong>. This copy is then shipped out of the cell's nucleus to the protein factories.</p>
 
@@ -136,7 +170,7 @@
     </div>
 
     <span class="section-tag tag-molecular">MOLECULAR</span>
-    <h2 id="sec-translation">4. Building the Machine (Proteins & Translation)</h2>
+    <h2 id="sec-translation">6. Building the Machine (Proteins & Translation)</h2>
     <p>This shape is everything. A protein's function is determined entirely by how it folds. Some become structural
         bricks (collagen), others become scanners (antibodies), and others become specialized tools (enzymes).</p>
 
@@ -153,7 +187,7 @@
     </div>
 
     <span class="section-tag tag-regulation">REGULATION</span>
-    <h2 id="sec-regulation">5. The Biological Logic (Gene Tuning)</h2>
+    <h2 id="sec-regulation">7. The Biological Logic (Gene Tuning)</h2>
     <p>Every cell in your body has the exact same DNA. Why is a brain cell different from a skin cell? The answer is
         <strong>Gene Regulation</strong>. Not every gene is "on" at the same time. Cells use complex feedback
         loops—biological IF/THEN statements—to tune their behavior <a href="#ref-2" style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[2]</a>.</p>
@@ -177,8 +211,26 @@
             the repressor release and gene transcription begin.
         </p>
     </div>
+    <span class="section-tag tag-evolution">EVOLUTION</span>
+    <h2 id="sec-evolution">8. The Search Algorithm (Natural Selection)</h2>
+    <p>How did the complex code of DNA come to be? The answer is an iterative search algorithm called <strong>Natural Selection</strong>. It requires three components to run: replication, random mutation, and a selection pressure.</p>
+    <p>In this environment, organisms must find food to survive. They possess two "genes": <strong>Speed</strong> and <strong>Sensory Radius</strong>. While high capability helps them locate and reach food faster, it also costs more energy to maintain. If an organism runs out of energy, it dies. Survivors reproduce, passing on their traits with slight mutations. Over time, the population evolves the optimal balance between capability and efficiency.</p>
+
+    <div class="interactive-container" style="min-height: 400px;">
+        <canvas id="evolutionCanvas" width="600" height="300" style="background: #111; border: 1px solid #333;"></canvas>
+        <div class="controls">
+            <button id="evo-spawn-btn" style="background:var(--evolution-orange); color:#fff;">NEXT GENERATION</button>
+            <div class="control-group">
+                <label>DAY / GENERATION: <span id="evo-gen-val" style="color:var(--evolution-orange)">1</span></label>
+            </div>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Green dots are food. Cell color indicates speed (blue=slow, red=fast). The glowing aura indicates sensory radius. Watch how natural selection prunes inefficiencies.
+        </p>
+    </div>
+
     <span class="section-tag tag-crispr">GENE EDITING</span>
-    <h2 id="sec-crispr">6. Search & Replace (CRISPR-Cas9)</h2>
+    <h2 id="sec-crispr">9. Search & Replace (CRISPR-Cas9)</h2>
     <p>In 2012, researchers discovered a way to turn a bacterial immune system into the world's most precise pair of
         molecular scissors. This system, <strong>CRISPR-Cas9</strong>, allows us to find a specific sequence of DNA
         and cut it with surgical precision <a href="#ref-5" style="color:var(--crispr-red); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[5]</a>.</p>
@@ -201,7 +253,7 @@
         </p>
     </div>
 
-    <h2 id="sec-quiz">6. Test Your Biology Knowledge</h2>
+    <h2 id="sec-quiz">10. Test Your Biology Knowledge</h2>
     <p>Can you implement the core logic of the central dogma? Below is a live Python environment. Write the functions to
         simulate base-pairing and protein translation.</p>
 

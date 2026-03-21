@@ -1033,11 +1033,365 @@ resetBtn.addEventListener('click', () => {
     cutBtn.disabled = false;
 });
 
+// --- Section 1: The Container (Cell Membrane) ---
+const membraneCanvas = document.getElementById('membraneCanvas');
+const membraneCtx = membraneCanvas.getContext('2d');
+const membraneBtn = document.getElementById('membrane-permeability-btn');
+
+let channelsOpen = false;
+let membraneParticles = [];
+
+// Initialize particles inside and outside
+for(let i=0; i<80; i++) {
+    membraneParticles.push({
+        x: Math.random() * 600,
+        y: Math.random() * 300,
+        vx: (Math.random() - 0.5) * 2,
+        vy: (Math.random() - 0.5) * 2,
+        type: Math.random() > 0.5 ? 'charged' : 'neutral'
+    });
+}
+
+function drawMembrane() {
+    const w = membraneCanvas.width;
+    const h = membraneCanvas.height;
+    membraneCtx.clearRect(0, 0, w, h);
+
+    // Membrane in the middle vertical
+    const memX = w / 2 - 15;
+    const memWidth = 30;
+
+    // Membrane visual
+    membraneCtx.fillStyle = '#ff005544';
+    membraneCtx.fillRect(memX, 0, memWidth, h);
+
+    // Channels
+    const channels = [h*0.25, h*0.75];
+    channels.forEach(y => {
+        membraneCtx.fillStyle = channelsOpen ? '#00ff8888' : '#ff005588';
+        membraneCtx.fillRect(memX, y - 20, memWidth, 40);
+        if (channelsOpen) {
+            membraneCtx.clearRect(memX + 10, y - 20, 10, 40);
+        }
+    });
+
+    // Update & draw particles
+    membraneParticles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Bounce off canvas edges
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+
+        // Interaction with membrane
+        const hitMembrane = p.x > memX && p.x < memX + memWidth;
+        if (hitMembrane) {
+            let pass = false;
+            if (p.type === 'neutral') {
+                pass = true; // Neutrals cross freely
+            } else {
+                if (channelsOpen) {
+                    // Check if near channel
+                    if (Math.abs(p.y - channels[0]) < 20 || Math.abs(p.y - channels[1]) < 20) {
+                        pass = true;
+                    }
+                }
+            }
+            if (!pass) {
+                p.vx *= -1; // Bounce
+                p.x += p.vx * 2; // Extra push out
+            }
+        }
+
+        membraneCtx.beginPath();
+        membraneCtx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        membraneCtx.fillStyle = p.type === 'charged' ? '#00aaff' : '#00ff88';
+        membraneCtx.fill();
+    });
+
+    requestAnimationFrame(drawMembrane);
+}
+
+membraneBtn.addEventListener('click', () => {
+    channelsOpen = !channelsOpen;
+    membraneBtn.innerText = channelsOpen ? 'TOGGLE CHANNELS: OPEN' : 'TOGGLE CHANNELS: CLOSED';
+});
+
+// --- Section 2: Thermodynamics (ATP) ---
+const atpCanvas = document.getElementById('atpCanvas');
+const atpCtx = atpCanvas.getContext('2d');
+let atpCharged = false;
+let atpTime = 0;
+let motorX = 50;
+
+function drawATP() {
+    const w = atpCanvas.width;
+    const h = atpCanvas.height;
+    atpCtx.clearRect(0, 0, w, h);
+    atpTime++;
+
+    // Draw Mitochondrion
+    atpCtx.fillStyle = '#ff4d4d22';
+    atpCtx.beginPath();
+    atpCtx.ellipse(w*0.75, h/2, 80, 50, 0, 0, Math.PI * 2);
+    atpCtx.fill();
+    atpCtx.strokeStyle = '#ff4d4d88';
+    atpCtx.stroke();
+    
+    // Draw Motor Protein
+    atpCtx.fillStyle = '#00aaff88';
+    atpCtx.fillRect(motorX, h*0.7, 40, 40);
+    atpCtx.fillStyle = '#fff';
+    atpCtx.font = '10px monospace';
+    atpCtx.fillText('MOTOR', motorX + 5, h*0.7 + 24);
+
+    // Draw ATP/ADP
+    const cx = w/2;
+    const cy = h*0.3;
+    atpCtx.fillStyle = atpCharged ? '#fbbf24' : '#555';
+    atpCtx.beginPath();
+    atpCtx.arc(cx, cy, 20, 0, Math.PI * 2);
+    atpCtx.fill();
+    
+    atpCtx.fillStyle = '#fff';     
+    atpCtx.fillText(atpCharged ? 'ATP' : 'ADP', cx - 10, cy + 4);
+
+    if (atpCharged) {
+        // Sparkle
+        atpCtx.fillStyle = '#fbbf24';
+        atpCtx.beginPath();
+        atpCtx.arc(cx + Math.sin(atpTime*0.2)*25, cy + Math.cos(atpTime*0.2)*25, 3, 0, Math.PI * 2);
+        atpCtx.fill();
+    }
+
+    requestAnimationFrame(drawATP);
+}
+
+document.getElementById('atp-charge-btn').addEventListener('click', () => {
+    atpCharged = true;
+});
+document.getElementById('atp-use-btn').addEventListener('click', () => {
+    if (atpCharged) {
+        atpCharged = false;
+        motorX += 50;
+        if(motorX > w - 50) motorX = 50;
+    }
+});
+
+// --- Section 8: Evolution (Energy/Foraging Trade-off) ---
+const evoCanvas = document.getElementById('evolutionCanvas');
+const evoCtx = evoCanvas.getContext('2d');
+const evoGenVal = document.getElementById('evo-gen-val');
+
+let cells = [];
+let foods = [];
+let generation = 1;
+let dayTimer = 0;
+const DAY_LENGTH = 600;
+
+function spawnFood(count) {
+    for(let i=0; i<count; i++) {
+        foods.push({
+            x: 20 + Math.random() * (evoCanvas.width - 40),
+            y: 20 + Math.random() * (evoCanvas.height - 40)
+        });
+    }
+}
+
+function initEvo() {
+    cells = [];
+    foods = [];
+    generation = 1;
+    dayTimer = 0;
+    evoGenVal.innerText = generation;
+    
+    // Spawn initial diverse population
+    for(let i=0; i<30; i++) {
+        cells.push(createCell(
+            Math.random() * evoCanvas.width,
+            Math.random() * evoCanvas.height,
+            0.5 + Math.random() * 2.5, // Speed: 0.5 to 3.0
+            20 + Math.random() * 80    // Sense: 20 to 100
+        ));
+    }
+    spawnFood(60);
+}
+
+function createCell(x, y, speed, sense) {
+    return {
+        x: x, y: y,
+        vx: (Math.random() - 0.5) * 2,
+        vy: (Math.random() - 0.5) * 2,
+        speed: Math.max(0.5, speed),
+        sense: Math.max(10, sense),
+        energy: 100,
+        foodEaten: 0,
+        dead: false
+    };
+}
+
+function nextGeneration() {
+    // Survivors reproduce based on food eaten
+    const survivors = cells.filter(c => !c.dead && c.foodEaten > 0);
+    cells = [];
+    
+    if (survivors.length === 0) {
+        // Extinction - restart
+        initEvo();
+        return;
+    }
+    
+    // Reproduction with mutation
+    survivors.forEach(p => {
+        // Parent survives if it ate enough, otherwise just reproduces and dies. 
+        // Let's say it makes 1 offspring per food eaten.
+        for(let i=0; i<p.foodEaten; i++) {
+            cells.push(createCell(
+                p.x + (Math.random()-0.5)*20,
+                p.y + (Math.random()-0.5)*20,
+                p.speed + (Math.random()-0.5)*0.4, // Mutate speed
+                p.sense + (Math.random()-0.5)*10   // Mutate sense
+            ));
+        }
+    });
+    
+    // Cap population
+    while(cells.length > 50) {
+        cells.splice(Math.floor(Math.random() * cells.length), 1);
+    }
+    
+    generation++;
+    evoGenVal.innerText = generation;
+    dayTimer = 0;
+    spawnFood(60);
+}
+
+function drawEvolution() {
+    const w = evoCanvas.width;
+    const h = evoCanvas.height;
+    evoCtx.clearRect(0, 0, w, h);
+
+    // Draw Food
+    evoCtx.fillStyle = '#00ff88';
+    foods.forEach(f => {
+        evoCtx.beginPath();
+        evoCtx.arc(f.x, f.y, 3, 0, Math.PI * 2);
+        evoCtx.fill();
+    });
+
+    // Update & Draw Cells
+    cells.forEach(c => {
+        if (c.dead) {
+            // Draw corpse
+            evoCtx.fillStyle = '#333';
+            evoCtx.beginPath();
+            evoCtx.arc(c.x, c.y, 4, 0, Math.PI * 2);
+            evoCtx.fill();
+            return;
+        }
+
+        // --- Energy Cost ---
+        // Cost scales with speed squared and sense radius linearly
+        const cost = 0.05 + (c.speed * c.speed * 0.01) + (c.sense * 0.001);
+        c.energy -= cost;
+        if (c.energy <= 0) {
+            c.dead = true;
+            return;
+        }
+
+        // --- Foraging / Sense ---
+        let targetFood = null;
+        let minDist = c.sense;
+
+        foods.forEach(f => {
+            const dist = Math.sqrt((c.x - f.x)**2 + (c.y - f.y)**2);
+            if (dist < minDist) {
+                targetFood = f;
+                minDist = dist;
+            }
+        });
+
+        if (targetFood) {
+            // Steer towards food
+            const dx = targetFood.x - c.x;
+            const dy = targetFood.y - c.y;
+            const len = Math.sqrt(dx*dx + dy*dy);
+            c.vx = (dx / len);
+            c.vy = (dy / len);
+            
+            // Eat food
+            if (minDist < 6) {
+                foods = foods.filter(f => f !== targetFood);
+                c.energy = Math.min(200, c.energy + 40); // Restore energy
+                c.foodEaten++;
+            }
+        } else {
+            // Random wander
+            c.vx += (Math.random() - 0.5) * 0.2;
+            c.vy += (Math.random() - 0.5) * 0.2;
+            const len = Math.sqrt(c.vx*c.vx + c.vy*c.vy) || 1;
+            c.vx /= len;
+            c.vy /= len;
+        }
+
+        // Move
+        c.x += c.vx * c.speed;
+        c.y += c.vy * c.speed;
+        
+        // Bounce
+        if (c.x < 5 || c.x > w-5) c.vx *= -1;
+        if (c.y < 5 || c.y > h-5) c.vy *= -1;
+
+        // --- Draw ---
+        // Sense Aura (larger radius = more transparent outline)
+        evoCtx.strokeStyle = `rgba(255, 255, 255, ${Math.max(0.05, 0.3 - c.sense/400)})`;
+        evoCtx.beginPath();
+        evoCtx.arc(c.x, c.y, c.sense, 0, Math.PI * 2);
+        evoCtx.stroke();
+
+        // Body color based on speed (blue=slow, red=fast)
+        const hue = 240 - Math.min(240, (c.speed - 0.5) * 100); 
+        evoCtx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+        evoCtx.beginPath();
+        evoCtx.arc(c.x, c.y, 5, 0, Math.PI * 2);
+        evoCtx.fill();
+        
+        // Energy indicator (inner dot gets smaller as energy drops)
+        evoCtx.fillStyle = '#fff';
+        evoCtx.beginPath();
+        evoCtx.arc(c.x, c.y, Math.max(0, (c.energy/100) * 2), 0, Math.PI * 2);
+        evoCtx.fill();
+    });
+
+    // Time progress
+    dayTimer++;
+    evoCtx.fillStyle = 'rgba(255,255,255,0.2)';
+    evoCtx.fillRect(0, h - 5, (dayTimer / DAY_LENGTH) * w, 5);
+
+    if (dayTimer >= DAY_LENGTH) {
+        nextGeneration();
+    }
+
+    requestAnimationFrame(drawEvolution);
+}
+
+document.getElementById('evo-spawn-btn').addEventListener('click', () => {
+    // Manually progress to next generation or spawn food early
+    nextGeneration();
+});
+
+// Start the simulation
+initEvo();
+
 // Initialize
 drawHeroDNA();
+drawMembrane();
+drawATP();
 drawDnaSection();
 updateCodonReader();
 drawTranscription();
 drawTranslation();
 drawRegulation();
+drawEvolution();
 drawCRISPR();
