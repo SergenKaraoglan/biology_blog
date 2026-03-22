@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initVertexTransformer();
     initRasterVisualizer();
     initShaderPlayground();
+    initRayTracer();
 });
 
 // --- HELPER: Simple 3D Engine from Scratch ---
@@ -49,7 +50,7 @@ function initHeroCube() {
     const canvas = document.getElementById('hero-cube-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    
+
     function resize() {
         canvas.width = canvas.parentElement.clientWidth;
         canvas.height = canvas.parentElement.clientHeight;
@@ -73,7 +74,7 @@ function initHeroCube() {
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
+
         angleX += 0.01;
         angleY += 0.015;
 
@@ -109,7 +110,7 @@ function initVertexTransformer() {
     const canvas = document.getElementById('vertex-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    
+
     const rotXInput = document.getElementById('rot-x');
     const rotYInput = document.getElementById('rot-y');
     const fovInput = document.getElementById('fov');
@@ -144,8 +145,8 @@ function initVertexTransformer() {
         ctx.setLineDash([5, 5]);
         ctx.strokeStyle = '#333';
         ctx.beginPath();
-        ctx.moveTo(0, canvas.height/2); ctx.lineTo(canvas.width, canvas.height/2);
-        ctx.moveTo(canvas.width/2, 0); ctx.lineTo(canvas.width/2, canvas.height);
+        ctx.moveTo(0, canvas.height / 2); ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height);
         ctx.stroke();
         ctx.setLineDash([]);
 
@@ -183,7 +184,7 @@ function initRasterVisualizer() {
     const canvas = document.getElementById('raster-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    
+
     const toggleGridBtn = document.getElementById('toggle-grid');
     const animateBtn = document.getElementById('animate-triangle');
 
@@ -237,8 +238,8 @@ function initRasterVisualizer() {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         const p1 = { x: 300 + Math.cos(t) * 100, y: 150 + Math.sin(t) * 50 };
-        const p2 = { x: 450 + Math.sin(t*0.5) * 50, y: 300 };
-        const p3 = { x: 150, y: 300 - Math.cos(t*0.8) * 40 };
+        const p2 = { x: 450 + Math.sin(t * 0.5) * 50, y: 300 };
+        const p3 = { x: 150, y: 300 - Math.cos(t * 0.8) * 40 };
 
         drawTriangle(p1, p2, p3);
 
@@ -267,7 +268,7 @@ function initShaderPlayground() {
     const canvas = document.getElementById('shader-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    
+
     const speedInput = document.getElementById('shader-speed');
     const complexInput = document.getElementById('shader-complexity');
 
@@ -277,7 +278,7 @@ function initShaderPlayground() {
     function renderPulse() {
         const speed = parseFloat(speedInput.value);
         const complexity = parseFloat(complexInput.value);
-        
+
         const width = canvas.width;
         const height = canvas.height;
         const imageData = ctx.createImageData(width, height);
@@ -287,19 +288,19 @@ function initShaderPlayground() {
             for (let x = 0; x < width; x += res) {
                 const nx = x / width - 0.5;
                 const ny = y / height - 0.5;
-                
+
                 let v = 0;
                 v += Math.sin(nx * complexity + time);
                 v += Math.sin((ny * complexity + time) / 2.0);
                 v += Math.sin((nx * complexity + ny * complexity + time) / 2.0);
-                
+
                 const cx = nx + 0.5 * Math.sin(time / 5.0);
                 const cy = ny + 0.5 * Math.cos(time / 3.0);
                 v += Math.sin(Math.sqrt(128.0 * (cx * cx + cy * cy) + 1.0) + time);
-                
+
                 const r = Math.sin(v * Math.PI) * 127 + 128;
                 const g = Math.cos(v * Math.PI) * 127 + 128;
-                const b = Math.sin(v * Math.PI + Math.PI/2) * 127 + 128;
+                const b = Math.sin(v * Math.PI + Math.PI / 2) * 127 + 128;
 
                 // Fill pixel block (emulating fragment shader output)
                 for (let by = 0; by < res && (y + by) < height; by++) {
@@ -321,4 +322,171 @@ function initShaderPlayground() {
     }
 
     renderPulse();
+}
+
+// --- 5. RAY TRACING VISUALIZER ---
+
+function initRayTracer() {
+    const canvas = document.getElementById('raytrace-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const lightXInput = document.getElementById('rt-light-x');
+    const raysInput = document.getElementById('rt-rays');
+    const bouncesInput = document.getElementById('rt-bounces');
+
+    // Define scene obstacles (polygons)
+    const obstacles = [
+        // Walls
+        { p1: {x: 0, y: 0}, p2: {x: 600, y: 0} },
+        { p1: {x: 600, y: 0}, p2: {x: 600, y: 400} },
+        { p1: {x: 600, y: 400}, p2: {x: 0, y: 400} },
+        { p1: {x: 0, y: 400}, p2: {x: 0, y: 0} },
+        // A diamond shape
+        { p1: {x: 300, y: 250}, p2: {x: 350, y: 200} },
+        { p1: {x: 350, y: 200}, p2: {x: 400, y: 250} },
+        { p1: {x: 400, y: 250}, p2: {x: 350, y: 300} },
+        { p1: {x: 350, y: 300}, p2: {x: 300, y: 250} },
+        // A wall/mirror
+        { p1: {x: 500, y: 100}, p2: {x: 550, y: 280} },
+        // Small block
+        { p1: {x: 100, y: 150}, p2: {x: 180, y: 150} },
+        { p1: {x: 180, y: 150}, p2: {x: 180, y: 190} },
+        { p1: {x: 180, y: 190}, p2: {x: 100, y: 190} },
+        { p1: {x: 100, y: 190}, p2: {x: 100, y: 150} }
+    ];
+
+    function getIntersection(ray, segment) {
+        const r_px = ray.o.x;
+        const r_py = ray.o.y;
+        const r_dx = ray.d.x;
+        const r_dy = ray.d.y;
+        const s_px = segment.p1.x;
+        const s_py = segment.p1.y;
+        const s_dx = segment.p2.x - segment.p1.x;
+        const s_dy = segment.p2.y - segment.p1.y;
+
+        const cross = r_dx * s_dy - r_dy * s_dx;
+        if (Math.abs(cross) < 0.0001) return null; // Parallel
+
+        const t1 = ((s_px - r_px) * s_dy - (s_py - r_py) * s_dx) / cross;
+        const t2 = ((s_px - r_px) * r_dy - (s_py - r_py) * r_dx) / cross;
+
+        if (t1 > 0.0001 && t2 >= 0 && t2 <= 1.0) {
+            // Calculate normal
+            let nx = -s_dy;
+            let ny = s_dx;
+            const len = Math.hypot(nx, ny);
+            nx /= len;
+            ny /= len;
+            
+            // Fix normal direction to face the ray
+            if (nx * r_dx + ny * r_dy > 0) {
+                nx = -nx;
+                ny = -ny;
+            }
+
+            return {
+                x: r_px + t1 * r_dx,
+                y: r_py + t1 * r_dy,
+                t: t1,
+                normal: { x: nx, y: ny }
+            };
+        }
+        return null;
+    }
+
+    function traceRay(origin, direction, bouncesLeft) {
+        let closest = null;
+        let minDist = Infinity;
+
+        // Find closest intersection
+        obstacles.forEach(segment => {
+            const hit = getIntersection({o: origin, d: direction}, segment);
+            if (hit && hit.t < minDist) {
+                minDist = hit.t;
+                closest = hit;
+            }
+        });
+
+        if (closest) {
+            ctx.beginPath();
+            ctx.moveTo(origin.x, origin.y);
+            ctx.lineTo(closest.x, closest.y);
+            // Alpha fades with bounces
+            ctx.strokeStyle = `rgba(204, 255, 0, ${0.1 + (bouncesLeft * 0.15)})`;
+            ctx.stroke();
+
+            if (bouncesLeft > 0) {
+                // Reflect ray
+                const dot = direction.x * closest.normal.x + direction.y * closest.normal.y;
+                const reflectDir = {
+                    x: direction.x - 2 * dot * closest.normal.x,
+                    y: direction.y - 2 * dot * closest.normal.y
+                };
+                
+                // Advance origin slightly to prevent self-intersection
+                const newOrigin = {
+                    x: closest.x + closest.normal.x * 0.1,
+                    y: closest.y + closest.normal.y * 0.1
+                };
+
+                traceRay(newOrigin, reflectDir, bouncesLeft - 1);
+            }
+        } else {
+            // Ray escapes screen (won't happen with enclosing walls)
+            ctx.beginPath();
+            ctx.moveTo(origin.x, origin.y);
+            ctx.lineTo(origin.x + direction.x * 1000, origin.y + direction.y * 1000);
+            ctx.strokeStyle = `rgba(204, 255, 0, ${0.1 + (bouncesLeft * 0.15)})`;
+            ctx.stroke();
+        }
+    }
+
+    let t = 0;
+
+    function render() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const lightXOffset = parseFloat(lightXInput.value);
+        const lightYOffset = 80 + Math.sin(t * 0.8) * 40; // Add some bobbing
+
+        const origin = { x: lightXOffset, y: lightYOffset };
+        const numRays = parseInt(raysInput.value, 10);
+        const maxBounces = parseInt(bouncesInput.value, 10);
+
+        // Draw obstacles
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 2;
+        obstacles.forEach(segment => {
+            ctx.beginPath();
+            ctx.moveTo(segment.p1.x, segment.p1.y);
+            ctx.lineTo(segment.p2.x, segment.p2.y);
+            ctx.stroke();
+        });
+
+        // Draw light source
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(origin.x, origin.y, 6, 0, Math.PI * 2);
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '#ccff00';
+        ctx.fill();
+        ctx.fill(); // fill twice to intensify center
+        ctx.shadowBlur = 0;
+
+        // Cast rays
+        ctx.lineWidth = 1;
+        for (let i = 0; i < numRays; i++) {
+            const angle = (i / numRays) * Math.PI * 2 + (t * 0.05); // Global spin
+            const dir = { x: Math.cos(angle), y: Math.sin(angle) };
+            traceRay(origin, dir, maxBounces);
+        }
+
+        t += 0.02;
+        requestAnimationFrame(render);
+    }
+
+    render();
 }
