@@ -40,6 +40,7 @@
                 <ol>
                     <li><a href="#rasterization"><span class="section-tag tag-raster">RASTER</span> Scan-line
                             Conversion</a></li>
+                    <li><a href="#antialiasing"><span class="section-tag tag-raster">RASTER</span> Anti-Aliasing</a></li>
                     <li><a href="#fragment-shading">Fragment Shaders: Painting the Pixels</a></li>
                 </ol>
             </li>
@@ -125,6 +126,25 @@
                 </div>
                 <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Watch how the continuous mathematical
                     triangle is "sampled" into discrete pixel points.</p>
+            </div>
+        </section>
+
+        <section id="antialiasing">
+            <h2>Anti-Aliasing: Smoothing the Edges</h2>
+            <p>Because pixels are discrete squares on a grid, rendering continuous mathematical lines or curves results in "jaggies"—stair-step edges known as <strong>aliasing</strong>.</p>
+            <p><strong>Anti-aliasing (AA)</strong> solves this by calculating the fractional coverage of a pixel by the mathematical geometry. Instead of simply turning a pixel 100% on or 100% off (Bresenham's algorithm), it blends the pixel's color with the background proportionally based on how much the geometry overlaps it (Wu's algorithm), tricking our eyes into perceiving a perfectly smooth edge.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Pixel Sampling Simulator</div>
+                <canvas id="aa-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <button id="toggle-aa" style="margin-bottom: 1rem; width: 100%;">Enable Anti-Aliasing (Wu's Algorithm)</button>
+                    <div class="slider-group">
+                        <label>Angle: <span id="aa-angle-display">25</span>°</label>
+                        <input type="range" id="aa-angle" min="0" max="90" step="1" value="25">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Toggle algorithms to see how the stark stair-stepping (aliasing) becomes a visually smooth gradient edge under anti-aliasing.</p>
             </div>
         </section>
 

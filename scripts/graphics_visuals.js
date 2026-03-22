@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initCartesianPlane();
     initVertexTransformer();
     initRasterVisualizer();
+    initAntialiasing();
     initShaderPlayground();
     initRayTracer();
 });
@@ -437,6 +438,163 @@ function initRasterVisualizer() {
     });
 
     render();
+}
+
+// --- 3.5 ANTI-ALIASING VISUALIZER (Bresenham vs Wu) ---
+
+function initAntialiasing() {
+    const canvas = document.getElementById('aa-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const toggleBtn = document.getElementById('toggle-aa');
+    const angleSlider = document.getElementById('aa-angle');
+    const angleDisplay = document.getElementById('aa-angle-display');
+
+    let aaEnabled = false;
+
+    toggleBtn.addEventListener('click', () => {
+        aaEnabled = !aaEnabled;
+        toggleBtn.textContent = aaEnabled ? "Disable Anti-Aliasing (Bresenham)" : "Enable Anti-Aliasing (Wu's Algorithm)";
+        draw();
+    });
+
+    // Helper functions for Wu's algorithm
+    function ipart(x) { return Math.floor(x); }
+    function round(x) { return ipart(x + 0.5); }
+    function fpart(x) { return x - Math.floor(x); }
+    function rfpart(x) { return 1 - fpart(x); }
+
+    function draw() {
+        ctx.fillStyle = '#111';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const angleDeg = parseFloat(angleSlider.value);
+        angleDisplay.textContent = angleDeg;
+        
+        const angle = angleDeg * (Math.PI / 180);
+        const pixelSize = 10;
+        
+        const cxGrid = Math.floor(canvas.width / 2 / pixelSize);
+        const cyGrid = Math.floor(canvas.height / 2 / pixelSize);
+        const lengthGrid = 15;
+
+        // Line endpoints
+        const x0 = cxGrid - Math.cos(angle) * lengthGrid;
+        const y0 = cyGrid + Math.sin(angle) * lengthGrid;
+        const x1 = cxGrid + Math.cos(angle) * lengthGrid;
+        const y1 = cyGrid - Math.sin(angle) * lengthGrid;
+
+        function plot(x, y, c) {
+            ctx.fillStyle = `rgba(204, 255, 0, ${c})`;
+            ctx.fillRect(Math.floor(x) * pixelSize, Math.floor(y) * pixelSize, pixelSize, pixelSize);
+        }
+
+        function drawLineBresenham(x0, y0, x1, y1) {
+            let x0i = Math.round(x0), y0i = Math.round(y0);
+            let x1i = Math.round(x1), y1i = Math.round(y1);
+            let dx = Math.abs(x1i - x0i), sx = x0i < x1i ? 1 : -1;
+            let dy = Math.abs(y1i - y0i), sy = y0i < y1i ? 1 : -1;
+            let err = (dx > dy ? dx : -dy) / 2, e2; 
+            
+            while (true) {
+                plot(x0i, y0i, 1);
+                if (x0i === x1i && y0i === y1i) break;
+                e2 = err;
+                if (e2 > -dx) { err -= dy; x0i += sx; }
+                if (e2 < dy) { err += dx; y0i += sy; }
+            }
+        }
+
+        function drawLineWu(x0, y0, x1, y1) {
+            let steep = Math.abs(y1 - y0) > Math.abs(x1 - x0);
+            let temp;
+            if (steep) {
+                temp = x0; x0 = y0; y0 = temp;
+                temp = x1; x1 = y1; y1 = temp;
+            }
+            if (x0 > x1) {
+                temp = x0; x0 = x1; x1 = temp;
+                temp = y0; y0 = y1; y1 = temp;
+            }
+
+            let dx = x1 - x0;
+            let dy = y1 - y0;
+            let gradient = dx === 0 ? 1 : dy / dx;
+
+            let xend = round(x0);
+            let yend = y0 + gradient * (xend - x0);
+            let xgap = rfpart(x0 + 0.5);
+            let xpxl1 = xend;
+            let ypxl1 = ipart(yend);
+
+            if (steep) {
+                plot(ypxl1, xpxl1, rfpart(yend) * xgap);
+                plot(ypxl1 + 1, xpxl1, fpart(yend) * xgap);
+            } else {
+                plot(xpxl1, ypxl1, rfpart(yend) * xgap);
+                plot(xpxl1, ypxl1 + 1, fpart(yend) * xgap);
+            }
+
+            let intery = yend + gradient;
+            xend = round(x1);
+            yend = y1 + gradient * (xend - x1);
+            xgap = fpart(x1 + 0.5);
+            let xpxl2 = xend;
+            let ypxl2 = ipart(yend);
+
+            if (steep) {
+                plot(ypxl2, xpxl2, rfpart(yend) * xgap);
+                plot(ypxl2 + 1, xpxl2, fpart(yend) * xgap);
+            } else {
+                plot(xpxl2, ypxl2, rfpart(yend) * xgap);
+                plot(xpxl2, ypxl2 + 1, fpart(yend) * xgap);
+            }
+
+            if (steep) {
+                for (let x = xpxl1 + 1; x <= xpxl2 - 1; x++) {
+                    plot(ipart(intery), x, rfpart(intery));
+                    plot(ipart(intery) + 1, x, fpart(intery));
+                    intery += gradient;
+                }
+            } else {
+                for (let x = xpxl1 + 1; x <= xpxl2 - 1; x++) {
+                    plot(x, ipart(intery), rfpart(intery));
+                    plot(x, ipart(intery) + 1, fpart(intery));
+                    intery += gradient;
+                }
+            }
+        }
+
+        // Run the algorithms
+        if (aaEnabled) {
+            drawLineWu(x0, y0, x1, y1);
+        } else {
+            drawLineBresenham(x0, y0, x1, y1);
+        }
+
+        // Draw mathematical vector line on top (subpixel layout)
+        ctx.strokeStyle = 'rgba(255, 62, 62, 0.8)'; // Neon Red line
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        // offset by half a pixel so the geometric line rides the center of the grid coordinate
+        ctx.moveTo(x0 * pixelSize + pixelSize/2, y0 * pixelSize + pixelSize/2);
+        ctx.lineTo(x1 * pixelSize + pixelSize/2, y1 * pixelSize + pixelSize/2);
+        ctx.stroke();
+
+        // Draw grid outline overlay
+        ctx.strokeStyle = '#222';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < canvas.width; i += pixelSize) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+        }
+        for (let j = 0; j < canvas.height; j += pixelSize) {
+            ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
+        }
+    }
+
+    angleSlider.addEventListener('input', draw);
+    draw();
 }
 
 // --- 4. SHADER PLAYGROUND (GLSL emulation via JS) ---
