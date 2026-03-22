@@ -50,6 +50,7 @@
         <ol start="6">
             <li><a href="#sec-hh">The Mathematics of the Mind (Hodgkin-Huxley)</a></li>
             <li><a href="#sec-hebb">Fire Together, Wire Together (Hebbian Learning)</a></li>
+            <li><a href="#sec-bci">Bridging the Gap (Brain-Computer Interfaces)</a></li>
         </ol>
     </nav>
 
@@ -128,6 +129,23 @@
         </div>
         <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
             Click specific neurons sequentially to fire them. If two connected neurons fire in rapid succession, watch the weight of their physical connection thicken, permanently storing a memory of that stimulus.
+        </p>
+    </div>
+
+    <span class="section-tag">COMPUTATIONAL</span>
+    <h2 id="sec-bci">8. Bridging the Gap (Brain-Computer Interfaces)</h2>
+    <p>We are now entering the era where we can interface digital computation directly with biological neural networks. By implanting multi-electrode arrays into the motor cortex, we can capture the electrical storms of intent and mathematically decode them to control robotic limbs.</p>
+    <p>The primary challenge in BCI is <strong>Signal Processing</strong>. Biological brains are astonishingly noisy. We must extract pure, isolated intention from a massive chaotic electrical chorus.</p>
+
+    <div class="interactive-container">
+        <canvas id="bciCanvas" width="800" height="300" style="background:#050a0a; border: 1px solid var(--neuro-border);"></canvas>
+        <div class="controls" style="flex-wrap: wrap;">
+            <button id="bci-filter-btn">1. APPLY BANDPASS FILTER</button>
+            <button id="bci-spike-btn" disabled>2. RUN SPIKE SORTING</button>
+            <button id="bci-decode-btn" disabled style="background:var(--neuro-accent); color:#000; font-weight:bold;">3. DECODE MOTOR INTENT</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            You are viewing raw, noisy electrophysiological data from an electrode array. Apply mathematical filters sequentially to strip away the noise, isolate the spikes, and finally decode the underlying clean sine wave representing human intent.
         </p>
     </div>
 

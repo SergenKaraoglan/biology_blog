@@ -558,10 +558,139 @@ class HebbianLearningVis {
     }
 }
 
+class BCIDecoderVis {
+    constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.width = this.canvas.width;
+        this.height = this.canvas.height;
+        
+        this.filterBtn = document.getElementById('bci-filter-btn');
+        this.spikeBtn = document.getElementById('bci-spike-btn');
+        this.decodeBtn = document.getElementById('bci-decode-btn');
+        
+        this.state = 0; 
+        this.signal = [];
+        this.maxLen = 400;
+        this.time = 0;
+        
+        if (this.filterBtn) {
+            this.filterBtn.addEventListener('click', () => {
+                this.state = 1;
+                this.filterBtn.style.background = '#444';
+                this.filterBtn.innerText = 'BANDPASS ACTIVE';
+                this.filterBtn.disabled = true;
+                
+                this.spikeBtn.disabled = false;
+                this.spikeBtn.style.background = '#ff007a';
+            });
+            this.spikeBtn.addEventListener('click', () => {
+                this.state = 2;
+                this.spikeBtn.style.background = '#444';
+                this.spikeBtn.style.color = '#fff';
+                this.spikeBtn.innerText = 'SPIKES SORTED';
+                this.spikeBtn.disabled = true;
+                
+                this.decodeBtn.disabled = false;
+            });
+            this.decodeBtn.addEventListener('click', () => {
+                this.state = 3;
+                this.decodeBtn.style.background = '#444';
+                this.decodeBtn.style.color = '#fff';
+                this.decodeBtn.innerText = 'INTENT DECODED';
+                this.decodeBtn.disabled = true;
+            });
+        }
+        
+        this.animate();
+    }
+    
+    updateSignal() {
+        this.time += 0.05;
+        // Base motor intent: smooth sine wave
+        let intent = Math.sin(this.time) * 40;
+        
+        let noise = 0;
+        let spike = 0;
+        
+        if (this.state < 1) { // Raw: Heavy high-frequency noise
+            noise = (Math.random() - 0.5) * 60;
+        } else if (this.state < 2) { // Filtered: Low noise
+            noise = (Math.random() - 0.5) * 10;
+        }
+        
+        if (this.state < 2) { // Raw or Filtered: Random neural spikes
+            if (Math.random() < 0.05) spike = (Math.random() > 0.5 ? 1 : -1) * (80 + Math.random() * 40);
+        }
+        
+        let total = intent + noise + spike;
+        this.signal.push(total);
+        if (this.signal.length > this.maxLen) this.signal.shift();
+    }
+    
+    draw() {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        
+        // Draw grid
+        this.ctx.strokeStyle = '#112240';
+        this.ctx.lineWidth = 1;
+        this.ctx.beginPath();
+        for (let y = 0; y < this.height; y += 50) {
+            this.ctx.moveTo(0, y);
+            this.ctx.lineTo(this.width, y);
+        }
+        this.ctx.stroke();
+        
+        // Draw Signal
+        this.ctx.beginPath();
+        if (this.state === 0) this.ctx.strokeStyle = '#888';
+        else if (this.state === 1) this.ctx.strokeStyle = '#22d3ee';
+        else if (this.state >= 2) this.ctx.strokeStyle = '#00f2ff';
+        
+        this.ctx.lineWidth = 2;
+        
+        for (let i = 0; i < this.signal.length; i++) {
+            const x = (i / this.maxLen) * this.width;
+            const y = this.height / 2 - this.signal[i];
+            
+            if (i === 0) this.ctx.moveTo(x, y);
+            else this.ctx.lineTo(x, y);
+        }
+        this.ctx.stroke();
+        
+        // State 3 Overlay: Robotic Decoder matching intent
+        if (this.state === 3) {
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = '#ff007a';
+            this.ctx.lineWidth = 3;
+            for (let i = 0; i < this.signal.length - 15; i++) {
+                const x = (i / this.maxLen) * this.width;
+                const y = this.height / 2 - this.signal[i];
+                if (i === 0) this.ctx.moveTo(x, y);
+                else this.ctx.lineTo(x, y);
+            }
+            this.ctx.stroke();
+            
+            this.ctx.fillStyle = 'rgba(255, 0, 122, 0.2)';
+            this.ctx.fillRect(0, 0, this.width, 30);
+            this.ctx.fillStyle = '#ff007a';
+            this.ctx.font = '14px Courier New';
+            this.ctx.fillText("MOTOR COMMAND EXTRACTED: Y-AXIS TRANSLATION", 20, 20);
+        }
+    }
+    
+    animate() {
+        this.updateSignal();
+        this.draw();
+        requestAnimationFrame(() => this.animate());
+    }
+}
+
 window.onload = () => {
     if (document.getElementById('actionPotentialCanvas')) new ActionPotentialVis('actionPotentialCanvas');
     if (document.getElementById('synapseCanvas')) new SynapseVis('synapseCanvas');
     if (document.getElementById('networkCanvas')) new NeuralNetworkVis('networkCanvas');
     if (document.getElementById('hhCanvas')) new HodgkinHuxleyVis('hhCanvas');
     if (document.getElementById('hebbCanvas')) new HebbianLearningVis('hebbCanvas');
+    if (document.getElementById('bciCanvas')) new BCIDecoderVis('bciCanvas');
 };
