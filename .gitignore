@@ -5,3 +5,4 @@ node_modules/
 .gemini/
 /tmp/
 *.log
+sort_index.js

@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAntialiasing();
     initShaderPlayground();
     initRayTracer();
+    initVirtualReality();
 });
 
 // --- 1.5 CARTESIAN PLANE ---
@@ -824,4 +825,84 @@ function initRayTracer() {
     }
 
     render();
+}
+
+// --- 6. VIRTUAL REALITY VISUALIZER ---
+
+function initVirtualReality() {
+    const leftCanvas = document.getElementById('vr-left-canvas');
+    const rightCanvas = document.getElementById('vr-right-canvas');
+    if (!leftCanvas || !rightCanvas) return;
+
+    const ctxL = leftCanvas.getContext('2d');
+    const ctxR = rightCanvas.getContext('2d');
+    
+    const ipdSlider = document.getElementById('vr-ipd-slider');
+    const ipdValDisplay = document.getElementById('vr-ipd-val');
+
+    const vertices = [
+        new Point3D(-1, 1, -1), new Point3D(1, 1, -1), new Point3D(1, -1, -1), new Point3D(-1, -1, -1),
+        new Point3D(-1, 1, 1), new Point3D(1, 1, 1), new Point3D(1, -1, 1), new Point3D(-1, -1, 1)
+    ];
+
+    const edges = [
+        [0, 1], [1, 2], [2, 3], [3, 0],
+        [4, 5], [5, 6], [6, 7], [7, 4],
+        [0, 4], [1, 5], [2, 6], [3, 7]
+    ];
+
+    let rotX = 0;
+    let rotY = 0;
+
+    function renderScene(ctx, width, height, cameraOffsetX) {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, width, height);
+
+        const transformed = vertices.map(v => {
+            let p = rotateX(v, rotX);
+            p = rotateY(p, rotY);
+            
+            p.x *= 60; p.y *= 60; p.z *= 60;
+            
+            p.x -= cameraOffsetX;
+
+            return project(p, width, height, 400);
+        });
+
+        // Draw edges
+        ctx.strokeStyle = '#ccff00';
+        ctx.lineWidth = 1.5;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = 'rgba(204, 255, 0, 0.4)';
+        
+        edges.forEach(edge => {
+            const p1 = transformed[edge[0]];
+            const p2 = transformed[edge[1]];
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+        });
+        
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = '#333';
+        ctx.beginPath(); ctx.moveTo(width/2, height/2 - 5); ctx.lineTo(width/2, height/2 + 5); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(width/2 - 5, height/2); ctx.lineTo(width/2 + 5, height/2); ctx.stroke();
+    }
+
+    function animate() {
+        rotX += 0.005;
+        rotY += 0.01;
+
+        const ipd = parseFloat(ipdSlider.value);
+        ipdValDisplay.textContent = ipd.toFixed(1);
+
+        const halfIPDModeled = ipd * 2; 
+
+        renderScene(ctxL, leftCanvas.width, leftCanvas.height, -halfIPDModeled);
+        renderScene(ctxR, rightCanvas.width, rightCanvas.height, halfIPDModeled);
+
+        requestAnimationFrame(animate);
+    }
+    animate();
 }

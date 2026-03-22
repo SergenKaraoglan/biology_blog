@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Graphics: The Alchemy of Light | Polymath</title>
+    <title>Computer Graphics: The Alchemy of Light | Polymath</title>
     <link rel="stylesheet" href="../styles/fonts.css">
     <link rel="stylesheet" href="../styles/graphics_styles.css">
 </head>
@@ -15,7 +15,7 @@
     </nav>
 
     <header>
-        <h1>Graphics</h1>
+        <h1>Computer Graphics</h1>
         <p>How the brain of a machine converts abstract geometry into the vibrant pixels on your screen. A journey from
             first principles to real-time photorealism.</p>
     </header>
@@ -49,6 +49,7 @@
                 <ol>
                     <li><a href="#ray-tracing"><span class="section-tag tag-raytracing">LIGHT</span> Ray Tracing & Path
                             Tracing</a></li>
+                    <li><a href="#virtual-reality"><span class="section-tag tag-raytracing">PRESENCE</span> Virtual Reality</a></li>
                 </ol>
             </li>
         </ol>
@@ -84,7 +85,7 @@
 
         <section id="vertex-processing">
             <h2>The Geometry of Sight</h2>
-            <p>At its core, 3D graphics is an exercise in linear algebra. Every object is defined by a collection of
+            <p>At its core, computer graphics is an exercise in linear algebra. Every object is defined by a collection of
                 <strong>vertices</strong>—points in 3D space. To render these on a 2D screen, we must project them. This
                 involves multiplying them by a series of matrices: Model, View, and Projection.</p>
 
@@ -199,10 +200,32 @@
                 <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Observe how light rays emit from a source, interact with obstacles, and bounce to calculate accurate lighting paths.</p>
             </div>
         </section>
+
+        <section id="virtual-reality">
+            <span class="section-tag" style="background:var(--accent-color); color:#fff; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">PRESENCE</span>
+            <h2>Virtual Reality: Hacking Perception</h2>
+            <p>Traditional computer graphics map a 3D world to a flat 2D rectangle. <strong>Virtual Reality (VR)</strong> hacks the human brain's binocular vision by rendering two slightly different perspectives of the same scene—one for each eye.</p>
+            <p>When combined with ultra-low latency head tracking and distortion lenses, the brain fuses the two 2D images into a solitary, immersive 3D space. The mathematics of projection matrices must perfectly mirror the physical optics of the headset to maintain the illusion of absolute presence.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">Stereoscopic Renderer</div>
+                <div style="display: flex; gap: 10px; width: 100%; justify-content: center; background: #000; padding: 10px;">
+                    <div style="text-align: center; color: #666; font-size: 12px; font-family: 'Courier New';">LEFT EYE<br><canvas id="vr-left-canvas" width="280" height="280" style="background: #050505; border: 1px solid #333; margin-top: 5px;"></canvas></div>
+                    <div style="text-align: center; color: #666; font-size: 12px; font-family: 'Courier New';">RIGHT EYE<br><canvas id="vr-right-canvas" width="280" height="280" style="background: #050505; border: 1px solid #333; margin-top: 5px;"></canvas></div>
+                </div>
+                <div class="controls">
+                    <div class="slider-group">
+                        <label>Interpupillary Distance (IPD): <span id="vr-ipd-val">6.0</span> cm</label>
+                        <input type="range" id="vr-ipd-slider" min="0" max="15" step="0.5" value="6.0">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Adjust the IPD (distance between the cameras) to watch how the left and right perspectives shift horizontally to form stereoscopic depth. Cross your eyes to fuse the two cubes manually!</p>
+            </div>
+        </section>
     </main>
 
     <footer>
-        <p>© 2026 POLYMATH SERIES — 3D GRAPHICS MODULE</p>
+        <p>© 2026 POLYMATH SERIES — COMPUTER GRAPHICS MODULE</p>
     </footer>
 
     <script src="../scripts/graphics_visuals.js"></script>
