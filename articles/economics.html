@@ -54,6 +54,7 @@
         <p class="toc-part">Part III — Cooperation</p>
         <ol start="4">
             <li><a href="#sec-game-theory">The Strategy of Life (Game Theory)</a></li>
+            <li><a href="#sec-sum-games">The Size of the Pie (Zero-Sum vs Positive-Sum)</a></li>
             <li><a href="#sec-quiz">Test Your Economic Intuition</a></li>
         </ol>
     </nav>
@@ -156,7 +157,24 @@
         </p>
     </div>
 
-    <h2 id="sec-quiz">5. Test Your Economic Intuition</h2>
+    <span class="section-tag tag-cooperation">COOPERATION</span>
+    <h2 id="sec-sum-games">5. The Size of the Pie (Zero-Sum vs Positive-Sum)</h2>
+    <p>Not all conflicts are the same. In a <strong>Zero-Sum Game</strong>, whatever one player wins, the other player perfectly loses. The size of the "pie" is fixed. Examples include poker, war, and slicing an actual pie.</p>
+    
+    <p>Conversely, a <strong>Positive-Sum Game</strong> allows both players to win simultaneously. Trade is the ultimate positive-sum game. Because we value different things differently, freely trading goods or services creates a larger total pie of human satisfaction than existed before.</p>
+    
+    <div class="interactive-container">
+        <canvas id="sumGamesCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <button id="zero-sum-btn">ZERO-SUM: SLICE THE PIE</button>
+            <button id="pos-sum-btn">POSITIVE-SUM: BAKE A NEW PIE</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            In zero-sum logic, the red and blue slices just trade boundaries. In positive-sum trade logic, the total boundary area expands for both.
+        </p>
+    </div>
+
+    <h2 id="sec-quiz">6. Test Your Economic Intuition</h2>
     <p>Can you calculate the point of equilibrium? Use the Python environment below to solve basic supply and demand
         equations.</p>
 

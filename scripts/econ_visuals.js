@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initOpportunity();
     initMarginal();
     initGameTheory();
+    initSumGames();
 });
 
 // --- 1. HERO VISUAL (Flow of Value) ---
@@ -271,4 +272,80 @@ function initGameTheory() {
 
         cells[index].classList.add('active');
     });
+}
+
+// --- 6. ZERO-SUM VS POSITIVE-SUM ---
+function initSumGames() {
+    const canvas = document.getElementById('sumGamesCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const btnZero = document.getElementById('zero-sum-btn');
+    const btnPos = document.getElementById('pos-sum-btn');
+
+    let mode = 'zero'; // 'zero' or 'pos'
+    let t = 0;
+    
+    function render() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2 - 20;
+        const baseRadius = 100;
+
+        if (mode === 'zero') {
+            const splitAngle = Math.PI + Math.sin(t * 0.03) * Math.PI * 0.4;
+
+            // Player 1 (Blue)
+            ctx.fillStyle = '#00e5ff';
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, baseRadius, 0, splitAngle);
+            ctx.fill();
+
+            // Player 2 (Red)
+            ctx.fillStyle = '#ff3366';
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, baseRadius, splitAngle, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#fff';
+            ctx.font = '16px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('FIXED TOTAL VALUE (100%)', centerX, centerY + baseRadius + 40);
+            
+        } else {
+            const growth = 1 + (Math.sin(t * 0.03) * 0.5 + 0.5); // 1 to 2
+            const r1 = baseRadius * 0.6 * growth;
+            const r2 = baseRadius * 0.6 * growth;
+
+            // Player 1 (Blue)
+            ctx.globalCompositeOperation = 'screen';
+            ctx.fillStyle = '#00e5ff';
+            ctx.beginPath();
+            ctx.arc(centerX - 40, centerY, r1, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Player 2 (Red)
+            ctx.fillStyle = '#ff3366';
+            ctx.beginPath();
+            ctx.arc(centerX + 40, centerY, r2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+
+            ctx.fillStyle = '#fff';
+            ctx.font = '16px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('GROWING TOTAL VALUE (>100%)', centerX, centerY + baseRadius * 1.5 + 40);
+        }
+
+        t++;
+        requestAnimationFrame(render);
+    }
+
+    btnZero.addEventListener('click', () => { mode = 'zero'; t = 0; });
+    btnPos.addEventListener('click', () => { mode = 'pos'; t = 0; });
+
+    render();
 }
