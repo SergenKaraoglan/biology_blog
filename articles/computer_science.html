@@ -41,7 +41,7 @@
         <p class="toc-part">Part II — Transformation</p>
         <ol start="2">
             <li><a href="#sec-logic">The Geometry of Thought (Logic Gates)</a></li>
-            <li><a href="#sec-architecture">The Loom of Data (Von Neumann Architecture)</a></li>
+            <li><a href="#sec-gpu">Parallel Realities (The GPU)</a></li>
         </ol>
 
         <p class="toc-part">Part III — Organization</p>
@@ -88,8 +88,25 @@
         </p>
     </div>
 
+    <span class="section-tag" style="background:#ccff00; color:#000; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">PARALLELISM</span>
+    <h2 id="sec-gpu">3. Parallel Realities (The GPU)</h2>
+    <p>Traditional computer architecture (the CPU) is like a brilliant mathematician—it can solve incredibly complex logic problems consecutively, but only one step at a time. This becomes a bottleneck when rendering graphics or training AI, where millions of simple calculations need to happen simultaneously.</p>
+    
+    <p>A <strong>Graphical Processing Unit (GPU)</strong> solves this through <strong>Parallelism</strong>. Instead of a few powerful cores, it utilizes thousands of smaller, simpler cores to execute operations concurrently. An operation that takes a CPU minutes to calculate sequentially can be executed by a GPU in milliseconds.</p>
+    
+    <div class="interactive-container">
+        <canvas id="gpuCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <button id="cpu-mode-btn">MODE: CPU (SEQUENTIAL)</button>
+            <button id="gpu-mode-btn">MODE: GPU (PARALLEL)</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Observe how a CPU processes information one instruction at a time, while a GPU harnesses thousands of cores to compute vast arrays of data instantaneously.
+        </p>
+    </div>
+
     <span class="section-tag tag-struct">STRUCTURE</span>
-    <h2 id="sec-structures">3. Architectures of Memory (Data Structures)</h2>
+    <h2 id="sec-structures">4. Architectures of Memory (Data Structures)</h2>
     <p>How we arrange data determines how fast we can find it. This is the essence of <strong>Data Structures</strong>.</p>
 
     <p>An <strong>Array</strong> is like a row of lockers—fast to access if you know the number, but hard to expand. A <strong>Linked List</strong> is like a scavenger hunt—each item tells you where the next one is; easy to grow, but slow to search. Choosing the right structure is the most important decision a programmer makes.</p>
@@ -105,7 +122,7 @@
         </p>
     </div>
 
-    <h2 id="sec-quiz">4. Test Your Computational Intuition</h2>
+    <h2 id="sec-quiz">5. Test Your Computational Intuition</h2>
     <p>Can you implement a basic sort? Use the Python environment below to sort a list of numbers from first principles.</p>
 
     <div class="interactive-container" style="align-items: stretch; padding: 2rem;">

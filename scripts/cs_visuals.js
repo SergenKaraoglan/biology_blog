@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initHero();
     initBinary();
     initLogic();
+    initGPUVisualizer();
     initStructs();
 });
 
@@ -161,6 +162,93 @@ function initLogic() {
         draw();
     });
 
+    draw();
+}
+
+// --- 3.5 PARALLEL REALITIES (GPU) ---
+function initGPUVisualizer() {
+    const canvas = document.getElementById('gpuCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const cpuBtn = document.getElementById('cpu-mode-btn');
+    const gpuBtn = document.getElementById('gpu-mode-btn');
+
+    let mode = 'CPU'; 
+    let grid = [];
+    const cols = 50;
+    const rows = 25;
+    const cellW = canvas.width / cols;
+    const cellH = canvas.height / rows;
+    let animationId = null;
+
+    function resetGrid() {
+        grid = [];
+        for(let r = 0; r < rows; r++) {
+            for(let c = 0; c < cols; c++) {
+                grid.push({ r, c, done: false });
+            }
+        }
+    }
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        grid.forEach(cell => {
+            const x = cell.c * cellW;
+            const y = cell.r * cellH;
+            ctx.fillStyle = cell.done ? '#ccff00' : '#222';
+            ctx.fillRect(x + 1, y + 1, cellW - 2, cellH - 2);
+        });
+    }
+
+    function animate() {
+        let isDone = true;
+        
+        if (mode === 'CPU') {
+            let processed = 0;
+            for (let i = 0; i < grid.length; i++) {
+                if (!grid[i].done) {
+                    grid[i].done = true;
+                    processed++;
+                    isDone = false;
+                    if (processed >= 6) break; // slow sequential speed
+                }
+            }
+        } else if (mode === 'GPU') {
+            let processed = 0;
+            for (let i = 0; i < grid.length; i++) {
+                if (!grid[i].done) {
+                    grid[i].done = true;
+                    processed++;
+                    isDone = false;
+                    if (processed >= 400) break; // extremely fast batch processing
+                }
+            }
+        }
+
+        draw();
+
+        if (!isDone) {
+            animationId = requestAnimationFrame(animate);
+        }
+    }
+
+    cpuBtn.addEventListener('click', () => {
+        mode = 'CPU';
+        if(animationId) cancelAnimationFrame(animationId);
+        resetGrid();
+        animate();
+    });
+
+    gpuBtn.addEventListener('click', () => {
+        mode = 'GPU';
+        if(animationId) cancelAnimationFrame(animationId);
+        resetGrid();
+        animate();
+    });
+
+    resetGrid();
     draw();
 }
 
