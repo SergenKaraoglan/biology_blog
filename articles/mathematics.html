@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A first-principles guide to mathematics. Explore numerical patterns, geometry, and the beauty of chaos through interactive visualizations.">
+    <meta name="description"
+        content="A first-principles guide to mathematics. Explore numerical patterns, geometry, and the beauty of chaos through interactive visualizations.">
     <title>Mathematics: First Principles — The Universal Language</title>
     <link rel="stylesheet" href="../styles/fonts.css">
     <link rel="stylesheet" href="../styles/math_styles.css">
 </head>
+
 <body>
     <nav class="home-nav">
         <a href="../index.html">← BACK TO HOME</a>
@@ -19,15 +22,19 @@
         <canvas id="heroCanvas"></canvas>
     </div>
 
-    <p>Mathematics is not about numbers, equations, or algorithms: it is about <strong>Understanding</strong>. It is the search for patterns that remain true regardless of the physical world. It is the language in which the universe is written.</p>
+    <p>Mathematics is not about numbers, equations, or algorithms: it is about <strong>Understanding</strong>. It is the
+        search for patterns that remain true regardless of the physical world. It is the language in which the universe
+        is written.</p>
 
-    <p>At its heart, math is the study of <strong>Structure</strong>. From the way seeds arrange themselves in a sunflower to the complex geometry of space-time, mathematics provides the tools to decode the hidden logic of reality. It is the ultimate first principle.</p>
+    <p>At its heart, math is the study of <strong>Structure</strong>. From the way seeds arrange themselves in a
+        sunflower to the complex geometry of space-time, mathematics provides the tools to decode the hidden logic of
+        reality. It is the ultimate first principle.</p>
 
     <p>Let's strip away the symbols and find the beauty in the logic.</p>
 
     <nav class="toc">
         <p class="toc-title">CONTENTS</p>
-        
+
         <p class="toc-part">Part I — Pure Pattern</p>
         <ol>
             <li><a href="#sec-patterns">The Code of Nature (Fibonacci & Phyllotaxis)</a></li>
@@ -46,9 +53,12 @@
 
     <span class="section-tag tag-patterns">PURE PATTERN</span>
     <h2 id="sec-patterns">1. The Code of Nature (Fibonacci & Phyllotaxis)</h2>
-    <p>Numbers aren't just for counting; they form the blueprint of the organic world. The <strong>Fibonacci Sequence</strong> (1, 1, 2, 3, 5, 8...) appears everywhere, from the spiral of galaxies to the arrangement of leaves on a stem.</p>
-    
-    <p>This isn't a coincidence. This specific arrangement, known as <strong>Phyllotaxis</strong>, allows for the most efficient packing of seeds or leaves, ensuring each gets maximum sunlight or space without overlapping.</p>
+    <p>Numbers aren't just for counting; they form the blueprint of the organic world. The <strong>Fibonacci
+            Sequence</strong> (1, 1, 2, 3, 5, 8...) appears everywhere, from the spiral of galaxies to the arrangement
+        of leaves on a stem.</p>
+
+    <p>This isn't a coincidence. This specific arrangement, known as <strong>Phyllotaxis</strong>, allows for the most
+        efficient packing of seeds or leaves, ensuring each gets maximum sunlight or space without overlapping.</p>
 
     <div class="interactive-container">
         <canvas id="patternsCanvas" width="600" height="400"></canvas>
@@ -58,16 +68,21 @@
                 <input type="range" id="patterns-slider" min="10" max="1000" step="1" value="200">
             </div>
         </div>
-        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
-            Adjust the slider to see how simple mathematical rules create complex organic spirals. This is the Golden Ratio in action.
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Adjust the slider to see how simple mathematical rules create complex organic spirals. This is the Golden
+            Ratio in action.
         </p>
     </div>
 
     <span class="section-tag tag-geometry">SPACE & LOGIC</span>
     <h2 id="sec-geometry">2. The Measure of World (Geometry & Proof)</h2>
-    <p>Geometry is the study of <strong>Invariance</strong>—the properties that stay the same even when you move or rotate an object. The Pythagorean Theorem is a perfect example: in a right-angled triangle, the relationship between the sides is an eternal truth.</p>
+    <p>Geometry is the study of <strong>Invariance</strong>—the properties that stay the same even when you move or
+        rotate an object. The Pythagorean Theorem is a perfect example: in a right-angled triangle, the relationship
+        between the sides is an eternal truth.</p>
 
-    <p>Proof is the heartbeat of mathematics. Unlike science, which relies on evidence that can be overturned, a mathematical proof establishes a truth that will remain true for as long as the universe exists.</p>
+    <p>Proof is the heartbeat of mathematics. Unlike science, which relies on evidence that can be overturned, a
+        mathematical proof establishes a truth that will remain true for as long as the universe exists.</p>
 
     <div class="interactive-container">
         <canvas id="geometryCanvas" width="600" height="300"></canvas>
@@ -81,21 +96,29 @@
                 <input type="range" id="side-b" min="20" max="200" step="1" value="100">
             </div>
         </div>
-        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
-            Change the lengths of sides A and B. Side C (the hypotenuse) always follows the rule: a² + b² = c². Current C: <span id="side-c">0</span>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Change the lengths of sides A and B. Side C (the hypotenuse) always follows the rule: a² + b² = c². Current
+            C: <span id="side-c">0</span>
         </p>
     </div>
 
     <span class="section-tag tag-chaos">THE EDGE OF REASON</span>
     <h2 id="sec-chaos">3. Beauty in Chaos (Fractals & Dynamics)</h2>
-    <p>Sometimes, simple rules lead to infinite complexity. <strong>Fractals</strong> are shapes that look the same at every scale. They are the geometry of nature—found in clouds, coastlines, and even our own circulatory systems.</p>
+    <p>Sometimes, simple rules lead to infinite complexity. <strong>Fractals</strong> are shapes that look the same at
+        every scale. They are the geometry of nature—found in clouds, coastlines, and even our own circulatory systems.
+    </p>
 
-    <p>The Julia Set and the Mandelbrot Set are visualizations of complex numbers being feedback into simple equations. This is the realm of <strong>Chaos Theory</strong>, where small changes in initial conditions can lead to wildly different outcomes.</p>
+    <p>The Julia Set and the Mandelbrot Set are visualizations of complex numbers being feedback into simple equations.
+        This is the realm of <strong>Chaos Theory</strong>, where small changes in initial conditions can lead to wildly
+        different outcomes.</p>
 
     <div class="interactive-container">
         <canvas id="chaosCanvas" width="600" height="400" style="cursor: crosshair;"></canvas>
-        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
-            Move your mouse over the canvas to explore different snapshots of the Julia Set. Each pixel is the result of thousands of iterations of a simple rule: z = z² + c.
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Move your mouse over the canvas to explore different snapshots of the Julia Set. Each pixel is the result of
+            thousands of iterations of a simple rule: z = z² + c.
         </p>
     </div>
 
@@ -105,4 +128,5 @@
 
     <script src="../scripts/math_visuals.js"></script>
 </body>
+
 </html>

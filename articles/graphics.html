@@ -30,8 +30,8 @@
             <li>
                 <div class="toc-part">PART I: GEOMETRY</div>
                 <ol>
-                    <li><a href="#vertex-processing"><span class="section-tag tag-geometry">GEOMETRY</span> Vertex
-                            Processing & Matrices</a></li>
+                    <li><a href="#cartesian-coordinates"><span class="section-tag tag-geometry">GEOMETRY</span> The Cartesian Coordinate System</a></li>
+                    <li><a href="#vertex-processing">Vertex Processing & Matrices</a></li>
                     <li><a href="#transformations">Transformations in 3D Space</a></li>
                 </ol>
             </li>
@@ -54,6 +54,33 @@
     </section>
 
     <main>
+        <section id="cartesian-coordinates">
+            <h2>The Cartesian Coordinate System</h2>
+            <p>Every digital image, 3D model, and pixel on your screen exists within a mathematical space known as the <strong>Cartesian Coordinate System</strong>. Developed by René Descartes, it bridges the gap between algebra and geometry, allowing us to define any point in space using numerical coordinates (X, Y, and Z).</p>
+            <p>Without this foundational grid, computer graphics as we know them would be impossible. It provides the absolute reference frame necessary to map abstract shapes into a format the machine can render.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Cartesian Plane Mapper</div>
+                <canvas id="cartesianCanvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <button id="toggle-dimensions" style="margin-bottom: 1rem; width: 100%;">Switch to 3D Space</button>
+                    <div class="slider-group">
+                        <label>X Coordinate: <span id="coord-x">5.0</span></label>
+                        <input type="range" id="slider-cx" min="-15" max="15" step="0.5" value="5">
+                    </div>
+                    <div class="slider-group">
+                        <label>Y Coordinate: <span id="coord-y">5.0</span></label>
+                        <input type="range" id="slider-cy" min="-10" max="10" step="0.5" value="5">
+                    </div>
+                    <div class="slider-group" id="group-cz" style="display: none;">
+                        <label>Z Coordinate: <span id="coord-z">0.0</span></label>
+                        <input type="range" id="slider-cz" min="-10" max="10" step="0.5" value="0">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Move the sliders to translate the point across the coordinate plane, mapping numerical values to spatial positions.</p>
+            </div>
+        </section>
+
         <section id="vertex-processing">
             <h2>The Geometry of Sight</h2>
             <p>At its core, 3D graphics is an exercise in linear algebra. Every object is defined by a collection of

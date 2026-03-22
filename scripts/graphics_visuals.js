@@ -5,11 +5,188 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     initHeroCube();
+    initCartesianPlane();
     initVertexTransformer();
     initRasterVisualizer();
     initShaderPlayground();
     initRayTracer();
 });
+
+// --- 1.5 CARTESIAN PLANE ---
+
+function initCartesianPlane() {
+    const canvas = document.getElementById('cartesianCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const toggleBtn = document.getElementById('toggle-dimensions');
+    const sliderX = document.getElementById('slider-cx');
+    const sliderY = document.getElementById('slider-cy');
+    const sliderZ = document.getElementById('slider-cz');
+    
+    const labelX = document.getElementById('coord-x');
+    const labelY = document.getElementById('coord-y');
+    const labelZ = document.getElementById('coord-z');
+    const groupZ = document.getElementById('group-cz');
+
+    let is3D = false;
+
+    toggleBtn.addEventListener('click', () => {
+        is3D = !is3D;
+        toggleBtn.textContent = is3D ? 'Switch to 2D Space' : 'Switch to 3D Space';
+        groupZ.style.display = is3D ? 'flex' : 'none';
+        draw();
+    });
+
+    function draw() {
+        const xVal = parseFloat(sliderX.value);
+        const yVal = parseFloat(sliderY.value);
+        const zVal = is3D ? parseFloat(sliderZ.value) : 0;
+
+        labelX.textContent = xVal.toFixed(1);
+        labelY.textContent = yVal.toFixed(1);
+        if (is3D) labelZ.textContent = zVal.toFixed(1);
+
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const scale = 15; // pixels per unit
+
+        if (!is3D) {
+            // 2D Grid
+            ctx.strokeStyle = '#222';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= canvas.width; i += scale) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+            for (let j = 0; j <= canvas.height; j += scale) {
+                ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
+            }
+
+            // 2D Axes
+            ctx.strokeStyle = '#555';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(canvas.width, cy); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, canvas.height); ctx.stroke();
+
+            // 2D Target point
+            const px = cx + xVal * scale;
+            const py = cy - yVal * scale;
+
+            // 2D coordinate lines
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = '#ccff00';
+            ctx.beginPath();
+            ctx.moveTo(px, cy);
+            ctx.lineTo(px, py);
+            ctx.lineTo(cx, py);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 2D Point
+            ctx.fillStyle = '#ccff00';
+            ctx.beginPath();
+            ctx.arc(px, py, 6, 0, Math.PI * 2);
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#ccff00';
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            
+            // 2D Text
+            ctx.fillStyle = '#fff';
+            ctx.font = '14px Courier New';
+            ctx.fillText(`(${xVal.toFixed(1)}, ${yVal.toFixed(1)})`, px + 10, py - 10);
+        } else {
+            // 3D Logic
+            const fov = 400;
+            const angleX = 0.4;
+            const angleY = -0.6;
+
+            function processPoint(px, py, pz) {
+                let p = new Point3D(px * scale, py * scale, pz * scale);
+                p = rotateX(p, angleX);
+                p = rotateY(p, angleY);
+                return project(p, canvas.width, canvas.height, fov);
+            }
+
+            // 3D Axes
+            const origin = processPoint(0, 0, 0);
+
+            // X axis (red)
+            const xAx1 = processPoint(-15, 0, 0);
+            const xAx2 = processPoint(15, 0, 0);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#ff3333';
+            ctx.beginPath(); ctx.moveTo(xAx1.x, xAx1.y); ctx.lineTo(origin.x, origin.y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(origin.x, origin.y); ctx.lineTo(xAx2.x, xAx2.y); ctx.stroke();
+
+            // Y axis (green)  (+Y is technically up in project helper by inverting)
+            const yAx1 = processPoint(0, -10, 0);
+            const yAx2 = processPoint(0, 10, 0);
+            ctx.strokeStyle = '#33ff33';
+            ctx.beginPath(); ctx.moveTo(yAx1.x, yAx1.y); ctx.lineTo(origin.x, origin.y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(origin.x, origin.y); ctx.lineTo(yAx2.x, yAx2.y); ctx.stroke();
+
+            // Z axis (blue)
+            const zAx1 = processPoint(0, 0, -15);
+            const zAx2 = processPoint(0, 0, 15);
+            ctx.strokeStyle = '#3366ff';
+            ctx.beginPath(); ctx.moveTo(zAx1.x, zAx1.y); ctx.lineTo(origin.x, origin.y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(origin.x, origin.y); ctx.lineTo(zAx2.x, zAx2.y); ctx.stroke();
+
+            // 3D Target point
+            const pt = processPoint(xVal, yVal, zVal);
+            
+            // Projections onto planes
+            const pxz = processPoint(xVal, 0, zVal);
+            const pxy = processPoint(xVal, yVal, 0);
+            const pyz = processPoint(0, yVal, zVal);
+            const px = processPoint(xVal, 0, 0);
+            const py = processPoint(0, yVal, 0);
+            const pz = processPoint(0, 0, zVal);
+
+            // Draw connecting lines
+            ctx.setLineDash([4, 4]);
+            ctx.strokeStyle = 'rgba(204, 255, 0, 0.6)';
+            
+            // Box edges to point
+            ctx.beginPath(); ctx.moveTo(pt.x, pt.y); ctx.lineTo(pxz.x, pxz.y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(pt.x, pt.y); ctx.lineTo(pxy.x, pxy.y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(pt.x, pt.y); ctx.lineTo(pyz.x, pyz.y); ctx.stroke();
+
+            // Box edges on XZ plane
+            ctx.beginPath(); ctx.moveTo(pxz.x, pxz.y); ctx.lineTo(px.x, px.y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(pxz.x, pxz.y); ctx.lineTo(pz.x, pz.y); ctx.stroke();
+
+            // Box edges on XY plane
+            ctx.beginPath(); ctx.moveTo(pxy.x, pxy.y); ctx.lineTo(px.x, px.y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(pxy.x, pxy.y); ctx.lineTo(py.x, py.y); ctx.stroke();
+            
+            // Box edges on YZ plane
+            ctx.beginPath(); ctx.moveTo(pyz.x, pyz.y); ctx.lineTo(py.x, py.y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(pyz.x, pyz.y); ctx.lineTo(pz.x, pz.y); ctx.stroke();
+
+            ctx.setLineDash([]);
+
+            // 3D Point
+            ctx.fillStyle = '#ccff00';
+            ctx.beginPath(); ctx.arc(pt.x, pt.y, 6, 0, Math.PI * 2); 
+            ctx.shadowBlur = 10; ctx.shadowColor = '#ccff00'; ctx.fill(); ctx.shadowBlur = 0;
+
+            // 3D Text
+            ctx.fillStyle = '#fff';
+            ctx.font = '14px Courier New';
+            ctx.fillText(`(${xVal.toFixed(1)}, ${yVal.toFixed(1)}, ${zVal.toFixed(1)})`, pt.x + 10, pt.y - 10);
+        }
+    }
+
+    sliderX.addEventListener('input', draw);
+    sliderY.addEventListener('input', draw);
+    if(sliderZ) sliderZ.addEventListener('input', draw);
+    draw();
+}
 
 // --- HELPER: Simple 3D Engine from Scratch ---
 
