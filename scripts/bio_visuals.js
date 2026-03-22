@@ -1938,7 +1938,7 @@ function drawImmune() {
         ab.life -= 0.5;
 
         // Draw Y-shape
-        immuneCtx.strokeStyle = 'var(--immune-cyan)';
+        immuneCtx.strokeStyle = '#22d3ee'; // var(--immune-cyan)
         immuneCtx.lineWidth = 2;
         immuneCtx.beginPath();
         immuneCtx.moveTo(ab.x, ab.y);
@@ -1950,7 +1950,7 @@ function drawImmune() {
         immuneCtx.stroke();
 
         // Draw paratope shape (tips)
-        immuneCtx.fillStyle = 'var(--immune-cyan)';
+        immuneCtx.fillStyle = '#22d3ee'; // var(--immune-cyan)
         drawShape(immuneCtx, ab.shape, ab.x, ab.y - 8, 3);
         immuneCtx.fill();
 
@@ -2400,8 +2400,8 @@ function drawFractal() {
     
     let linesToDraw = Math.floor(fracLines.length * fracProgress);
     
-    fracCtx.strokeStyle = 'var(--bio-green)';
-    if (currentSpecies === 2) fracCtx.strokeStyle = 'var(--dna-blue)'; 
+    fracCtx.strokeStyle = '#00ff88'; // var(--bio-green)
+    if (currentSpecies === 2) fracCtx.strokeStyle = '#00aaff'; // var(--dna-blue)
     if (currentSpecies === 0) fracCtx.strokeStyle = '#fbbf24'; 
     
     fracCtx.lineWidth = 1;
@@ -2437,6 +2437,126 @@ if (fracRunBtn) {
         initFractal();
         fracRunBtn.innerText = 'PAUSE FRACTAL';
     });
+}
+
+// --- Section 18: Swarm Behavior (Boids) ---
+const boidsCanvas = document.getElementById('boidsCanvas');
+const boidsCtx = boidsCanvas ? boidsCanvas.getContext('2d') : null;
+const sepSlider = document.getElementById('boids-sep');
+const aliSlider = document.getElementById('boids-ali');
+const cohSlider = document.getElementById('boids-coh');
+
+let boids = [];
+const numBoids = 150;
+const speedLimit = 3;
+const visualRange = 40;
+
+function initBoids() {
+    boids = [];
+    if (!boidsCanvas) return;
+    for (let i = 0; i < numBoids; i++) {
+        boids.push({
+            x: Math.random() * boidsCanvas.width,
+            y: Math.random() * boidsCanvas.height,
+            vx: (Math.random() - 0.5) * speedLimit,
+            vy: (Math.random() - 0.5) * speedLimit,
+        });
+    }
+}
+
+function drawBoids() {
+    if (!boidsCtx) return;
+    const w = boidsCanvas.width;
+    const h = boidsCanvas.height;
+
+    boidsCtx.fillStyle = 'rgba(10, 25, 47, 0.3)';
+    boidsCtx.fillRect(0, 0, w, h);
+
+    const matchFactor = aliSlider ? parseFloat(aliSlider.value) * 0.05 : 0.05;
+    const centeringFactor = cohSlider ? parseFloat(cohSlider.value) * 0.005 : 0.005;
+    const avoidFactor = sepSlider ? parseFloat(sepSlider.value) * 0.05 : 0.05;
+
+    for (let boid of boids) {
+        let xVelAvg = 0, yVelAvg = 0;
+        let xPosAvg = 0, yPosAvg = 0;
+        let cdx = 0, cdy = 0;
+        let neighboringBoids = 0;
+
+        for (let otherBoid of boids) {
+            if (boid !== otherBoid) {
+                const dx = boid.x - otherBoid.x;
+                const dy = boid.y - otherBoid.y;
+                const distSq = dx * dx + dy * dy;
+
+                if (distSq < visualRange * visualRange) {
+                    xVelAvg += otherBoid.vx;
+                    yVelAvg += otherBoid.vy;
+                    xPosAvg += otherBoid.x;
+                    yPosAvg += otherBoid.y;
+                    neighboringBoids++;
+                }
+                
+                if (distSq < 20 * 20) {
+                    cdx += dx;
+                    cdy += dy;
+                }
+            }
+        }
+
+        if (neighboringBoids > 0) {
+            xVelAvg = xVelAvg / neighboringBoids;
+            yVelAvg = yVelAvg / neighboringBoids;
+            boid.vx += (xVelAvg - boid.vx) * matchFactor;
+            boid.vy += (yVelAvg - boid.vy) * matchFactor;
+
+            xPosAvg = xPosAvg / neighboringBoids;
+            yPosAvg = yPosAvg / neighboringBoids;
+            boid.vx += (xPosAvg - boid.x) * centeringFactor;
+            boid.vy += (yPosAvg - boid.y) * centeringFactor;
+        }
+
+        boid.vx += cdx * avoidFactor;
+        boid.vy += cdy * avoidFactor;
+
+        // Bounds
+        const margin = 50;
+        const turnFactor = 0.5;
+        if (boid.x < margin) boid.vx += turnFactor;
+        if (boid.x > w - margin) boid.vx -= turnFactor;
+        if (boid.y < margin) boid.vy += turnFactor;
+        if (boid.y > h - margin) boid.vy -= turnFactor;
+
+        // Speed limit
+        const speed = Math.sqrt(boid.vx * boid.vx + boid.vy * boid.vy);
+        if (speed > speedLimit) {
+            boid.vx = (boid.vx / speed) * speedLimit;
+            boid.vy = (boid.vy / speed) * speedLimit;
+        }
+
+        boid.x += boid.vx;
+        boid.y += boid.vy;
+
+        // Draw Boid
+        const angle = Math.atan2(boid.vy, boid.vx);
+        boidsCtx.save();
+        boidsCtx.translate(boid.x, boid.y);
+        boidsCtx.rotate(angle);
+        boidsCtx.beginPath();
+        boidsCtx.fillStyle = '#00ff88'; // var(--bio-green)
+        boidsCtx.moveTo(8, 0);
+        boidsCtx.lineTo(-4, 4);
+        boidsCtx.lineTo(-4, -4);
+        boidsCtx.closePath();
+        boidsCtx.fill();
+        boidsCtx.restore();
+    }
+
+    requestAnimationFrame(drawBoids);
+}
+
+if (boidsCanvas) {
+    initBoids();
+    drawBoids();
 }
 
 // Initialize
