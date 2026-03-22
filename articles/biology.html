@@ -372,26 +372,6 @@
         </p>
     </div>
 
-    <h2 id="sec-quiz">16. Test Your Biology Knowledge</h2>
-    <p>Can you implement the core logic of the central dogma? Below is a live Python environment. Write the functions to
-        simulate base-pairing and protein translation.</p>
-
-    <div class="interactive-container" style="align-items: stretch; padding: 2rem;">
-        <div class="controls" style="justify-content: space-between; margin-top: 0; margin-bottom: 1rem;">
-            <select id="quiz-select"
-                style="background:#111; color:#fff; border:1px solid #444; padding:0.5rem; font-family:'Courier New', monospace; flex-grow:1; margin-right:1rem;">
-                <option value="pairing">01. BASE PAIRING LOGIC</option>
-                <option value="transcription">02. RNA TRANSCRIPTION</option>
-                <option value="codon">03. CODON TRANSLATION</option>
-            </select>
-            <button id="quiz-run-btn" disabled>INITIALIZING...</button>
-        </div>
-        <textarea id="quiz-editor"
-            style="width:100%; height:200px; background:#0a0a0a; color:#fff; border:1px solid #333; font-family:'Courier New', monospace; padding:1rem; outline:none;"></textarea>
-        <div class="output-console" id="quiz-output"
-            style="margin-top:1rem; background:#050505; color:var(--bio-green); padding:1rem; border:1px solid #333; font-family:'Courier New', monospace; min-height:60px; white-space:pre-wrap;">
-            Awaiting Python Kernel...</div>
-    </div>
 
     <span class="section-tag tag-math">MATH</span>
     <h2 id="sec-turing">14. The Mathematics of Form (Turing Patterns)</h2>
@@ -432,6 +412,65 @@
         <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; padding-bottom:1rem; font-family: 'Courier New', monospace;">
             Left: The 2D particle ecosystem. Right: The live differential equation graph. Watch the two populations infinitely oscillate perfectly out of phase.
         </p>
+    </div>
+
+    <span class="section-tag tag-math">MATH</span>
+    <h2 id="sec-phylo">16. The Mathematics of Growth (Phyllotaxis)</h2>
+    <p>How do plants pack the maximum number of seeds into a sunflower head without wasting any space? Nature solved this optimization problem using the irrational geometry of the <strong>Golden Ratio</strong>.</p>
+    <p>By rotating exactly 137.5° (the Golden Angle) before placing the next seed, plants form perfect, infinitely scalable spirals. Deviating by even a fraction of a degree instantly destroys this perfect packing geometry.</p>
+
+    <div class="interactive-container">
+        <canvas id="phyloCanvas" width="600" height="300" style="background:#111; border:1px solid #333;"></canvas>
+        <div class="controls">
+            <button id="phylo-run-btn" style="background:var(--math-purple); color:#fff; font-weight:bold;">GROW SEEDS</button>
+            <div class="control-group">
+                <label>ANGLE: <span id="phylo-angle-val" style="color:var(--math-purple)">137.5°</span></label>
+                <input type="range" id="phylo-angle-slider" min="137.0" max="138.0" step="0.1" value="137.5">
+            </div>
+            <button id="phylo-reset-btn">CLEAR</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch the recursive seed placement. Play with the angle slider to diverge from 137.5° and witness how strictly biology adheres to this mathematical constant.
+        </p>
+    </div>
+
+    <span class="section-tag tag-math">MATH</span>
+    <h2 id="sec-fractal">17. The Mathematics of Branching (Fractals & L-Systems)</h2>
+    <p>Biological branching—from the veins in a leaf, to the bronchi of human lungs, to the sweeping branches of an oak tree—follows recursive mathematical rules. In 1968, biologist Aristid Lindenmayer developed <strong>L-Systems</strong> to mathematically describe this fractal sequence.</p>
+    <p>By applying a simple string-rewriting rule recursively (e.g., rewriting every branch as two sub-branches at specific angles), a single line can instantly generate an infinitely complex organic structure.</p>
+
+    <div class="interactive-container">
+        <canvas id="fractalCanvas" width="600" height="400" style="background:#0a0f0d; border:1px solid #333;"></canvas>
+        <div class="controls">
+            <button id="fractal-run-btn" style="background:var(--bio-green); color:#000; font-weight:bold;">GROW FRACTAL</button>
+            <button id="fractal-toggle-btn">CHANGE SPECIES</button>
+            <div class="control-group">
+                <label>SPECIES: <span id="fractal-type-val" style="color:var(--bio-green)">OAK TREE</span></label>
+            </div>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Toggle between different mathematical "species" (Fractal Trees, Koch curves, Organic Ferns) generated precisely by recursive L-System rules.
+        </p>
+    </div>
+
+    <h2 id="sec-quiz">18. Test Your Biology Knowledge</h2>
+    <p>Can you implement the core logic of the central dogma? Below is a live Python environment. Write the functions to simulate base-pairing and protein translation.</p>
+
+    <div class="interactive-container" style="align-items: stretch; padding: 2rem;">
+        <div class="controls" style="justify-content: space-between; margin-top: 0; margin-bottom: 1rem;">
+            <select id="quiz-select"
+                style="background:#111; color:#fff; border:1px solid #444; padding:0.5rem; font-family:'Courier New', monospace; flex-grow:1; margin-right:1rem;">
+                <option value="pairing">01. BASE PAIRING LOGIC</option>
+                <option value="transcription">02. RNA TRANSCRIPTION</option>
+                <option value="codon">03. CODON TRANSLATION</option>
+            </select>
+            <button id="quiz-run-btn" disabled>INITIALIZING...</button>
+        </div>
+        <textarea id="quiz-editor"
+            style="width:100%; height:200px; background:#0a0a0a; color:#fff; border:1px solid #333; font-family:'Courier New', monospace; padding:1rem; outline:none;"></textarea>
+        <div class="output-console" id="quiz-output"
+            style="margin-top:1rem; background:#050505; color:var(--bio-green); padding:1rem; border:1px solid #333; font-family:'Courier New', monospace; min-height:60px; white-space:pre-wrap;">
+            Awaiting Python Kernel...</div>
     </div>
 
     <section id="references" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #222;">

@@ -2263,6 +2263,182 @@ if (lvRunBtn) {
     });
 }
 
+// --- Section 16: Phyllotaxis (The Golden Angle) ---
+const phyloCanvas = document.getElementById('phyloCanvas');
+const phyloCtx = phyloCanvas ? phyloCanvas.getContext('2d') : null;
+const phyloRunBtn = document.getElementById('phylo-run-btn');
+const phyloResetBtn = document.getElementById('phylo-reset-btn');
+const phyloAngleSlider = document.getElementById('phylo-angle-slider');
+const phyloAngleVal = document.getElementById('phylo-angle-val');
+
+let phyloSeeds = [];
+let phyloActive = false;
+let phyloN = 0; 
+const phyloC = 5; 
+
+function drawPhyllotaxis() {
+    if (!phyloCtx) return;
+    
+    if (phyloActive && phyloN < 1500) {
+        // Run multiple seeds per frame for speed
+        for(let i=0; i<5; i++) {
+            const angle = parseFloat(phyloAngleSlider.value) * (Math.PI / 180);
+            const a = phyloN * angle;
+            const r = phyloC * Math.sqrt(phyloN);
+            
+            const x = phyloCanvas.width/2 + r * Math.cos(a);
+            const y = phyloCanvas.height/2 + r * Math.sin(a);
+            
+            phyloSeeds.push({x, y, age: phyloN});
+            phyloN++;
+        }
+    }
+    
+    // Draw
+    phyloCtx.fillStyle = '#111';
+    phyloCtx.fillRect(0,0, phyloCanvas.width, phyloCanvas.height);
+    
+    phyloSeeds.forEach(seed => {
+        phyloCtx.fillStyle = `hsl(${(seed.age * 0.5) % 360}, 80%, 60%)`;
+        phyloCtx.beginPath();
+        phyloCtx.arc(seed.x, seed.y, 3, 0, Math.PI*2);
+        phyloCtx.fill();
+    });
+    
+    requestAnimationFrame(drawPhyllotaxis);
+}
+
+if (phyloRunBtn) {
+    drawPhyllotaxis();
+    phyloRunBtn.addEventListener('click', () => {
+        phyloActive = !phyloActive;
+        phyloRunBtn.innerText = phyloActive ? 'PAUSE GROWTH' : 'GROW SEEDS';
+    });
+    phyloResetBtn.addEventListener('click', () => {
+        phyloSeeds = [];
+        phyloN = 0;
+    });
+    phyloAngleSlider.addEventListener('input', (e) => {
+        phyloAngleVal.innerText = e.target.value + '°';
+        phyloSeeds = [];
+        phyloN = 0;
+    });
+}
+
+// --- Section 17: Fractals & L-Systems ---
+const fracCanvas = document.getElementById('fractalCanvas');
+const fracCtx = fracCanvas ? fracCanvas.getContext('2d') : null;
+const fracRunBtn = document.getElementById('fractal-run-btn');
+const fracToggleBtn = document.getElementById('fractal-toggle-btn');
+const fracTypeVal = document.getElementById('fractal-type-val');
+
+let fracActive = false;
+let fracProgress = 0; 
+let fracLines = []; 
+let currentSpecies = 0;
+
+const L_SYSTEMS = [
+    { name: 'OAK TREE', axiom: 'X', rules: { 'X': 'F+[[X]-X]-F[-FX]+X', 'F': 'FF' }, angle: 25, iters: 6, len: 3, startY: 400, startA: -90 },
+    { name: 'ORGANIC FERN', axiom: 'X', rules: { 'X': 'F-[[X]+X]+F[+FX]-X', 'F': 'FF' }, angle: 22.5, iters: 6, len: 4, startY: 400, startA: -90 }, 
+    { name: 'DRAGON CURVE', axiom: 'FX', rules: { 'X': 'X+YF+', 'Y': '-FX-Y' }, angle: 90, iters: 12, len: 3, startY: 250, startA: 0 }
+];
+
+function generateLSystem(sys) {
+    let sentence = sys.axiom;
+    for(let i=0; i<sys.iters; i++) {
+        let nextSentence = "";
+        for(let j=0; j<sentence.length; j++) {
+            let c = sentence.charAt(j);
+            nextSentence += sys.rules[c] || c;
+        }
+        sentence = nextSentence;
+    }
+    
+    let lines = [];
+    let state = { x: 300, y: sys.startY, a: sys.startA };
+    let stack = [];
+    
+    for(let j=0; j<sentence.length; j++) {
+        let c = sentence.charAt(j);
+        if (c === 'F' || c === 'G') {
+            let nx = state.x + sys.len * Math.cos(state.a * Math.PI/180);
+            let ny = state.y + sys.len * Math.sin(state.a * Math.PI/180);
+            lines.push({x1: state.x, y1: state.y, x2: nx, y2: ny});
+            state.x = nx; state.y = ny;
+        } else if (c === '+') {
+            state.a += sys.angle;
+        } else if (c === '-') {
+            state.a -= sys.angle;
+        } else if (c === '[') {
+            stack.push({x: state.x, y: state.y, a: state.a});
+        } else if (c === ']') {
+            state = stack.pop();
+        }
+    }
+    return lines;
+}
+
+function initFractal() {
+    fracLines = generateLSystem(L_SYSTEMS[currentSpecies]);
+    fracProgress = 0;
+    fracActive = true; 
+}
+
+function drawFractal() {
+    if (!fracCtx) return;
+    
+    fracCtx.clearRect(0,0, fracCanvas.width, fracCanvas.height);
+    
+    if (fracActive) {
+        fracProgress += 0.008; 
+        if (fracProgress > 1) {
+            fracProgress = 1;
+            fracActive = false; // Stop drawing when done
+            if (fracRunBtn) fracRunBtn.innerText = 'GROW FRACTAL';
+        }
+    }
+    
+    let linesToDraw = Math.floor(fracLines.length * fracProgress);
+    
+    fracCtx.strokeStyle = 'var(--bio-green)';
+    if (currentSpecies === 2) fracCtx.strokeStyle = 'var(--dna-blue)'; 
+    if (currentSpecies === 0) fracCtx.strokeStyle = '#fbbf24'; 
+    
+    fracCtx.lineWidth = 1;
+    fracCtx.beginPath();
+    for(let i=0; i<linesToDraw; i++) {
+        let l = fracLines[i];
+        fracCtx.moveTo(l.x1, l.y1);
+        fracCtx.lineTo(l.x2, l.y2);
+    }
+    fracCtx.stroke();
+    
+    requestAnimationFrame(drawFractal);
+}
+
+if (fracRunBtn) {
+    initFractal();
+    fracActive = false; 
+    drawFractal();
+    
+    fracRunBtn.addEventListener('click', () => {
+        if (fracProgress >= 1) {
+            fracProgress = 0; 
+            fracActive = true;
+        } else {
+            fracActive = !fracActive;
+        }
+        fracRunBtn.innerText = fracActive ? 'PAUSE FRACTAL' : 'GROW FRACTAL';
+    });
+    
+    fracToggleBtn.addEventListener('click', () => {
+        currentSpecies = (currentSpecies + 1) % L_SYSTEMS.length;
+        fracTypeVal.innerText = L_SYSTEMS[currentSpecies].name;
+        initFractal();
+        fracRunBtn.innerText = 'PAUSE FRACTAL';
+    });
+}
+
 // Initialize
 drawHeroDNA();
 drawMembrane();
@@ -2276,3 +2452,4 @@ drawEvolution();
 drawVirus();
 drawImmune();
 drawCRISPR();
+
