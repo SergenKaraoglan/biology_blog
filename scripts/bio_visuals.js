@@ -47,6 +47,131 @@ function drawHeroDNA() {
     requestAnimationFrame(drawHeroDNA);
 }
 
+// --- Section 3: Nucleotide Assembly ---
+const assemblyCanvas = document.getElementById('assemblyCanvas');
+const assemblyCtx = assemblyCanvas ? assemblyCanvas.getContext('2d') : null;
+const snapBtn = document.getElementById('assembly-snap-btn');
+
+let assemblyProgress = 0; // 0 (separated) to 1 (snapped)
+let isSnapping = false;
+
+function drawAssembly() {
+    if (!assemblyCtx) return;
+    const w = assemblyCanvas.width;
+    const h = assemblyCanvas.height;
+    assemblyCtx.clearRect(0, 0, w, h);
+
+    if (isSnapping) {
+        assemblyProgress += (1 - assemblyProgress) * 0.08;
+        if (assemblyProgress > 0.99) assemblyProgress = 1;
+    } else {
+        assemblyProgress += (0 - assemblyProgress) * 0.08;
+        if (assemblyProgress < 0.01) assemblyProgress = 0;
+    }
+
+    const midX = w / 2;
+    const offset = 80 * (1 - assemblyProgress); 
+
+    const leftEdge = midX - 50 - offset; 
+    const rightEdge = midX + 50 + offset;
+
+    assemblyCtx.fillStyle = '#444';
+    assemblyCtx.fillRect(leftEdge - 20, 20, 20, h - 40);
+    assemblyCtx.fillRect(rightEdge, 20, 20, h - 40);
+    
+    assemblyCtx.fillStyle = '#aaa';
+    assemblyCtx.font = '12px monospace';
+    assemblyCtx.textAlign = 'center';
+    assemblyCtx.fillText('BACKBONE', leftEdge - 10, h - 5);
+    assemblyCtx.fillText('BACKBONE', rightEdge + 10, h - 5);
+
+    const pairs = [
+        { y: 70, left: 'A', right: 'T', lc: '#00ff88', rc: '#ff0055' },
+        { y: 125, left: 'C', right: 'G', lc: '#fbbf24', rc: '#00aaff' },
+        { y: 180, left: 'T', right: 'A', lc: '#ff0055', rc: '#00ff88' }
+    ];
+
+    pairs.forEach(p => {
+        // Left
+        assemblyCtx.fillStyle = p.lc;
+        assemblyCtx.beginPath();
+        assemblyCtx.moveTo(leftEdge, p.y - 20);
+        
+        if (p.left === 'A') {
+            assemblyCtx.lineTo(leftEdge + 30, p.y - 20); 
+            assemblyCtx.lineTo(leftEdge + 50, p.y); 
+            assemblyCtx.lineTo(leftEdge + 30, p.y + 20); 
+        } else if (p.left === 'T') {
+            assemblyCtx.lineTo(leftEdge + 50, p.y - 20); 
+            assemblyCtx.lineTo(leftEdge + 30, p.y); 
+            assemblyCtx.lineTo(leftEdge + 50, p.y + 20); 
+        } else if (p.left === 'C') {
+            assemblyCtx.lineTo(leftEdge + 30, p.y - 20); 
+            assemblyCtx.arc(leftEdge + 30, p.y, 20, -Math.PI/2, Math.PI/2); 
+        } else if (p.left === 'G') {
+            assemblyCtx.lineTo(leftEdge + 50, p.y - 20); 
+            assemblyCtx.arc(leftEdge + 50, p.y, 20, -Math.PI/2, Math.PI/2, true); 
+        }
+        assemblyCtx.lineTo(leftEdge, p.y + 20); 
+        assemblyCtx.fill();
+        assemblyCtx.fillStyle = '#000';
+        assemblyCtx.textAlign = 'center';
+        assemblyCtx.fillText(p.left, leftEdge + 15, p.y + 4);
+
+        // Right
+        assemblyCtx.fillStyle = p.rc;
+        assemblyCtx.beginPath();
+        assemblyCtx.moveTo(rightEdge, p.y - 20);
+        
+        if (p.right === 'A') {
+            assemblyCtx.lineTo(rightEdge - 30, p.y - 20);
+            assemblyCtx.lineTo(rightEdge - 50, p.y); 
+            assemblyCtx.lineTo(rightEdge - 30, p.y + 20);
+        } else if (p.right === 'T') {
+            assemblyCtx.lineTo(rightEdge - 50, p.y - 20); 
+            assemblyCtx.lineTo(rightEdge - 30, p.y); 
+            assemblyCtx.lineTo(rightEdge - 50, p.y + 20);
+        } else if (p.right === 'C') {
+            assemblyCtx.lineTo(rightEdge - 30, p.y - 20);
+            assemblyCtx.arc(rightEdge - 30, p.y, 20, -Math.PI/2, Math.PI/2, true); 
+        } else if (p.right === 'G') {
+            assemblyCtx.lineTo(rightEdge - 50, p.y - 20);
+            assemblyCtx.arc(rightEdge - 50, p.y, 20, -Math.PI/2, Math.PI/2); 
+        }
+        assemblyCtx.lineTo(rightEdge, p.y + 20); 
+        assemblyCtx.fill();
+        assemblyCtx.fillStyle = '#000';
+        assemblyCtx.fillText(p.right, rightEdge - 15, p.y + 4);
+
+        if (assemblyProgress > 0.5) {
+            assemblyCtx.strokeStyle = `rgba(255,255,255,${(assemblyProgress-0.5)*2})`;
+            assemblyCtx.setLineDash([4, 4]);
+            assemblyCtx.lineWidth = 1;
+            assemblyCtx.beginPath();
+            const bonds = (p.left === 'C' || p.left === 'G') ? 3 : 2;
+            for(let i=0; i<bonds; i++) {
+                const by = p.y - 8 + (i * (16/(bonds-1)));
+                assemblyCtx.moveTo(midX - 10, by);
+                assemblyCtx.lineTo(midX + 10, by);
+            }
+            assemblyCtx.stroke();
+            assemblyCtx.setLineDash([]);
+        }
+    });
+
+    requestAnimationFrame(drawAssembly);
+}
+
+if (assemblyCanvas) {
+    drawAssembly();
+    if (snapBtn) {
+        snapBtn.addEventListener('click', () => {
+            isSnapping = !isSnapping;
+            snapBtn.innerText = isSnapping ? 'SEPARATE STRANDS' : 'SNAP NUCLEOTIDES';
+        });
+    }
+}
+
 // --- DNA Section Animation: Twirling Helix ---
 const dnaCanvas = document.getElementById('dnaCanvas');
 const dnaCtx = dnaCanvas.getContext('2d');
@@ -670,6 +795,131 @@ document.getElementById('translation-run-btn').addEventListener('click', () => {
     isTranslating = true;
     isFolding = false;
 });
+
+// --- Section 8: Protein Folding ---
+const foldCanvas = document.getElementById('foldingCanvas');
+const foldCtx = foldCanvas ? foldCanvas.getContext('2d') : null;
+const foldBtn = document.getElementById('folding-run-btn');
+const foldResetBtn = document.getElementById('folding-reset-btn');
+
+let aaChain = [];
+let isFoldingSim = false;
+
+function initFolding() {
+    aaChain = [];
+    if (!foldCanvas) return;
+    const w = foldCanvas.width;
+    const h = foldCanvas.height;
+    for(let i=0; i<40; i++) {
+        // Give it slight zigzag so it's not perfectly straight to avoid local minima
+        aaChain.push({
+            x: 50 + i * (w - 100) / 40,
+            y: h / 2 + (i % 2 === 0 ? 5 : -5),
+            vx: 0,
+            vy: 0,
+            type: Math.random() > 0.4 ? 'hydrophobic' : 'hydrophilic' // 60% hydrophobic for good collapse
+        });
+    }
+    isFoldingSim = false;
+}
+
+function drawFoldingCanvas() {
+    if (!foldCtx) return;
+    const w = foldCanvas.width;
+    const h = foldCanvas.height;
+    foldCtx.clearRect(0, 0, w, h);
+
+    if (isFoldingSim) {
+        const center = { x: w/2, y: h/2 };
+        
+        for(let i=0; i<aaChain.length; i++) {
+            let p1 = aaChain[i];
+            
+            // 1. Hydrophobic effect 
+            if (p1.type === 'hydrophobic') {
+                const dx = center.x - p1.x;
+                const dy = center.y - p1.y;
+                const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+                // Strong pull to center
+                p1.vx += (dx / dist) * 0.3;
+                p1.vy += (dy / dist) * 0.3;
+            } else {
+                // Hydrophilic slight push from center
+                const dx = p1.x - center.x;
+                const dy = p1.y - center.y;
+                const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+                p1.vx += (dx / dist) * 0.05;
+                p1.vy += (dy / dist) * 0.05;
+            }
+
+            // 2. Spring chains
+            if (i > 0) {
+                let p0 = aaChain[i-1];
+                let dx = p0.x - p1.x;
+                let dy = p0.y - p1.y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                let diff = dist - 12; 
+                let force = diff * 0.2;
+                p1.vx += (dx / dist) * force;
+                p1.vy += (dy / dist) * force;
+                p0.vx -= (dx / dist) * force;
+                p0.vy -= (dy / dist) * force;
+            }
+
+            // 3. Repulsion
+            for(let j=i+2; j<aaChain.length; j++) {
+                let p2 = aaChain[j];
+                let dx = p1.x - p2.x;
+                let dy = p1.y - p2.y;
+                let dist = Math.sqrt(dx*dx + dy*dy) || 1;
+                if (dist < 15) {
+                    let force = (15 - dist) * 0.1;
+                    p1.vx += (dx / dist) * force;
+                    p1.vy += (dy / dist) * force;
+                    p2.vx -= (dx / dist) * force;
+                    p2.vy -= (dy / dist) * force;
+                }
+            }
+            
+            p1.vx *= 0.8;
+            p1.vy *= 0.8;
+
+            p1.x += p1.vx;
+            p1.y += p1.vy;
+        }
+    }
+
+    // Draw backbone
+    foldCtx.beginPath();
+    foldCtx.moveTo(aaChain[0].x, aaChain[0].y);
+    for(let i=1; i<aaChain.length; i++) {
+        foldCtx.lineTo(aaChain[i].x, aaChain[i].y);
+    }
+    foldCtx.strokeStyle = '#555';
+    foldCtx.lineWidth = 2;
+    foldCtx.stroke();
+
+    // Draw nodes
+    for(let i=0; i<aaChain.length; i++) {
+        let p = aaChain[i];
+        foldCtx.fillStyle = p.type === 'hydrophobic' ? '#fbbf24' : '#00aaff';
+        foldCtx.beginPath();
+        foldCtx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+        foldCtx.fill();
+        foldCtx.strokeStyle = '#222';
+        foldCtx.lineWidth = 1;
+        foldCtx.stroke();
+    }
+
+    requestAnimationFrame(drawFoldingCanvas);
+}
+
+if (foldCanvas) {
+    initFolding();
+    drawFoldingCanvas();
+    if (foldBtn) foldBtn.addEventListener('click', () => isFoldingSim = true);
+    if (foldResetBtn) foldResetBtn.addEventListener('click', () => initFolding());
+}
 
 // --- Section 5: Gene Regulation (Lac Operon) ---
 const regCanvas = document.getElementById('regulationCanvas');

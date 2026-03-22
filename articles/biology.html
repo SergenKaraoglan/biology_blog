@@ -117,17 +117,25 @@
         </p>
     </div>
 
-    <span class="section-tag tag-genetics">GENETICS</span>
-    <h2 id="sec-dna">3. The Language of Life (DNA)</h2>
-    <p>If you were to stretch out the DNA in a single human cell, it would be two meters long. Yet it is packed into a
-        space smaller than a speck of dust. This molecule, the <strong>Double Helix</strong>, is the most efficient data
-        storage system in the known universe <a href="#ref-4"
-            style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[4]</a>.
-    </p>
+    <span class="section-tag tag-molecular">MOLECULAR</span>
+    <h2 id="sec-nucleotides">3. The Alphabet (Nucleotides)</h2>
+    <p>Before we look at the entire genetic code, we must inspect its fundamental building blocks. DNA is a polymer made of repeating physical units called <strong>Nucleotides</strong>. Each nucleotide consists of a sugar-phosphate backbone and a nitrogenous base.</p>
+    <p>There are four types of bases: <strong>Adenine (A)</strong>, <strong>Thymine (T)</strong>, <strong>Cytosine (C)</strong>, and <strong>Guanine (G)</strong>. The structural genius of biology lies in their geometry: A perfectly snaps into T, and C perfectly snaps into G. This precise physical fitting is the mechanical basis for all information storage and copying in living systems.</p>
 
-    <p>DNA consists of two strands twisting around each other. Each strand is a sequence of four chemical bases:
-        <strong>Adenine (A)</strong>, <strong>Thymine (T)</strong>, <strong>Cytosine (C)</strong>, and <strong>Guanine
-            (G)</strong>. The "magic" of DNA is in its pairing rules: A always binds with T, and C always binds with G.
+    <div class="interactive-container">
+        <canvas id="assemblyCanvas" width="600" height="250" style="background:#111; border:1px solid #333;"></canvas>
+        <div class="controls">
+            <button id="assembly-snap-btn" style="background:var(--bio-green); color:#fff; font-weight:bold;">SNAP NUCLEOTIDES</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch how the complementary geometric shapes and hydrogen bonds of the nucleotides perfectly interlock, forming the rungs of the biological ladder.
+        </p>
+    </div>
+
+    <span class="section-tag tag-genetics">GENETICS</span>
+    <h2 id="sec-dna">4. The Memory Drive (DNA)</h2>
+    <p>When millions of these paired nucleotides are strung together, they naturally twist into a <strong>Double Helix</strong> to minimize energy. If you were to stretch out the DNA in a single human cell, it would be two meters long, yet it is packed into a space smaller than a speck of dust. It represents the ultimate, persistent memory drive of the biological system <a href="#ref-4"
+            style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[4]</a>.
     </p>
 
     <div class="interactive-container">
@@ -146,7 +154,7 @@
     </div>
 
     <span class="section-tag tag-molecular">MOLECULAR</span>
-    <h2 id="sec-code">4. The Digital Script (The Genetic Code)</h2>
+    <h2 id="sec-code">5. The Machine Code (Codons)</h2>
     <p>Each codon represents one specific <strong>Amino Acid</strong>. For example, the sequence <span
             class="term">ATG</span> is the universal "START" signal. This mapping between 3-letter DNA sequences and
         amino acids is known as the <strong>Genetic Code</strong> <a href="#ref-3"
@@ -176,7 +184,7 @@
     </div>
 
     <span class="section-tag tag-molecular">MOLECULAR</span>
-    <h2 id="sec-transcription">5. Copying the Code (RNA & Transcription)</h2>
+    <h2 id="sec-transcription">6. Information Transfer (RNA & Transcription)</h2>
     <p>The mRNA is essentially a mirror image of the DNA, with one small change: instead of Thymine (T), it uses
         <strong>Uracil (U)</strong>. This copy is then shipped out of the cell's nucleus to the protein factories.
     </p>
@@ -194,25 +202,44 @@
     </div>
 
     <span class="section-tag tag-molecular">MOLECULAR</span>
-    <h2 id="sec-translation">6. Building the Machine (Proteins & Translation)</h2>
-    <p>This shape is everything. A protein's function is determined entirely by how it folds. Some become structural
-        bricks (collagen), others become scanners (antibodies), and others become specialized tools (enzymes).</p>
+    <h2 id="sec-translation">7. The 3D Printers (Translation)</h2>
+    <p>The mRNA transcript is shipped out to <strong>Ribosomes</strong>, the 3D printers of the cell. The ribosome reads the RNA machine code one codon at a time and strings together the corresponding amino acids, building a long, 1-dimensional peptide chain.</p>
 
     <div class="interactive-container">
         <canvas id="translationCanvas" width="600" height="300"></canvas>
         <div class="controls">
-            <button id="translation-run-btn">ASSEMBLE PROTEIN</button>
+            <button id="translation-run-btn">ASSEMBLE CHAIN</button>
         </div>
         <p
             style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
-            Watch the ribosome scan the mRNA codons (bottom) and assemble amino acids into a peptide chain that
-            self-folds through spring and repulsion physics <a href="#ref-1"
+            Watch the ribosome scan the mRNA codons (bottom) and pull in amino acids to assemble the 1D peptide string <a href="#ref-1"
                 style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[1]</a>.
         </p>
     </div>
 
+    <span class="section-tag tag-molecular" style="background:#fbbf24; color:#000;">HARDWARE</span>
+    <h2 id="sec-folding">8. The Hardware (Protein Folding)</h2>
+    <p>A 1D string of amino acids is useless on its own. It cannot perform mechanical work. But the magic of life happens the moment that string exits the ribosome: driven purely by the laws of physics, the string instantly collapses into a highly specific 3D shape.</p>
+    <p>This process is called <strong>Protein Folding</strong>. Hydrophobic (water-fearing) amino acids clump together in the center to hide from the watery cell environment, while hydrophilic (water-loving) amino acids face outward. Positives attract negatives. The resulting 3D structure is a functional nanomachine: a protein. The shape is everything—it determines perfectly whether the protein will become a structural brick, an enzyme, or a motor.</p>
+
+    <div class="interactive-container">
+        <canvas id="foldingCanvas" width="600" height="300" style="background:#111; border:1px solid #333;"></canvas>
+        <div class="controls">
+            <button id="folding-run-btn" style="background:var(--protein-gold); color:#000; font-weight:bold;">SIMULATE FOLDING</button>
+            <button id="folding-reset-btn">RESET</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch the physical forces take over. Hydrophobic (yellow) residues attract each other and cluster inward, pulling the polar (blue) residues into a stable 3D globular structure.
+        </p>
+    </div>
+
+    <div style="background: rgba(0,255,136,0.05); border: 1px solid var(--bio-green); padding: 2rem; border-radius: 8px; margin: 3rem 0;">
+        <h3 style="color: var(--bio-green); margin-top: 0;">The Central Dogma (The Unified System)</h3>
+        <p style="margin-bottom: 0;">We have now reached the core operational loop of life. <strong>DNA (Storage)</strong> holds the blueprints safely. <strong>RNA (Messenger)</strong> carries disposable instructions. <strong>Proteins (Hardware)</strong> do the physical work. What makes it a closed-loop system is that Proteins are the very machines required to copy the DNA and read the RNA. Without the instructions, you can't build the machines; without the machines, you can't read the instructions. This interdependent triangle is the fundamental architecture of all known life.</p>
+    </div>
+
     <span class="section-tag tag-regulation">REGULATION</span>
-    <h2 id="sec-regulation">7. The Biological Logic (Gene Tuning)</h2>
+    <h2 id="sec-regulation">9. The Control Logic (Gene Tuning)</h2>
     <p>Every cell in your body has the exact same DNA. Why is a brain cell different from a skin cell? The answer is
         <strong>Gene Regulation</strong>. Not every gene is "on" at the same time. Cells use complex feedback
         loops—biological IF/THEN statements—to tune their behavior <a href="#ref-2"
@@ -239,7 +266,7 @@
         </p>
     </div>
     <span class="section-tag tag-evolution">EVOLUTION</span>
-    <h2 id="sec-evolution">8. The Search Algorithm (Natural Selection)</h2>
+    <h2 id="sec-evolution">10. The Search Algorithm (Natural Selection)</h2>
     <p>How did the complex code of DNA come to be? The answer is an iterative search algorithm called <strong>Natural
             Selection</strong>. It requires three components to run: replication, random mutation, and a selection
         pressure.</p>
@@ -266,7 +293,7 @@
     </div>
 
     <span class="section-tag tag-virus">DISEASE</span>
-    <h2 id="sec-virus">9. Rogue Code (Viruses)</h2>
+    <h2 id="sec-virus">11. Rogue Code (Viruses)</h2>
     <p>A virus is not technically alive because it lacks the machinery to process energy (metabolism) or build itself
         (ribosomes). It is an obligate parasite: a flash drive holding malicious genetic code wrapped in a protein coat.
     </p>
@@ -287,7 +314,7 @@
     </div>
 
     <span class="section-tag tag-immune">DEFENSE</span>
-    <h2 id="sec-immune">10. Self vs. Non-Self (Immunology)</h2>
+    <h2 id="sec-immune">12. Self vs. Non-Self (Immunology)</h2>
     <p>How does a blind, mechanical system defend against such sophisticated rogue code? Through a massively parallel
         game of shape-matching.</p>
     <p>The immune system generates millions of random protein shapes known as <strong>Antibodies</strong>. The body
@@ -320,7 +347,7 @@
     </div>
 
     <span class="section-tag tag-crispr">GENE EDITING</span>
-    <h2 id="sec-crispr">11. Search & Replace (CRISPR-Cas9)</h2>
+    <h2 id="sec-crispr">13. Search & Replace (CRISPR-Cas9)</h2>
     <p>In 2012, researchers discovered a way to turn a bacterial immune system into the world's most precise pair of
         molecular scissors. This system, <strong>CRISPR-Cas9</strong>, allows us to find a specific sequence of DNA
         and cut it with surgical precision <a href="#ref-5"
