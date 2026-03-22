@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initScaleViz();
     initStellarViz();
     initGravityViz();
+    initSolarSystemViz();
 });
 
 // --- Hero Animation (Starfield) ---
@@ -228,4 +229,99 @@ function initGravityViz() {
     }
 
     draw();
+}
+
+// --- Solar System Viz ---
+function initSolarSystemViz() {
+    const canvas = document.getElementById('solarSystemCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const innerBtn = document.getElementById('ss-inner-btn');
+    const outerBtn = document.getElementById('ss-outer-btn');
+
+    let mode = 'inner'; // 'inner' or 'outer'
+    
+    // Orbital distances scaled for visualization purposes
+    const innerPlanets = [
+        { name: 'Mercury', dist: 40, size: 3, speed: 0.04, angle: 0, color: '#b0b0b0' },
+        { name: 'Venus', dist: 70, size: 5, speed: 0.03, angle: 2, color: '#e0c080' },
+        { name: 'Earth', dist: 100, size: 5.5, speed: 0.02, angle: 4, color: '#4facfe' },
+        { name: 'Mars', dist: 130, size: 4, speed: 0.015, angle: 1, color: '#ff6b6b' }
+    ];
+
+    const outerPlanets = [
+        { name: 'Jupiter', dist: 60, size: 14, speed: 0.01, angle: 0, color: '#ffaf7b' },
+        { name: 'Saturn', dist: 100, size: 11, speed: 0.007, angle: 2, color: '#eaddb0', ring: true },
+        { name: 'Uranus', dist: 140, size: 8, speed: 0.005, angle: 4, color: '#a0ffff' },
+        { name: 'Neptune', dist: 180, size: 7.5, speed: 0.004, angle: 1, color: '#4060ff' }
+    ];
+
+    function renderLoop() {
+        ctx.fillStyle = 'rgba(5, 5, 8, 0.2)'; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        const sunRadius = mode === 'inner' ? 15 : 20;
+        ctx.fillStyle = '#fff3a3';
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, sunRadius, 0, Math.PI * 2);
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = '#fff3a3';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        const planets = mode === 'inner' ? innerPlanets : outerPlanets;
+
+        planets.forEach(p => {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, p.dist, 0, Math.PI * 2);
+            ctx.stroke();
+
+            const x = centerX + Math.cos(p.angle) * p.dist;
+            const y = centerY + Math.sin(p.angle) * p.dist;
+
+            if (p.ring) {
+                ctx.strokeStyle = 'rgba(234, 221, 176, 0.6)';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.ellipse(x, y, p.size * 1.8, p.size * 0.6, Math.PI / 8, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.lineWidth = 1;
+            }
+
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(x, y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+
+            p.angle += p.speed;
+        });
+
+        requestAnimationFrame(renderLoop);
+    }
+    
+    // reset trails
+    innerBtn.addEventListener('click', () => { 
+        if(mode !== 'inner') {
+            mode = 'inner'; 
+            ctx.fillStyle = '#050508';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+    });
+    
+    outerBtn.addEventListener('click', () => { 
+        if(mode !== 'outer') {
+            mode = 'outer'; 
+            ctx.fillStyle = '#050508';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+    });
+
+    // Initial clear
+    ctx.fillStyle = '#050508';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    renderLoop();
 }
