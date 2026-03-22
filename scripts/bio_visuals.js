@@ -1984,6 +1984,285 @@ function drawImmune() {
 
 immuneSpawnBtn.addEventListener('click', spawnPathogen);
 
+// --- Section 14: Turing Patterns (Reaction-Diffusion) ---
+const turingCanvas = document.getElementById('turingCanvas');
+const turingCtx = turingCanvas ? turingCanvas.getContext('2d') : null;
+const turingBtn = document.getElementById('turing-run-btn');
+const turingToggleBtn = document.getElementById('turing-toggle-btn');
+const turingTypeVal = document.getElementById('turing-type-val');
+
+// Grid for Reaction-Diffusion
+const t_w = 150; 
+const t_h = 75; // 4x scale to fit 600x300
+let grid = [];
+let nextGrid = [];
+let turingActive = false;
+
+// Turing Parameters (Feed rate, Kill rate)
+const turingParams = [
+    { name: 'LEOPARD SPOTS', f: 0.03, k: 0.062 },
+    { name: 'ZEBRA STRIPES', f: 0.022, k: 0.051 },
+    { name: 'CORAL MAZE', f: 0.029, k: 0.057 }
+];
+let paramIdx = 0;
+
+function initTuring() {
+    grid = [];
+    nextGrid = [];
+    for (let x = 0; x < t_w; x++) {
+        grid[x] = [];
+        nextGrid[x] = [];
+        for (let y = 0; y < t_h; y++) {
+            grid[x][y] = { a: 1, b: 0 };
+            nextGrid[x][y] = { a: 1, b: 0 };
+        }
+    }
+    // Drop some "B" chemical in the center to start the reaction
+    for (let i = 0; i < 10; i++) {
+        const rx = Math.floor(t_w/2 + (Math.random()-0.5)*20);
+        const ry = Math.floor(t_h/2 + (Math.random()-0.5)*20);
+        grid[rx][ry].b = 1;
+    }
+}
+
+function laplaceA(x, y) {
+    let sumA = 0;
+    sumA += grid[x][y].a * -1;
+    sumA += grid[x - 1][y].a * 0.2;
+    sumA += grid[x + 1][y].a * 0.2;
+    sumA += grid[x][y + 1].a * 0.2;
+    sumA += grid[x][y - 1].a * 0.2;
+    sumA += grid[x - 1][y - 1].a * 0.05;
+    sumA += grid[x + 1][y - 1].a * 0.05;
+    sumA += grid[x + 1][y + 1].a * 0.05;
+    sumA += grid[x - 1][y + 1].a * 0.05;
+    return sumA;
+}
+
+function laplaceB(x, y) {
+    let sumB = 0;
+    sumB += grid[x][y].b * -1;
+    sumB += grid[x - 1][y].b * 0.2;
+    sumB += grid[x + 1][y].b * 0.2;
+    sumB += grid[x][y + 1].b * 0.2;
+    sumB += grid[x][y - 1].b * 0.2;
+    sumB += grid[x - 1][y - 1].b * 0.05;
+    sumB += grid[x + 1][y - 1].b * 0.05;
+    sumB += grid[x + 1][y + 1].b * 0.05;
+    sumB += grid[x - 1][y + 1].b * 0.05;
+    return sumB;
+}
+
+function drawTuringPatterns() {
+    if (!turingCtx) return;
+    if (turingActive) {
+        const f = turingParams[paramIdx].f;
+        const k = turingParams[paramIdx].k;
+        const dA = 1.0;
+        const dB = 0.5;
+
+        // Run multiple steps per frame for speed
+        for(let step=0; step<10; step++) {
+            for (let x = 1; x < t_w - 1; x++) {
+                for (let y = 1; y < t_h - 1; y++) {
+                    const a = grid[x][y].a;
+                    const b = grid[x][y].b;
+                    // React: A + 2B -> 3B
+                    nextGrid[x][y].a = a + (dA * laplaceA(x, y)) - (a * b * b) + (f * (1 - a));
+                    nextGrid[x][y].b = b + (dB * laplaceB(x, y)) + (a * b * b) - ((k + f) * b);
+                    // Constrain
+                    nextGrid[x][y].a = Math.max(0, Math.min(1, nextGrid[x][y].a));
+                    nextGrid[x][y].b = Math.max(0, Math.min(1, nextGrid[x][y].b));
+                }
+            }
+            // Swap
+            let temp = grid;
+            grid = nextGrid;
+            nextGrid = temp;
+        }
+
+        // Draw to canvas
+        const imgData = turingCtx.createImageData(t_w, t_h);
+        for (let x = 0; x < t_w; x++) {
+            for (let y = 0; y < t_h; y++) {
+                const pix = (x + y * t_w) * 4;
+                let a = grid[x][y].a;
+                let b = grid[x][y].b;
+                let c = Math.floor((a - b) * 255);
+                c = Math.max(0, Math.min(255, c));
+                
+                // Biological color grading (e.g. skin/fur colors)
+                imgData.data[pix + 0] = c > 128 ? 240 : 20; // R
+                imgData.data[pix + 1] = c > 128 ? 200 : 20; // G
+                imgData.data[pix + 2] = c > 128 ? 100 : 20; // B
+                imgData.data[pix + 3] = 255;
+            }
+        }
+        
+        // Scale up to canvas
+        const offCanvas = document.createElement('canvas');
+        offCanvas.width = t_w;
+        offCanvas.height = t_h;
+        offCanvas.getContext('2d').putImageData(imgData, 0, 0);
+        
+        turingCtx.imageSmoothingEnabled = false;
+        turingCtx.drawImage(offCanvas, 0, 0, 600, 300);
+    }
+    requestAnimationFrame(drawTuringPatterns);
+}
+
+if (turingBtn) {
+    initTuring();
+    drawTuringPatterns();
+    turingBtn.addEventListener('click', () => {
+        turingActive = !turingActive;
+        turingBtn.innerText = turingActive ? 'PAUSE PATTERN' : 'GENERATE PATTERN';
+    });
+    turingToggleBtn.addEventListener('click', () => {
+        paramIdx = (paramIdx + 1) % turingParams.length;
+        turingTypeVal.innerText = turingParams[paramIdx].name;
+        initTuring();
+    });
+}
+
+// --- Section 15: Lotka-Volterra (Predator-Prey Matrix) ---
+const lvSimCanvas = document.getElementById('lvSimulationCanvas');
+const lvSimCtx = lvSimCanvas ? lvSimCanvas.getContext('2d') : null;
+const lvGraphCanvas = document.getElementById('lvGraphCanvas');
+const lvGraphCtx = lvGraphCanvas ? lvGraphCanvas.getContext('2d') : null;
+const lvRunBtn = document.getElementById('lv-run-btn');
+const lvFoxVal = document.getElementById('lv-fox-val');
+const lvRabVal = document.getElementById('lv-rab-val');
+
+let rabbits = 50.0;
+let foxes = 2.0;
+let lvHistory = []; // store history for graphing
+let lvActive = false;
+
+// Parameters
+const alpha = 0.08; // Rabbit birth rate
+const beta = 0.002; // Rabbit death by fox
+const delta = 0.001;// Fox birth from eating rabbit
+const gamma = 0.05; // Fox natural death rate
+
+let lvParticles = [];
+function initLV() {
+    rabbits = 50.0;
+    foxes = 2.0;
+    lvHistory = [];
+    lvParticles = [];
+}
+
+function drawLotkaVolterra() {
+    if (!lvSimCtx || !lvGraphCtx) return;
+    
+    if (lvActive) {
+        // Math Update 
+        const dr = (alpha * rabbits) - (beta * rabbits * foxes);
+        const df = (delta * rabbits * foxes) - (gamma * foxes);
+        
+        rabbits += dr;
+        foxes += df;
+        
+        // Prevent total extinction to keep sim running
+        if (rabbits < 2) rabbits = 2;
+        if (foxes < 0.5) foxes = 0.5;
+
+        // Record history for graph
+        lvHistory.push({r: rabbits, f: foxes});
+        if (lvHistory.length > lvGraphCanvas.width) {
+            lvHistory.shift(); 
+        }
+
+        // Update UI
+        lvRabVal.innerText = Math.floor(rabbits);
+        lvFoxVal.innerText = Math.floor(foxes);
+
+        // Particle Sim visual
+        const targetR = Math.min(150, Math.floor(rabbits));
+        const targetF = Math.min(50, Math.floor(foxes));
+
+        let currentR = lvParticles.filter(p=>p.type==='r').length;
+        let currentF = lvParticles.filter(p=>p.type==='f').length;
+
+        // Add/Remove Rabbits
+        while (currentR < targetR) {
+            lvParticles.push({x: Math.random()*250, y: Math.random()*300, vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2, type: 'r'});
+            currentR++;
+        }
+        while (currentR > targetR && currentR > 0) {
+            const idx = lvParticles.findIndex(p=>p.type==='r');
+            if(idx > -1) lvParticles.splice(idx, 1);
+            currentR--;
+        }
+
+        // Add/Remove Foxes
+        while (currentF < targetF) {
+            lvParticles.push({x: Math.random()*250, y: Math.random()*300, vx: (Math.random()-0.5)*3, vy: (Math.random()-0.5)*3, type: 'f'});
+            currentF++;
+        }
+        while (currentF > targetF && currentF > 0) {
+            const idx = lvParticles.findIndex(p=>p.type==='f');
+            if(idx > -1) lvParticles.splice(idx, 1);
+            currentF--;
+        }
+
+        // Draw Sim Canvas
+        lvSimCtx.clearRect(0,0, 250, 300);
+        lvParticles.forEach(p => {
+            p.x += p.vx; p.y += p.vy;
+            if(p.x<0 || p.x>250) p.vx*=-1;
+            if(p.y<0 || p.y>300) p.vy*=-1;
+            
+            lvSimCtx.fillStyle = p.type==='r' ? '#fff' : '#ff4d4d';
+            lvSimCtx.beginPath();
+            lvSimCtx.arc(p.x, p.y, p.type==='r'? 2:4, 0, Math.PI*2);
+            lvSimCtx.fill();
+        });
+
+        // Draw Graph
+        const gw = lvGraphCanvas.width;
+        const gh = lvGraphCanvas.height;
+        lvGraphCtx.clearRect(0,0, gw, gh);
+
+        const maxPop = 200; 
+        
+        // draw Rabbit line (White)
+        lvGraphCtx.strokeStyle = '#fff';
+        lvGraphCtx.lineWidth = 2;
+        lvGraphCtx.beginPath();
+        for(let i=0; i<lvHistory.length; i++) {
+            const x = i;
+            const y = gh - (lvHistory[i].r / maxPop) * gh;
+            if (i===0) lvGraphCtx.moveTo(x,y);
+            else lvGraphCtx.lineTo(x,y);
+        }
+        lvGraphCtx.stroke();
+
+        // draw Fox line (Red)
+        lvGraphCtx.strokeStyle = '#ff4d4d';
+        lvGraphCtx.lineWidth = 2;
+        lvGraphCtx.beginPath();
+        for(let i=0; i<lvHistory.length; i++) {
+            const x = i;
+            const y = gh - (lvHistory[i].f / maxPop) * gh * 5; 
+            if (i===0) lvGraphCtx.moveTo(x,y);
+            else lvGraphCtx.lineTo(x,y);
+        }
+        lvGraphCtx.stroke();
+    }
+    requestAnimationFrame(drawLotkaVolterra);
+}
+
+if (lvRunBtn) {
+    initLV();
+    drawLotkaVolterra();
+    lvRunBtn.addEventListener('click', () => {
+        lvActive = !lvActive;
+        lvRunBtn.innerText = lvActive ? 'PAUSE ECOSYSTEM' : 'START ECOSYSTEM';
+    });
+}
+
 // Initialize
 drawHeroDNA();
 drawMembrane();

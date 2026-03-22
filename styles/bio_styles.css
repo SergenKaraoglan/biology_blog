@@ -38,6 +38,7 @@
     --evolution-orange: #f97316; /* Natural Selection */
     --virus-lime: #a3e635; /* Rogue Code */
     --immune-cyan: #22d3ee; /* Defense */
+    --math-purple: #c084fc; /* Mathematical Biology */
     
     --success: var(--bio-green);
 }
@@ -265,6 +266,7 @@ button:hover {
 .tag-evolution { color: var(--evolution-orange); border-color: rgba(249, 115, 22, 0.2); }
 .tag-virus { color: var(--virus-lime); border-color: rgba(163, 230, 53, 0.2); }
 .tag-immune { color: var(--immune-cyan); border-color: rgba(34, 211, 238, 0.2); }
+.tag-math { color: var(--math-purple); border-color: rgba(192, 132, 252, 0.2); }
 
 /* Footer */
 footer {

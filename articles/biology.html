@@ -372,7 +372,7 @@
         </p>
     </div>
 
-    <h2 id="sec-quiz">12. Test Your Biology Knowledge</h2>
+    <h2 id="sec-quiz">16. Test Your Biology Knowledge</h2>
     <p>Can you implement the core logic of the central dogma? Below is a live Python environment. Write the functions to
         simulate base-pairing and protein translation.</p>
 
@@ -391,6 +391,47 @@
         <div class="output-console" id="quiz-output"
             style="margin-top:1rem; background:#050505; color:var(--bio-green); padding:1rem; border:1px solid #333; font-family:'Courier New', monospace; min-height:60px; white-space:pre-wrap;">
             Awaiting Python Kernel...</div>
+    </div>
+
+    <span class="section-tag tag-math">MATH</span>
+    <h2 id="sec-turing">14. The Mathematics of Form (Turing Patterns)</h2>
+    <p>In 1952, Alan Turing (the father of computer science) proposed a mathematical model for how complex biological patterns—like leopard spots, zebra stripes, and fingerprint whorls—could arise from an initially uniform state. This is called <strong>Morphogenesis</strong>.</p>
+    <p>The model requires two interacting chemicals: an <strong>Activator</strong> that makes more of itself, and an <strong>Inhibitor</strong> that slows down the activator. Crucially, the inhibitor must diffuse through the tissue faster than the activator. The result? Pure mathematics "drawing" intricate, organic animal patterns.</p>
+
+    <div class="interactive-container">
+        <canvas id="turingCanvas" width="600" height="300" style="background:#000;"></canvas>
+        <div class="controls">
+            <button id="turing-run-btn" style="background:var(--math-purple); color:#fff; font-weight:bold;">GENERATE PATTERN</button>
+            <button id="turing-toggle-btn">CHANGE MATH PARAMS</button>
+            <div class="control-group">
+                <label>PATTERN TYPE: <span id="turing-type-val" style="color:var(--math-purple)">LEOPARD SPOTS</span></label>
+            </div>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            This is a Reaction-Diffusion simulation. By tweaking the mathematical feed and kill rates, the exact same equations can generate spots, stripes, or labyrinthine mazes. 
+        </p>
+    </div>
+
+    <span class="section-tag tag-math">MATH</span>
+    <h2 id="sec-lotka">15. The Mathematics of Ecosystems (Lotka-Volterra)</h2>
+    <p>Math governs life not just at the molecular level, but at the scale of entire ecosystems. The <strong>Lotka-Volterra equations</strong> represent predator-prey dynamics using a pair of non-linear differential equations.</p>
+    <p>When prey (e.g., rabbits) multiply, an abundant food supply allows predators (e.g., foxes) to multiply. As predators surge, they overhunt the prey. The prey population collapses, causing the starving predators to decline. The few surviving prey then multiply again, repeating the mathematical cycle.</p>
+
+    <div class="interactive-container" style="min-height: 400px; display:flex; flex-direction:column; padding:0; overflow:hidden;">
+        <div style="display:flex; width:100%; height:300px; background:#111;">
+            <canvas id="lvSimulationCanvas" width="250" height="300" style="background:#111; border-right:1px solid #333;"></canvas>
+            <canvas id="lvGraphCanvas" width="350" height="300" style="background:#050505;"></canvas>
+        </div>
+        <div class="controls" style="border-top:1px solid #333; background:#161616; margin:0; padding:15px; border-radius:0;">
+            <button id="lv-run-btn" style="background:var(--math-purple); color:#fff; font-weight:bold;">START ECOSYSTEM</button>
+            <div class="control-group">
+                <label style="color:#ff4d4d">FOXES: <span id="lv-fox-val">2</span></label>
+                <label style="color:#fff">RABBITS: <span id="lv-rab-val">50</span></label>
+            </div>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; padding-bottom:1rem; font-family: 'Courier New', monospace;">
+            Left: The 2D particle ecosystem. Right: The live differential equation graph. Watch the two populations infinitely oscillate perfectly out of phase.
+        </p>
     </div>
 
     <section id="references" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #222;">
