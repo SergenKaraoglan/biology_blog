@@ -382,17 +382,17 @@ function initRasterVisualizer() {
         ctx.stroke();
 
         // Rasterization (simplified scanline/sampling)
-        const gridSize = 15;
-        ctx.fillStyle = '#ccff00';
-        for (let x = 0; x < canvas.width; x += gridSize) {
-            for (let y = 0; y < canvas.height; y += gridSize) {
-                if (isInside(x, y, p1, p2, p3)) {
-                    ctx.fillRect(x + 2, y + 2, gridSize - 4, gridSize - 4);
+        if (showGrid) {
+            const gridSize = 15;
+            ctx.fillStyle = '#ccff00';
+            for (let x = 0; x < canvas.width; x += gridSize) {
+                for (let y = 0; y < canvas.height; y += gridSize) {
+                    if (isInside(x, y, p1, p2, p3)) {
+                        ctx.fillRect(x + 2, y + 2, gridSize - 4, gridSize - 4);
+                    }
                 }
             }
-        }
 
-        if (showGrid) {
             ctx.strokeStyle = '#111';
             ctx.lineWidth = 0.5;
             for (let x = 0; x < canvas.width; x += gridSize) {
