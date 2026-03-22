@@ -33,7 +33,8 @@
     <p>This code is not written in bits and bytes, but in a four-letter chemical alphabet. It is a system of
         instructions that can build nanomachines, regulate energy, and replicate itself with staggering precision. To
         understand life, we must look past the pulse and the breath, and into the mathematics of the
-        <strong>Genome</strong>.</p>
+        <strong>Genome</strong>.
+    </p>
 
     <p>Let's explore the architecture of life from absolute first principles.</p>
 
@@ -59,9 +60,15 @@
             <li><a href="#sec-regulation">The Biological Logic (Gene Tuning)</a></li>
         </ol>
 
-        <p class="toc-part">Part IV — Complexity & Frontiers</p>
+        <p class="toc-part">Part IV — Complexity & Defense</p>
         <ol start="8">
             <li><a href="#sec-evolution">The Search Algorithm (Natural Selection)</a></li>
+            <li><a href="#sec-virus">Rogue Code (Viruses)</a></li>
+            <li><a href="#sec-immune">Self vs. Non-Self (Immunology)</a></li>
+        </ol>
+
+        <p class="toc-part">Part V — Frontiers & Engineering</p>
+        <ol start="11">
             <li><a href="#sec-crispr">Search & Replace (CRISPR-Cas9)</a></li>
             <li><a href="#sec-quiz">Test Your Biology Knowledge</a></li>
         </ol>
@@ -69,23 +76,33 @@
 
     <span class="section-tag tag-cellular">CELLULAR</span>
     <h2 id="sec-cell">1. The Container (Cell Theory)</h2>
-    <p>Life cannot exist without a boundary. Before you can have complex chemistry, you must separate the "inside" from the chaotic "outside". This boundary is the <strong>Cell Membrane</strong>, a lipid bilayer that acts as a selectively permeable wall.</p>
-    <p>By keeping necessary molecules close together and harmful ones out, the cell lowers local entropy, creating an environment where complex reactions can occur. Without this physical enclosure, the chemicals of life would simply diffuse away into the environment.</p>
+    <p>Life cannot exist without a boundary. Before you can have complex chemistry, you must separate the "inside" from
+        the chaotic "outside". This boundary is the <strong>Cell Membrane</strong>, a lipid bilayer that acts as a
+        selectively permeable wall.</p>
+    <p>By keeping necessary molecules close together and harmful ones out, the cell lowers local entropy, creating an
+        environment where complex reactions can occur. Without this physical enclosure, the chemicals of life would
+        simply diffuse away into the environment.</p>
 
     <div class="interactive-container">
         <canvas id="membraneCanvas" width="600" height="300"></canvas>
         <div class="controls">
             <button id="membrane-permeability-btn">TOGGLE CHANNELS: CLOSED</button>
         </div>
-        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
-            Observe standard diffusion. The membrane naturally blocks charged particles (blue) but allows neutral molecules (green). Click to open the protein channels and allow facilitated diffusion.
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Observe standard diffusion. The membrane naturally blocks charged particles (blue) but allows neutral
+            molecules (green). Click to open the protein channels and allow facilitated diffusion.
         </p>
     </div>
 
     <span class="section-tag tag-energy">THERMODYNAMICS</span>
     <h2 id="sec-energy">2. The Engine (Energy & Entropy)</h2>
-    <p>The second law of thermodynamics states that the universe tends toward disorder (entropy). Life is a localized rebellion against this law. To maintain structure and order, living systems must constantly process energy.</p>
-    <p>The universal currency for this energy is <strong>ATP (Adenosine Triphosphate)</strong>. When a cell needs to perform work—like moving a muscle or building a protein—it breaks a chemical bond in ATP, releasing a burst of usable energy and converting it to ADP. Cellular respiration is the process of recharging this biological battery.</p>
+    <p>The second law of thermodynamics states that the universe tends toward disorder (entropy). Life is a localized
+        rebellion against this law. To maintain structure and order, living systems must constantly process energy.</p>
+    <p>The universal currency for this energy is <strong>ATP (Adenosine Triphosphate)</strong>. When a cell needs to
+        perform work—like moving a muscle or building a protein—it breaks a chemical bond in ATP, releasing a burst of
+        usable energy and converting it to ADP. Cellular respiration is the process of recharging this biological
+        battery.</p>
 
     <div class="interactive-container">
         <canvas id="atpCanvas" width="600" height="300"></canvas>
@@ -93,8 +110,10 @@
             <button id="atp-charge-btn">GLYCOLYSIS: CHARGE ADP</button>
             <button id="atp-use-btn">WORK: USE ATP</button>
         </div>
-        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
-            Watch the mitochondrion recharge ADP into energetic ATP. Click "USE ATP" to spend that energy on cellular work (moving a motor protein).
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch the mitochondrion recharge ADP into energetic ATP. Click "USE ATP" to spend that energy on cellular
+            work (moving a motor protein).
         </p>
     </div>
 
@@ -102,7 +121,9 @@
     <h2 id="sec-dna">3. The Language of Life (DNA)</h2>
     <p>If you were to stretch out the DNA in a single human cell, it would be two meters long. Yet it is packed into a
         space smaller than a speck of dust. This molecule, the <strong>Double Helix</strong>, is the most efficient data
-        storage system in the known universe <a href="#ref-4" style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[4]</a>.</p>
+        storage system in the known universe <a href="#ref-4"
+            style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[4]</a>.
+    </p>
 
     <p>DNA consists of two strands twisting around each other. Each strand is a sequence of four chemical bases:
         <strong>Adenine (A)</strong>, <strong>Thymine (T)</strong>, <strong>Cytosine (C)</strong>, and <strong>Guanine
@@ -128,7 +149,9 @@
     <h2 id="sec-code">4. The Digital Script (The Genetic Code)</h2>
     <p>Each codon represents one specific <strong>Amino Acid</strong>. For example, the sequence <span
             class="term">ATG</span> is the universal "START" signal. This mapping between 3-letter DNA sequences and
-        amino acids is known as the <strong>Genetic Code</strong> <a href="#ref-3" style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[3]</a>.</p>
+        amino acids is known as the <strong>Genetic Code</strong> <a href="#ref-3"
+            style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[3]</a>.
+    </p>
 
     <div class="interactive-container">
         <canvas id="codonCanvas" width="600" height="250"></canvas>
@@ -155,7 +178,8 @@
     <span class="section-tag tag-molecular">MOLECULAR</span>
     <h2 id="sec-transcription">5. Copying the Code (RNA & Transcription)</h2>
     <p>The mRNA is essentially a mirror image of the DNA, with one small change: instead of Thymine (T), it uses
-        <strong>Uracil (U)</strong>. This copy is then shipped out of the cell's nucleus to the protein factories.</p>
+        <strong>Uracil (U)</strong>. This copy is then shipped out of the cell's nucleus to the protein factories.
+    </p>
 
     <div class="interactive-container">
         <canvas id="transcriptionCanvas" width="600" height="300"></canvas>
@@ -182,7 +206,8 @@
         <p
             style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
             Watch the ribosome scan the mRNA codons (bottom) and assemble amino acids into a peptide chain that
-            self-folds through spring and repulsion physics <a href="#ref-1" style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[1]</a>.
+            self-folds through spring and repulsion physics <a href="#ref-1"
+                style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[1]</a>.
         </p>
     </div>
 
@@ -190,7 +215,9 @@
     <h2 id="sec-regulation">7. The Biological Logic (Gene Tuning)</h2>
     <p>Every cell in your body has the exact same DNA. Why is a brain cell different from a skin cell? The answer is
         <strong>Gene Regulation</strong>. Not every gene is "on" at the same time. Cells use complex feedback
-        loops—biological IF/THEN statements—to tune their behavior <a href="#ref-2" style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[2]</a>.</p>
+        loops—biological IF/THEN statements—to tune their behavior <a href="#ref-2"
+            style="color:var(--bio-green); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[2]</a>.
+    </p>
 
     <div class="interactive-container" style="min-height: 400px;">
         <canvas id="regulationCanvas" width="600" height="300"></canvas>
@@ -213,27 +240,92 @@
     </div>
     <span class="section-tag tag-evolution">EVOLUTION</span>
     <h2 id="sec-evolution">8. The Search Algorithm (Natural Selection)</h2>
-    <p>How did the complex code of DNA come to be? The answer is an iterative search algorithm called <strong>Natural Selection</strong>. It requires three components to run: replication, random mutation, and a selection pressure.</p>
-    <p>In this environment, organisms must find food to survive. They possess two "genes": <strong>Speed</strong> and <strong>Sensory Radius</strong>. While high capability helps them locate and reach food faster, it also costs more energy to maintain. If an organism runs out of energy, it dies. Survivors reproduce, passing on their traits with slight mutations. Over time, the population evolves the optimal balance between capability and efficiency.</p>
+    <p>How did the complex code of DNA come to be? The answer is an iterative search algorithm called <strong>Natural
+            Selection</strong>. It requires three components to run: replication, random mutation, and a selection
+        pressure.</p>
+    <p>In this environment, organisms must find food to survive. They possess two "genes": <strong>Speed</strong> and
+        <strong>Sensory Radius</strong>. While high capability helps them locate and reach food faster, it also costs
+        more energy to maintain. If an organism runs out of energy, it dies. Survivors reproduce, passing on their
+        traits with slight mutations. Over time, the population evolves the optimal balance between capability and
+        efficiency.</p>
 
     <div class="interactive-container" style="min-height: 400px;">
-        <canvas id="evolutionCanvas" width="600" height="300" style="background: #111; border: 1px solid #333;"></canvas>
+        <canvas id="evolutionCanvas" width="600" height="300"
+            style="background: #111; border: 1px solid #333;"></canvas>
         <div class="controls">
             <button id="evo-spawn-btn" style="background:var(--evolution-orange); color:#fff;">NEXT GENERATION</button>
             <div class="control-group">
                 <label>DAY / GENERATION: <span id="evo-gen-val" style="color:var(--evolution-orange)">1</span></label>
             </div>
         </div>
-        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
-            Green dots are food. Cell color indicates speed (blue=slow, red=fast). The glowing aura indicates sensory radius. Watch how natural selection prunes inefficiencies.
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Green dots are food. Cell color indicates speed (blue=slow, red=fast). The glowing aura indicates sensory
+            radius. Watch how natural selection prunes inefficiencies.
+        </p>
+    </div>
+
+    <span class="section-tag tag-virus">DISEASE</span>
+    <h2 id="sec-virus">9. Rogue Code (Viruses)</h2>
+    <p>A virus is not technically alive because it lacks the machinery to process energy (metabolism) or build itself
+        (ribosomes). It is an obligate parasite: a flash drive holding malicious genetic code wrapped in a protein coat.
+    </p>
+    <p>The virus sequence consists of instructions to build more viruses. When it docks with a host cell, it injects
+        this code into the system. The host cell's blind machinery reads the code and unwittingly begins manufacturing
+        the virus's components, eventually bursting the cell (lysis) to release the new copies into the environment.</p>
+
+    <div class="interactive-container" style="min-height: 400px;">
+        <canvas id="virusCanvas" width="600" height="300" style="background: #111; border: 1px solid #333;"></canvas>
+        <div class="controls">
+            <button id="virus-infect-btn" style="background:var(--virus-lime); color:#000;">TRIGGER INFECTION</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch a Bacteriophage inject its DNA (green) into a host cell. The host's ribosomes indiscriminately
+            transcribe the viral code, forging new viral coats and assembling clones until the structure fails.
+        </p>
+    </div>
+
+    <span class="section-tag tag-immune">DEFENSE</span>
+    <h2 id="sec-immune">10. Self vs. Non-Self (Immunology)</h2>
+    <p>How does a blind, mechanical system defend against such sophisticated rogue code? Through a massively parallel
+        game of shape-matching.</p>
+    <p>The immune system generates millions of random protein shapes known as <strong>Antibodies</strong>. The body
+        first purges any antibodies that match its own cells (distinguishing "self" from "non-self"). The remaining
+        antibodies patrol the blood. If one happens to structurally bind to a foreign invader (an
+        <strong>Antigen</strong>), the immune system triggers a massive alarm, amplifying that specific lock-and-key
+        antibody to tag the intruders for destruction.</p>
+
+    <div class="interactive-container" style="min-height: 400px;">
+        <canvas id="immuneCanvas" width="600" height="300"
+            style="background: #0f141a; border: 1px solid #333;"></canvas>
+        <div class="controls" style="align-items: center;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap: 10px;">
+                <label style="font-family:'Courier New', monospace; font-size:12px; color:#888;">SELECT ANTIBODY
+                    SHAPE:</label>
+                <div style="display:flex; gap:10px;">
+                    <button class="ab-select-btn" data-shape="triangle">△</button>
+                    <button class="ab-select-btn" data-shape="square">□</button>
+                    <button class="ab-select-btn" data-shape="circle">○</button>
+                    <button class="ab-select-btn" data-shape="star">☆</button>
+                </div>
+            </div>
+            <button id="immune-spawn-btn" style="background:var(--immune-cyan); color:#000;">SPAWN PATHOGEN</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Pathogens have specific surface antigen shapes. Find the neutralizing antibody shape before the pathogen
+            replicates out of control.
         </p>
     </div>
 
     <span class="section-tag tag-crispr">GENE EDITING</span>
-    <h2 id="sec-crispr">9. Search & Replace (CRISPR-Cas9)</h2>
+    <h2 id="sec-crispr">11. Search & Replace (CRISPR-Cas9)</h2>
     <p>In 2012, researchers discovered a way to turn a bacterial immune system into the world's most precise pair of
         molecular scissors. This system, <strong>CRISPR-Cas9</strong>, allows us to find a specific sequence of DNA
-        and cut it with surgical precision <a href="#ref-5" style="color:var(--crispr-red); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[5]</a>.</p>
+        and cut it with surgical precision <a href="#ref-5"
+            style="color:var(--crispr-red); text-decoration:none; font-size:0.8rem; font-family:'Courier New', monospace;">[5]</a>.
+    </p>
 
     <p>The system uses a <strong>Guide RNA (gRNA)</strong> to mirror the target DNA sequence. When the Cas9 protein
         detects a match preceded by a short "PAM" sequence, it latches on and performs a double-strand break. Once the
@@ -253,7 +345,7 @@
         </p>
     </div>
 
-    <h2 id="sec-quiz">10. Test Your Biology Knowledge</h2>
+    <h2 id="sec-quiz">12. Test Your Biology Knowledge</h2>
     <p>Can you implement the core logic of the central dogma? Below is a live Python environment. Write the functions to
         simulate base-pairing and protein translation.</p>
 
@@ -275,27 +367,42 @@
     </div>
 
     <section id="references" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #222;">
-        <h3 style="font-family: 'Courier New', monospace; font-size: 0.85rem; letter-spacing: 0.3em; text-transform: uppercase; color: #555; margin-bottom: 2rem;">Academic References & Primary Sources</h3>
-        <ul style="list-style: none; padding: 0; font-size: 0.85rem; color: #777; line-height: 1.8; font-family: 'Inter', sans-serif;">
+        <h3
+            style="font-family: 'Courier New', monospace; font-size: 0.85rem; letter-spacing: 0.3em; text-transform: uppercase; color: #555; margin-bottom: 2rem;">
+            Academic References & Primary Sources</h3>
+        <ul
+            style="list-style: none; padding: 0; font-size: 0.85rem; color: #777; line-height: 1.8; font-family: 'Inter', sans-serif;">
             <li id="ref-1" style="margin-bottom: 1.2rem; padding-left: 1.5rem; text-indent: -1.5rem;">
-                [1] Alberts, B., Johnson, A., Lewis, J., Morgan, D., Raff, M., Roberts, K., & Walter, P. (2014). <em>Molecular Biology of the Cell</em> (6th ed.). Garland Science. 
-                <a href="https://www.ncbi.nlm.nih.gov/books/NBK21054/" target="_blank" style="color: var(--bio-green); text-decoration: none; margin-left: 10px; opacity: 0.8;">[NCBI Bookshelf]</a>
+                [1] Alberts, B., Johnson, A., Lewis, J., Morgan, D., Raff, M., Roberts, K., & Walter, P. (2014).
+                <em>Molecular Biology of the Cell</em> (6th ed.). Garland Science.
+                <a href="https://www.ncbi.nlm.nih.gov/books/NBK21054/" target="_blank"
+                    style="color: var(--bio-green); text-decoration: none; margin-left: 10px; opacity: 0.8;">[NCBI
+                    Bookshelf]</a>
             </li>
             <li id="ref-2" style="margin-bottom: 1.2rem; padding-left: 1.5rem; text-indent: -1.5rem;">
-                [2] Campbell, N. A., Urry, L. A., Cain, S. L., Wasserman, S. A., Minorsky, P. V., & Orr, R. B. (2020). <em>Campbell Biology</em> (12th ed.). Pearson.
-                <a href="https://www.pearson.com/en-us/subject-catalog/p/campbell-biology/P200000002137" target="_blank" style="color: var(--bio-green); text-decoration: none; margin-left: 10px; opacity: 0.8;">[Publisher Link]</a>
+                [2] Campbell, N. A., Urry, L. A., Cain, S. L., Wasserman, S. A., Minorsky, P. V., & Orr, R. B. (2020).
+                <em>Campbell Biology</em> (12th ed.). Pearson.
+                <a href="https://www.pearson.com/en-us/subject-catalog/p/campbell-biology/P200000002137" target="_blank"
+                    style="color: var(--bio-green); text-decoration: none; margin-left: 10px; opacity: 0.8;">[Publisher
+                    Link]</a>
             </li>
             <li id="ref-3" style="margin-bottom: 1.2rem; padding-left: 1.5rem; text-indent: -1.5rem;">
-                [3] Crick, F. (1970). Central dogma of molecular biology. <em>Nature</em>, 227(5258), 561-563. 
-                <a href="https://doi.org/10.1038/227561a0" target="_blank" style="color: var(--bio-green); text-decoration: none; margin-left: 10px; opacity: 0.8;">doi:10.1038/227561a0</a>
+                [3] Crick, F. (1970). Central dogma of molecular biology. <em>Nature</em>, 227(5258), 561-563.
+                <a href="https://doi.org/10.1038/227561a0" target="_blank"
+                    style="color: var(--bio-green); text-decoration: none; margin-left: 10px; opacity: 0.8;">doi:10.1038/227561a0</a>
             </li>
             <li id="ref-4" style="margin-bottom: 1.2rem; padding-left: 1.5rem; text-indent: -1.5rem;">
-                [4] Watson, J. D., & Crick, F. H. (1953). Molecular structure of nucleic acids; a structure for deoxyribose nucleic acid. <em>Nature</em>, 171(4356), 737-738. 
-                <a href="https://doi.org/10.1038/171737a0" target="_blank" style="color: var(--bio-green); text-decoration: none; margin-left: 10px; opacity: 0.8;">doi:10.1038/171737a0</a>
+                [4] Watson, J. D., & Crick, F. H. (1953). Molecular structure of nucleic acids; a structure for
+                deoxyribose nucleic acid. <em>Nature</em>, 171(4356), 737-738.
+                <a href="https://doi.org/10.1038/171737a0" target="_blank"
+                    style="color: var(--bio-green); text-decoration: none; margin-left: 10px; opacity: 0.8;">doi:10.1038/171737a0</a>
             </li>
             <li id="ref-5" style="margin-bottom: 1.2rem; padding-left: 1.5rem; text-indent: -1.5rem;">
-                [5] Jinek, M., Chylinski, K., Fonfara, I., Hauer, M., Doudna, J. A., & Charpentier, E. (2012). A programmable dual-RNA-guided DNA endonuclease in adaptive bacterial immunity. <em>Science</em>, 337(6096), 816-821.
-                <a href="https://doi.org/10.1126/science.1225829" target="_blank" style="color: var(--crispr-red); text-decoration: none; margin-left: 10px; opacity: 0.8;">doi:10.1126/science.1225829</a>
+                [5] Jinek, M., Chylinski, K., Fonfara, I., Hauer, M., Doudna, J. A., & Charpentier, E. (2012). A
+                programmable dual-RNA-guided DNA endonuclease in adaptive bacterial immunity. <em>Science</em>,
+                337(6096), 816-821.
+                <a href="https://doi.org/10.1126/science.1225829" target="_blank"
+                    style="color: var(--crispr-red); text-decoration: none; margin-left: 10px; opacity: 0.8;">doi:10.1126/science.1225829</a>
             </li>
         </ul>
     </section>

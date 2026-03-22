@@ -19,7 +19,7 @@ function drawHeroDNA() {
     for (let i = 0; i < nodes; i++) {
         const x = i * spacing + spacing / 2;
         const yOffset = height / 2;
-        
+
         const y1 = yOffset + Math.sin(time + i * freq * 10) * amp;
         const y2 = yOffset + Math.sin(time + i * freq * 10 + Math.PI) * amp;
 
@@ -66,11 +66,11 @@ function drawDnaSection() {
     for (let i = 0; i < pairs; i++) {
         const y = padding + i * spacing;
         const angle = dnaTime + i * 0.5;
-        
+
         const r = 80; // Helix radius
         const x1 = w / 2 + Math.cos(angle) * r;
         const x2 = w / 2 + Math.cos(angle + Math.PI) * r;
-        
+
         const z1 = Math.sin(angle);
         const z2 = Math.sin(angle + Math.PI);
 
@@ -101,7 +101,7 @@ function drawDnaSection() {
         // Backbone points
         const size1 = 5 + z1 * 2;
         const size2 = 5 + z2 * 2;
-        
+
         dnaCtx.beginPath();
         dnaCtx.arc(x1, y, size1, 0, Math.PI * 2);
         dnaCtx.fillStyle = '#fff';
@@ -141,28 +141,28 @@ function updateCodonReader() {
     const seq = currentCodon.join("");
     codonVal.innerText = seq;
     aminoVal.innerText = codonTable[seq] || "Amino Acid X (Generic)";
-    
+
     // Draw
     const w = codonCanvas.width;
     const h = codonCanvas.height;
     codonCtx.clearRect(0, 0, w, h);
-    
+
     currentCodon.forEach((base, i) => {
         const x = (w / 4) * (i + 1);
         const y = h / 2;
-        
+
         codonCtx.beginPath();
         codonCtx.arc(x, y, 30, 0, Math.PI * 2);
         codonCtx.strokeStyle = "#333";
         codonCtx.lineWidth = 1;
         codonCtx.stroke();
-        
+
         codonCtx.fillStyle = "#fff";
         codonCtx.font = "bold 24px 'Courier New'";
         codonCtx.textAlign = "center";
         codonCtx.textBaseline = "middle";
         codonCtx.fillText(base, x, y);
-        
+
         codonCtx.fillStyle = (base === "A") ? "#00ff88" : (base === "T") ? "#ff0055" : (base === "C") ? "#fbbf24" : "#00aaff";
         codonCtx.beginPath();
         codonCtx.arc(x, y + 50, 5, 0, Math.PI * 2);
@@ -187,14 +187,14 @@ let transProgress = -1; // -1 = idle
 let isTranscribing = false;
 
 // DNA template strand (3'→5') and its complement (5'→3')
-const templateStrand =    ['T','A','C','G','G','C','A','T','C','G','A','T'];
-const codingStrand =      ['A','T','G','C','C','G','T','A','G','C','T','A'];
+const templateStrand = ['T', 'A', 'C', 'G', 'G', 'C', 'A', 'T', 'C', 'G', 'A', 'T'];
+const codingStrand = ['A', 'T', 'G', 'C', 'C', 'G', 'T', 'A', 'G', 'C', 'T', 'A'];
 // mRNA is complementary to template: A→U, T→A, C→G, G→C
 function toRNA(base) {
-    return { 'T':'A', 'A':'U', 'C':'G', 'G':'C' }[base];
+    return { 'T': 'A', 'A': 'U', 'C': 'G', 'G': 'C' }[base];
 }
 
-const baseColor = { 'A':'#00ff88', 'T':'#ff0055', 'C':'#fbbf24', 'G':'#00aaff', 'U':'#a855f7' };
+const baseColor = { 'A': '#00ff88', 'T': '#ff0055', 'C': '#fbbf24', 'G': '#00aaff', 'U': '#a855f7' };
 
 function drawTranscription() {
     const w = transCanvas.width;
@@ -413,11 +413,11 @@ document.getElementById('transcription-run-btn').addEventListener('click', () =>
 const translateCanvas = document.getElementById('translationCanvas');
 const translateCtx = translateCanvas.getContext('2d');
 
-const mRNASequence = ['AUG','GCU','CCG','GAU','UGC','AAA','UGC','GCU','CCG','UAG'];
-const aminoAcids   = ['Met','Ala','Pro','Asp','Cys','Lys','Cys','Ala','Pro','STOP'];
-const aaColors     = ['#fbbf24','#34d399','#a78bfa','#f87171','#38bdf8','#fb923c','#38bdf8','#34d399','#a78bfa','#ef4444'];
+const mRNASequence = ['AUG', 'GCU', 'CCG', 'GAU', 'UGC', 'AAA', 'UGC', 'GCU', 'CCG', 'UAG'];
+const aminoAcids = ['Met', 'Ala', 'Pro', 'Asp', 'Cys', 'Lys', 'Cys', 'Ala', 'Pro', 'STOP'];
+const aaColors = ['#fbbf24', '#34d399', '#a78bfa', '#f87171', '#38bdf8', '#fb923c', '#38bdf8', '#34d399', '#a78bfa', '#ef4444'];
 // Hydrophobic residues fold inward; polar residues stay on the surface
-const hydrophobic  = [false, true, true, false, false, false, false, true, true, false];
+const hydrophobic = [false, true, true, false, false, false, false, true, true, false];
 
 let chain = [];
 let assembledCount = 0;
@@ -685,12 +685,12 @@ let mRNAParticles = [];
 // DNA Segment definitions (x positions relative to canvas)
 const DNA_Y = 160;
 const segments = [
-    { label: 'CAP',      x: 30,  w: 60,  color: '#334155' },
-    { label: 'PROMOTER', x: 95,  w: 80,  color: '#065f46' },
-    { label: 'OPERATOR', x: 180, w: 60,  color: '#7f1d1d' },
-    { label: 'lacZ',     x: 245, w: 90,  color: '#1e3a5f' },
-    { label: 'lacY',     x: 340, w: 70,  color: '#1e3a5f' },
-    { label: 'lacA',     x: 415, w: 70,  color: '#1e3a5f' },
+    { label: 'CAP', x: 30, w: 60, color: '#334155' },
+    { label: 'PROMOTER', x: 95, w: 80, color: '#065f46' },
+    { label: 'OPERATOR', x: 180, w: 60, color: '#7f1d1d' },
+    { label: 'lacZ', x: 245, w: 90, color: '#1e3a5f' },
+    { label: 'lacY', x: 340, w: 70, color: '#1e3a5f' },
+    { label: 'lacA', x: 415, w: 70, color: '#1e3a5f' },
 ];
 
 function drawRegulation() {
@@ -889,7 +889,7 @@ function drawCRISPR() {
     const w = crisprCanvas.width;
     const h = crisprCanvas.height;
     crisprCtx.clearRect(0, 0, w, h);
-    
+
     const midY = h / 2;
     const spacing = 25;
     const startX = 50;
@@ -917,14 +917,14 @@ function drawCRISPR() {
                 xOffset = -cutAnimProgress * 50;
             }
         }
-        
+
         const finalX = x + xOffset;
 
         // Backbone
         crisprCtx.strokeStyle = 'rgba(255,255,255,0.1)';
         crisprCtx.lineWidth = 2;
         if (i > 0) {
-            const prevX = currentX(i-1) + (i > targetIdx + 3 && hasCut ? cutAnimProgress * 150 : (i <= targetIdx + 3 && hasCut ? -cutAnimProgress * 50 : 0));
+            const prevX = currentX(i - 1) + (i > targetIdx + 3 && hasCut ? cutAnimProgress * 150 : (i <= targetIdx + 3 && hasCut ? -cutAnimProgress * 50 : 0));
             // Only draw backbone if not at the cut point
             if (!hasCut || i !== targetIdx + 4) {
                 crisprCtx.beginPath();
@@ -969,7 +969,7 @@ function drawCRISPR() {
     if (isCutting) {
         crisprCtx.scale(1 + Math.sin(crisprTime * 10) * 0.05, 1);
     }
-    
+
     crisprCtx.beginPath();
     crisprCtx.roundRect(-casW / 2, -casH / 2, casW, casH, 30);
     crisprCtx.fillStyle = 'rgba(100, 100, 110, 0.4)';
@@ -985,7 +985,7 @@ function drawCRISPR() {
     crisprCtx.moveTo(-40, 0);
     crisprCtx.bezierCurveTo(-20, -20, 20, 20, 40, 0);
     crisprCtx.stroke();
-    
+
     crisprCtx.fillStyle = '#fff';
     crisprCtx.font = 'bold 8px monospace';
     crisprCtx.textAlign = 'center';
@@ -1001,7 +1001,7 @@ function drawCRISPR() {
             isCutting = false;
             hasCut = true;
         }
-        
+
         // Flash effect at cut point
         crisprCtx.beginPath();
         crisprCtx.arc(casX, casY, cutAnimProgress * 100, 0, Math.PI * 2);
@@ -1042,7 +1042,7 @@ let channelsOpen = false;
 let membraneParticles = [];
 
 // Initialize particles inside and outside
-for(let i=0; i<80; i++) {
+for (let i = 0; i < 80; i++) {
     membraneParticles.push({
         x: Math.random() * 600,
         y: Math.random() * 300,
@@ -1066,7 +1066,7 @@ function drawMembrane() {
     membraneCtx.fillRect(memX, 0, memWidth, h);
 
     // Channels
-    const channels = [h*0.25, h*0.75];
+    const channels = [h * 0.25, h * 0.75];
     channels.forEach(y => {
         membraneCtx.fillStyle = channelsOpen ? '#00ff8888' : '#ff005588';
         membraneCtx.fillRect(memX, y - 20, memWidth, 40);
@@ -1134,34 +1134,34 @@ function drawATP() {
     // Draw Mitochondrion
     atpCtx.fillStyle = '#ff4d4d22';
     atpCtx.beginPath();
-    atpCtx.ellipse(w*0.75, h/2, 80, 50, 0, 0, Math.PI * 2);
+    atpCtx.ellipse(w * 0.75, h / 2, 80, 50, 0, 0, Math.PI * 2);
     atpCtx.fill();
     atpCtx.strokeStyle = '#ff4d4d88';
     atpCtx.stroke();
-    
+
     // Draw Motor Protein
     atpCtx.fillStyle = '#00aaff88';
-    atpCtx.fillRect(motorX, h*0.7, 40, 40);
+    atpCtx.fillRect(motorX, h * 0.7, 40, 40);
     atpCtx.fillStyle = '#fff';
     atpCtx.font = '10px monospace';
-    atpCtx.fillText('MOTOR', motorX + 5, h*0.7 + 24);
+    atpCtx.fillText('MOTOR', motorX + 5, h * 0.7 + 24);
 
     // Draw ATP/ADP
-    const cx = w/2;
-    const cy = h*0.3;
+    const cx = w / 2;
+    const cy = h * 0.3;
     atpCtx.fillStyle = atpCharged ? '#fbbf24' : '#555';
     atpCtx.beginPath();
     atpCtx.arc(cx, cy, 20, 0, Math.PI * 2);
     atpCtx.fill();
-    
-    atpCtx.fillStyle = '#fff';     
+
+    atpCtx.fillStyle = '#fff';
     atpCtx.fillText(atpCharged ? 'ATP' : 'ADP', cx - 10, cy + 4);
 
     if (atpCharged) {
         // Sparkle
         atpCtx.fillStyle = '#fbbf24';
         atpCtx.beginPath();
-        atpCtx.arc(cx + Math.sin(atpTime*0.2)*25, cy + Math.cos(atpTime*0.2)*25, 3, 0, Math.PI * 2);
+        atpCtx.arc(cx + Math.sin(atpTime * 0.2) * 25, cy + Math.cos(atpTime * 0.2) * 25, 3, 0, Math.PI * 2);
         atpCtx.fill();
     }
 
@@ -1175,7 +1175,7 @@ document.getElementById('atp-use-btn').addEventListener('click', () => {
     if (atpCharged) {
         atpCharged = false;
         motorX += 50;
-        if(motorX > w - 50) motorX = 50;
+        if (motorX > w - 50) motorX = 50;
     }
 });
 
@@ -1191,7 +1191,7 @@ let dayTimer = 0;
 const DAY_LENGTH = 600;
 
 function spawnFood(count) {
-    for(let i=0; i<count; i++) {
+    for (let i = 0; i < count; i++) {
         foods.push({
             x: 20 + Math.random() * (evoCanvas.width - 40),
             y: 20 + Math.random() * (evoCanvas.height - 40)
@@ -1205,9 +1205,9 @@ function initEvo() {
     generation = 1;
     dayTimer = 0;
     evoGenVal.innerText = generation;
-    
+
     // Spawn initial diverse population
-    for(let i=0; i<30; i++) {
+    for (let i = 0; i < 30; i++) {
         cells.push(createCell(
             Math.random() * evoCanvas.width,
             Math.random() * evoCanvas.height,
@@ -1235,32 +1235,32 @@ function nextGeneration() {
     // Survivors reproduce based on food eaten
     const survivors = cells.filter(c => !c.dead && c.foodEaten > 0);
     cells = [];
-    
+
     if (survivors.length === 0) {
         // Extinction - restart
         initEvo();
         return;
     }
-    
+
     // Reproduction with mutation
     survivors.forEach(p => {
         // Parent survives if it ate enough, otherwise just reproduces and dies. 
         // Let's say it makes 1 offspring per food eaten.
-        for(let i=0; i<p.foodEaten; i++) {
+        for (let i = 0; i < p.foodEaten; i++) {
             cells.push(createCell(
-                p.x + (Math.random()-0.5)*20,
-                p.y + (Math.random()-0.5)*20,
-                p.speed + (Math.random()-0.5)*0.4, // Mutate speed
-                p.sense + (Math.random()-0.5)*10   // Mutate sense
+                p.x + (Math.random() - 0.5) * 20,
+                p.y + (Math.random() - 0.5) * 20,
+                p.speed + (Math.random() - 0.5) * 0.4, // Mutate speed
+                p.sense + (Math.random() - 0.5) * 10   // Mutate sense
             ));
         }
     });
-    
+
     // Cap population
-    while(cells.length > 50) {
+    while (cells.length > 50) {
         cells.splice(Math.floor(Math.random() * cells.length), 1);
     }
-    
+
     generation++;
     evoGenVal.innerText = generation;
     dayTimer = 0;
@@ -1305,7 +1305,7 @@ function drawEvolution() {
         let minDist = c.sense;
 
         foods.forEach(f => {
-            const dist = Math.sqrt((c.x - f.x)**2 + (c.y - f.y)**2);
+            const dist = Math.sqrt((c.x - f.x) ** 2 + (c.y - f.y) ** 2);
             if (dist < minDist) {
                 targetFood = f;
                 minDist = dist;
@@ -1316,10 +1316,10 @@ function drawEvolution() {
             // Steer towards food
             const dx = targetFood.x - c.x;
             const dy = targetFood.y - c.y;
-            const len = Math.sqrt(dx*dx + dy*dy);
+            const len = Math.sqrt(dx * dx + dy * dy);
             c.vx = (dx / len);
             c.vy = (dy / len);
-            
+
             // Eat food
             if (minDist < 6) {
                 foods = foods.filter(f => f !== targetFood);
@@ -1330,7 +1330,7 @@ function drawEvolution() {
             // Random wander
             c.vx += (Math.random() - 0.5) * 0.2;
             c.vy += (Math.random() - 0.5) * 0.2;
-            const len = Math.sqrt(c.vx*c.vx + c.vy*c.vy) || 1;
+            const len = Math.sqrt(c.vx * c.vx + c.vy * c.vy) || 1;
             c.vx /= len;
             c.vy /= len;
         }
@@ -1338,29 +1338,29 @@ function drawEvolution() {
         // Move
         c.x += c.vx * c.speed;
         c.y += c.vy * c.speed;
-        
+
         // Bounce
-        if (c.x < 5 || c.x > w-5) c.vx *= -1;
-        if (c.y < 5 || c.y > h-5) c.vy *= -1;
+        if (c.x < 5 || c.x > w - 5) c.vx *= -1;
+        if (c.y < 5 || c.y > h - 5) c.vy *= -1;
 
         // --- Draw ---
         // Sense Aura (larger radius = more transparent outline)
-        evoCtx.strokeStyle = `rgba(255, 255, 255, ${Math.max(0.05, 0.3 - c.sense/400)})`;
+        evoCtx.strokeStyle = `rgba(255, 255, 255, ${Math.max(0.05, 0.3 - c.sense / 400)})`;
         evoCtx.beginPath();
         evoCtx.arc(c.x, c.y, c.sense, 0, Math.PI * 2);
         evoCtx.stroke();
 
         // Body color based on speed (blue=slow, red=fast)
-        const hue = 240 - Math.min(240, (c.speed - 0.5) * 100); 
+        const hue = 240 - Math.min(240, (c.speed - 0.5) * 100);
         evoCtx.fillStyle = `hsl(${hue}, 80%, 60%)`;
         evoCtx.beginPath();
         evoCtx.arc(c.x, c.y, 5, 0, Math.PI * 2);
         evoCtx.fill();
-        
+
         // Energy indicator (inner dot gets smaller as energy drops)
         evoCtx.fillStyle = '#fff';
         evoCtx.beginPath();
-        evoCtx.arc(c.x, c.y, Math.max(0, (c.energy/100) * 2), 0, Math.PI * 2);
+        evoCtx.arc(c.x, c.y, Math.max(0, (c.energy / 100) * 2), 0, Math.PI * 2);
         evoCtx.fill();
     });
 
@@ -1384,6 +1384,356 @@ document.getElementById('evo-spawn-btn').addEventListener('click', () => {
 // Start the simulation
 initEvo();
 
+// --- Section 9: Rogue Code (Viruses) ---
+const virusCanvas = document.getElementById('virusCanvas');
+const virusCtx = virusCanvas.getContext('2d');
+const infectBtn = document.getElementById('virus-infect-btn');
+
+let virusState = 'idle'; // idle, injecting, replicating, lysis
+let virusTimer = 0;
+let viralParticles = [];
+let hostHealth = 100;
+
+function drawVirus() {
+    const w = virusCanvas.width;
+    const h = virusCanvas.height;
+    virusCtx.clearRect(0, 0, w, h);
+
+    // Host Cell (Large circle covering bottom right)
+    const cellX = w * 0.7;
+    const cellY = h * 0.8;
+    const cellR = 150;
+
+    virusCtx.beginPath();
+    virusCtx.arc(cellX, cellY, cellR, 0, Math.PI * 2);
+    virusCtx.strokeStyle = virusState === 'lysis' ? '#555' : '#00aaff';
+    virusCtx.lineWidth = 4;
+
+    if (virusState === 'lysis') {
+        virusCtx.setLineDash([10, 15]);
+    } else {
+        virusCtx.setLineDash([]);
+    }
+    virusCtx.stroke();
+    virusCtx.fillStyle = '#0f172a';
+    virusCtx.fill();
+    virusCtx.setLineDash([]);
+
+    // Host Nucleus / Ribosomes area
+    if (virusState !== 'lysis') {
+        virusCtx.fillStyle = 'rgba(0, 170, 255, 0.1)';
+        virusCtx.beginPath();
+        virusCtx.arc(cellX, cellY, 60, 0, Math.PI * 2);
+        virusCtx.fill();
+        virusCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        virusCtx.font = '10px monospace';
+        virusCtx.textAlign = 'center';
+        virusCtx.fillText('HOST RIBOSOMES', cellX, cellY);
+        virusCtx.textAlign = 'left';
+    }
+
+    // The Bacteriophage (Attacking from top left of cell)
+    const phageX = cellX - 120;
+    const phageY = cellY - 120;
+
+    if (virusState !== 'lysis') {
+        // Draw Phage
+        virusCtx.strokeStyle = '#a3e635';
+        virusCtx.lineWidth = 2;
+
+        // Head (Hexagon)
+        virusCtx.beginPath();
+        for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i;
+            const hx = phageX - 20 + Math.cos(angle) * 15;
+            const hy = phageY - 20 + Math.sin(angle) * 15;
+            if (i === 0) virusCtx.moveTo(hx, hy);
+            else virusCtx.lineTo(hx, hy);
+        }
+        virusCtx.closePath();
+        virusCtx.stroke();
+
+        // DNA inside head (if not injected)
+        if (virusState === 'idle' || (virusState === 'injecting' && virusTimer < 50)) {
+            virusCtx.fillStyle = '#a3e635';
+            virusCtx.beginPath();
+            virusCtx.arc(phageX - 20, phageY - 20, 5, 0, Math.PI * 2);
+            virusCtx.fill();
+        }
+
+        // Tail
+        virusCtx.beginPath();
+        virusCtx.moveTo(phageX - 10, phageY - 10);
+        virusCtx.lineTo(phageX + 10, phageY + 10);
+        virusCtx.stroke();
+
+        // Legs
+        virusCtx.beginPath();
+        virusCtx.moveTo(phageX + 10, phageY + 10);
+        virusCtx.lineTo(phageX + 25, phageY);
+        virusCtx.moveTo(phageX + 10, phageY + 10);
+        virusCtx.lineTo(phageX + 5, phageY + 25);
+        virusCtx.stroke();
+    }
+
+    // Injection Animation
+    if (virusState === 'injecting') {
+        virusTimer++;
+        if (virusTimer > 20) {
+            // DNA traveling down
+            const progress = (virusTimer - 20) / 40;
+            const dnaX = phageX - 10 + progress * 80;
+            const dnaY = phageY - 10 + progress * 80;
+            if (progress <= 1) {
+                virusCtx.fillStyle = '#a3e635';
+                virusCtx.beginPath();
+                virusCtx.arc(dnaX, dnaY, 4, 0, Math.PI * 2);
+                virusCtx.fill();
+            } else {
+                virusState = 'replicating';
+                virusTimer = 0;
+            }
+        }
+    }
+
+    // Replicating Animation
+    if (virusState === 'replicating') {
+        virusTimer++;
+
+        // Add new viral particles over time
+        if (virusTimer % 20 === 0 && viralParticles.length < 50) {
+            viralParticles.push({
+                x: cellX + (Math.random() - 0.5) * 100,
+                y: cellY + (Math.random() - 0.5) * 100,
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2
+            });
+        }
+
+        if (viralParticles.length >= 40) {
+            hostHealth -= 2;
+        }
+
+        if (hostHealth <= 0) {
+            virusState = 'lysis';
+            virusTimer = 0;
+        }
+    }
+
+    // Lysis Animation (Explosion)
+    if (virusState === 'lysis') {
+        viralParticles.forEach(p => {
+            p.vx *= 1.05; // accelerate outward
+            p.vy *= 1.05;
+        });
+
+        // Reset after a while
+        virusTimer++;
+        if (virusTimer > 200) {
+            virusState = 'idle';
+            virusTimer = 0;
+            viralParticles = [];
+            infectBtn.disabled = false;
+        }
+    }
+
+    // Draw viral particles inside/outside
+    viralParticles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Bounce if still inside cell during replication
+        if (virusState === 'replicating') {
+            const dist = Math.sqrt((p.x - cellX) ** 2 + (p.y - cellY) ** 2);
+            if (dist > cellR - 10) {
+                p.vx *= -1;
+                p.vy *= -1;
+            }
+        }
+
+        // Draw mini phage
+        virusCtx.strokeStyle = '#a3e635';
+        virusCtx.beginPath();
+        virusCtx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        virusCtx.stroke();
+    });
+
+    requestAnimationFrame(drawVirus);
+}
+
+infectBtn.addEventListener('click', () => {
+    if (virusState === 'idle' || virusState === 'lysis') {
+        virusState = 'injecting';
+        virusTimer = 0;
+        viralParticles = [];
+        hostHealth = 100;
+        infectBtn.disabled = true;
+    }
+});
+
+// --- Section 10: Self vs. Non-Self (Immunology) ---
+const immuneCanvas = document.getElementById('immuneCanvas');
+const immuneCtx = immuneCanvas.getContext('2d');
+const immuneSpawnBtn = document.getElementById('immune-spawn-btn');
+const abBtns = document.querySelectorAll('.ab-select-btn');
+
+let activeAntibody = 'triangle';
+let pathogens = [];
+let antibodies = [];
+
+abBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        abBtns.forEach(b => b.style.background = 'transparent');
+        e.target.style.background = 'var(--immune-cyan)';
+        e.target.style.color = '#000';
+        activeAntibody = e.target.dataset.shape;
+
+        // Recolor others
+        abBtns.forEach(b => {
+            if (b !== e.target) b.style.color = '#fff';
+        });
+
+        // Spawn an antibody fleet
+        for (let i = 0; i < 5; i++) {
+            antibodies.push({
+                x: immuneCanvas.width / 2,
+                y: immuneCanvas.height / 2,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                shape: activeAntibody,
+                life: 100
+            });
+        }
+    });
+});
+if (abBtns.length > 0) abBtns[0].click(); // Select first by default
+
+function spawnPathogen() {
+    const shapes = ['triangle', 'square', 'circle', 'star'];
+    pathogens.push({
+        x: Math.random() < 0.5 ? 0 : immuneCanvas.width,
+        y: Math.random() * immuneCanvas.height,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: (Math.random() - 0.5) * 1.5,
+        antigen: shapes[Math.floor(Math.random() * shapes.length)],
+        repTimer: 0
+    });
+}
+
+function drawShape(ctx, shape, x, y, size) {
+    ctx.beginPath();
+    if (shape === 'triangle') {
+        ctx.moveTo(x, y - size);
+        ctx.lineTo(x + size, y + size);
+        ctx.lineTo(x - size, y + size);
+    } else if (shape === 'square') {
+        ctx.rect(x - size, y - size, size * 2, size * 2);
+    } else if (shape === 'circle') {
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+    } else if (shape === 'star') {
+        for (let i = 0; i < 5; i++) {
+            ctx.lineTo(x + Math.cos((18 + i * 72) * Math.PI / 180) * size, y - Math.sin((18 + i * 72) * Math.PI / 180) * size);
+            ctx.lineTo(x + Math.cos((54 + i * 72) * Math.PI / 180) * size / 2, y - Math.sin((54 + i * 72) * Math.PI / 180) * size / 2);
+        }
+    }
+    ctx.closePath();
+}
+
+function drawImmune() {
+    const w = immuneCanvas.width;
+    const h = immuneCanvas.height;
+    immuneCtx.clearRect(0, 0, w, h);
+
+    // Update & Draw Pathogens
+    for (let i = pathogens.length - 1; i >= 0; i--) {
+        const p = pathogens[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Bounce
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+
+        // Draw Pathogen Body (Red)
+        immuneCtx.fillStyle = 'rgba(239, 68, 68, 0.4)';
+        immuneCtx.beginPath();
+        immuneCtx.arc(p.x, p.y, 15, 0, Math.PI * 2);
+        immuneCtx.fill();
+
+        // Draw Antigen Surface Markers
+        immuneCtx.strokeStyle = '#fff';
+        immuneCtx.lineWidth = 1;
+        drawShape(immuneCtx, p.antigen, p.x, p.y, 6);
+        immuneCtx.stroke();
+
+        // Replication
+        p.repTimer++;
+        if (p.repTimer > 300 && pathogens.length < 20) {
+            p.repTimer = 0;
+            pathogens.push({
+                x: p.x + 10, y: p.y + 10,
+                vx: (Math.random() - 0.5) * 1.5,
+                vy: (Math.random() - 0.5) * 1.5,
+                antigen: p.antigen,
+                repTimer: 0
+            });
+        }
+    }
+
+    // Update & Draw Antibodies
+    for (let i = antibodies.length - 1; i >= 0; i--) {
+        const ab = antibodies[i];
+        ab.x += ab.vx;
+        ab.y += ab.vy;
+        ab.life -= 0.5;
+
+        // Draw Y-shape
+        immuneCtx.strokeStyle = 'var(--immune-cyan)';
+        immuneCtx.lineWidth = 2;
+        immuneCtx.beginPath();
+        immuneCtx.moveTo(ab.x, ab.y);
+        immuneCtx.lineTo(ab.x - 5, ab.y - 5);
+        immuneCtx.moveTo(ab.x, ab.y);
+        immuneCtx.lineTo(ab.x + 5, ab.y - 5);
+        immuneCtx.moveTo(ab.x, ab.y);
+        immuneCtx.lineTo(ab.x, ab.y + 8);
+        immuneCtx.stroke();
+
+        // Draw paratope shape (tips)
+        immuneCtx.fillStyle = 'var(--immune-cyan)';
+        drawShape(immuneCtx, ab.shape, ab.x, ab.y - 8, 3);
+        immuneCtx.fill();
+
+        // Collision detection with pathogens
+        let hit = false;
+        for (let j = pathogens.length - 1; j >= 0; j--) {
+            const p = pathogens[j];
+            const dist = Math.sqrt((p.x - ab.x) ** 2 + (p.y - ab.y) ** 2);
+            if (dist < 20) {
+                if (ab.shape === p.antigen) {
+                    // Match! Destroy pathogen
+                    pathogens.splice(j, 1);
+                    hit = true;
+                    // Spawn explosion particles
+                    break;
+                } else {
+                    // Bounce off
+                    ab.vx *= -1;
+                    ab.vy *= -1;
+                }
+            }
+        }
+
+        if (hit || ab.life <= 0 || ab.x < 0 || ab.x > w || ab.y < 0 || ab.y > h) {
+            antibodies.splice(i, 1);
+        }
+    }
+
+    requestAnimationFrame(drawImmune);
+}
+
+immuneSpawnBtn.addEventListener('click', spawnPathogen);
+
 // Initialize
 drawHeroDNA();
 drawMembrane();
@@ -1394,4 +1744,6 @@ drawTranscription();
 drawTranslation();
 drawRegulation();
 drawEvolution();
+drawVirus();
+drawImmune();
 drawCRISPR();
