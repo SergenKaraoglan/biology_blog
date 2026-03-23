@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initShaderPlayground();
     initRayTracer();
     initVirtualReality();
+    initAugmentedReality();
 });
 
 // --- 1.5 CARTESIAN PLANE ---
@@ -906,3 +907,196 @@ function initVirtualReality() {
     }
     animate();
 }
+
+// --- 7. AUGMENTED REALITY VISUALIZER ---
+
+function initAugmentedReality() {
+    const canvas = document.getElementById('ar-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    const toggleBtn = document.getElementById('toggle-ar-tracking');
+    const rotSpeedInput = document.getElementById('ar-rot-speed');
+    
+    let isTracking = true;
+    let marker = { x: 300, y: 200, width: 80, height: 80 };
+    let isDragging = false;
+    let dragPos = { x: 0, y: 0 };
+    let time = 0;
+    
+    // Pyramid vertices
+    const vertices = [
+        new Point3D(0, 1.5, 0),    // Top
+        new Point3D(-1, -0.5, -1), // Base 1
+        new Point3D(1, -0.5, -1),  // Base 2
+        new Point3D(1, -0.5, 1),   // Base 3
+        new Point3D(-1, -0.5, 1)   // Base 4
+    ];
+    
+    const edges = [
+        [0, 1], [0, 2], [0, 3], [0, 4], // Sides
+        [1, 2], [2, 3], [3, 4], [4, 1]  // Base
+    ];
+    
+    let angleY = 0;
+    
+    // Interaction
+    canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        if (mx > marker.x - marker.width/2 && mx < marker.x + marker.width/2 &&
+            my > marker.y - marker.height/2 && my < marker.y + marker.height/2) {
+            isDragging = true;
+            dragPos = { x: mx - marker.x, y: my - marker.y };
+        }
+    });
+    
+    window.addEventListener('mouseup', () => isDragging = false);
+    
+    window.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            const rect = canvas.getBoundingClientRect();
+            let newX = e.clientX - rect.left - dragPos.x;
+            let newY = e.clientY - rect.top - dragPos.y;
+            // constrain
+            newX = Math.max(marker.width/2, Math.min(canvas.width - marker.width/2, newX));
+            newY = Math.max(marker.height/2, Math.min(canvas.height - marker.height/2, newY));
+            marker.x = newX;
+            marker.y = newY;
+        }
+    });
+
+    // Touch support
+    canvas.addEventListener('touchstart', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const mx = touch.clientX - rect.left;
+        const my = touch.clientY - rect.top;
+        if (mx > marker.x - marker.width/2 && mx < marker.x + marker.width/2 &&
+            my > marker.y - marker.height/2 && my < marker.y + marker.height/2) {
+            isDragging = true;
+            dragPos = { x: mx - marker.x, y: my - marker.y };
+            e.preventDefault();
+        }
+    }, {passive: false});
+
+    window.addEventListener('touchend', () => isDragging = false);
+
+    window.addEventListener('touchmove', (e) => {
+        if (isDragging) {
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            let newX = touch.clientX - rect.left - dragPos.x;
+            let newY = touch.clientY - rect.top - dragPos.y;
+            newX = Math.max(marker.width/2, Math.min(canvas.width - marker.width/2, newX));
+            newY = Math.max(marker.height/2, Math.min(canvas.height - marker.height/2, newY));
+            marker.x = newX;
+            marker.y = newY;
+            e.preventDefault();
+        }
+    }, {passive: false});
+    
+    toggleBtn.addEventListener('click', () => {
+        isTracking = !isTracking;
+        toggleBtn.textContent = isTracking ? "Disable Marker Tracking" : "Enable Marker Tracking";
+        toggleBtn.style.color = isTracking ? "" : "#666";
+    });
+    
+    function drawCameraGrid() {
+        ctx.strokeStyle = '#2a2a2a';
+        ctx.lineWidth = 1;
+        const size = 30;
+        
+        ctx.beginPath();
+        for (let x = 0; x < canvas.width; x += size) {
+            ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
+        }
+        for (let y = (time % size); y < canvas.height; y += size) {
+            ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
+        }
+        ctx.stroke();
+    }
+    
+    function animate() {
+        ctx.fillStyle = '#0a0a0a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        time += 1;
+        drawCameraGrid();
+        
+        // Draw physical marker (the AR target)
+        if (isTracking) {
+            ctx.strokeStyle = '#33ff33';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([10, 5]);
+            ctx.strokeRect(marker.x - marker.width/2, marker.y - marker.height/2, marker.width, marker.height);
+            ctx.setLineDash([]);
+            
+            // Draw tracking crosshair
+            ctx.beginPath();
+            ctx.moveTo(marker.x - 10, marker.y); ctx.lineTo(marker.x + 10, marker.y);
+            ctx.moveTo(marker.x, marker.y - 10); ctx.lineTo(marker.x, marker.y + 10);
+            ctx.stroke();
+            
+            // Draw projected 3D Object
+            const rotSpeed = parseFloat(rotSpeedInput.value);
+            angleY += rotSpeed;
+            
+            // Transform & Project relative to the marker
+            const fov = 400;
+            const projected = vertices.map(v => {
+                let p = rotateY(v, angleY);
+                p = rotateX(p, -0.3); // slight tilt downwards
+                // Scale
+                p.x *= 40; p.y *= 40; p.z *= 40;
+                // Add marker translation into 3D space
+                p.x += marker.x - canvas.width/2;
+                p.y += -(marker.y - canvas.height/2);
+                p.z += 100; // push it out
+
+                const factor = fov / (p.z + fov);
+                const rx = p.x * factor + canvas.width / 2;
+                const ry = -p.y * factor + canvas.height / 2;
+                return { x: rx, y: ry };
+            });
+            
+            // Draw edges
+            ctx.strokeStyle = '#00ffff'; // Cyan hologram
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(0, 255, 255, 0.8)';
+            
+            edges.forEach(edge => {
+                const p1 = projected[edge[0]];
+                const p2 = projected[edge[1]];
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
+            });
+            
+            // connecting lines to marker to show "anchoring"
+            ctx.strokeStyle = 'rgba(51, 255, 51, 0.5)';
+            ctx.lineWidth = 1;
+            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.moveTo(marker.x - marker.width/2, marker.y - marker.height/2); ctx.lineTo(projected[3].x, projected[3].y);
+            ctx.moveTo(marker.x + marker.width/2, marker.y + marker.height/2); ctx.lineTo(projected[1].x, projected[1].y);
+            ctx.stroke();
+            
+        } else {
+            // Draw untracked state
+            ctx.fillStyle = '#666';
+            ctx.font = '16px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText("TRACKING LOST. ENABLE TO ACQUIRE TARGET.", canvas.width/2, canvas.height/2);
+            ctx.textAlign = 'left';
+        }
+        
+        requestAnimationFrame(animate);
+    }
+    
+    animate();
+}
+

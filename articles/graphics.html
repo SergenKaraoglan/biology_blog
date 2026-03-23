@@ -50,6 +50,7 @@
                     <li><a href="#ray-tracing"><span class="section-tag tag-raytracing">LIGHT</span> Ray Tracing & Path
                             Tracing</a></li>
                     <li><a href="#virtual-reality"><span class="section-tag tag-raytracing">PRESENCE</span> Virtual Reality</a></li>
+                    <li><a href="#augmented-reality"><span class="section-tag tag-raytracing">AUGMENT</span> Augmented Reality</a></li>
                 </ol>
             </li>
         </ol>
@@ -220,6 +221,26 @@
                     </div>
                 </div>
                 <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Adjust the IPD (distance between the cameras) to watch how the left and right perspectives shift horizontally to form stereoscopic depth. Cross your eyes to fuse the two cubes manually!</p>
+            </div>
+        </section>
+
+        <section id="augmented-reality">
+            <span class="section-tag" style="background:var(--graphics-lime); color:#000; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">AUGMENT</span>
+            <h2>Augmented Reality: Anchoring the Digital to the Physical</h2>
+            <p>Unlike Virtual Reality, which replaces your environment entirely, <strong>Augmented Reality (AR)</strong> superimposes digital geometry onto the real world. This requires extreme precision in camera pose estimation: the machine must constantly track the physical space to align virtual objects flawlessly.</p>
+            <p>By detecting feature points in a camera feed or tracking physical markers, AR systems compute a projection matrix relative to the real-world camera lens. When this math is perfectly synchronized, digital objects behave as if they physically exist in your room.</p>
+            
+            <div class="interactive-container">
+                <div class="visual-label">AR Tracker Simulator</div>
+                <canvas id="ar-canvas" width="600" height="400" style="background: #1a1a1a;"></canvas>
+                <div class="controls">
+                    <button id="toggle-ar-tracking" style="margin-bottom: 1rem; width: 100%;">Disable Marker Tracking</button>
+                    <div class="slider-group">
+                        <label>Object Rotation Speed</label>
+                        <input type="range" id="ar-rot-speed" min="0" max="0.1" step="0.01" value="0.02">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Drag the AR marker (the green square) on the canvas to see how the 3D projection anchors itself to the physical coordinate system in real-time.</p>
             </div>
         </section>
     </main>
