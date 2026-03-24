@@ -85,6 +85,7 @@
             <li><a href="#sec-bandits">The Gambler's Dilemma (Multi-Armed Bandits)</a></li>
             <li><a href="#sec-rl">Learning by Doing</a></li>
             <li><a href="#sec-ga">Survival of the Fittest (Genetic Algorithms)</a></li>
+            <li><a href="#sec-neat">Scaling Topology (NEAT)</a></li>
             <li><a href="#sec-dqn">The Neural Strategist (Deep Q-Learning)</a></li>
             <li><a href="#sec-bfs-dfs">Exploring the Maze (BFS &amp; DFS)</a></li>
             <li><a href="#sec-astar">The Heuristic Shortcut (A* Search)</a></li>
@@ -96,7 +97,7 @@
         </ol>
 
         <p class="toc-part">Closing</p>
-        <ol start="40">
+        <ol start="41">
             <li><a href="#sec-snn">Efficiency and Spikes (Spiking Neural Networks)</a></li>
             <li><a href="#sec-singularity">The Recursive Horizon (The Singularity)</a></li>
             <li><a href="#sec-quiz">Test Your Understanding</a></li>
@@ -1277,7 +1278,36 @@
         mathematical elegance for brute-force adaptability.</p>
 
     <span class="section-tag tag-advanced">ADVANCED</span>
-    <h2 id="sec-dqn">32. The Neural Strategist (Deep Q-Learning)</h2>
+    <h2 id="sec-neat">32. Scaling Topology (NEAT)</h2>
+    <p>Standard neuroevolution often শুধু evolves the <em>weights</em> of a fixed neural network. But what if we also
+        evolve the <strong>topology</strong>—the very structure of the brain itself? This is the core idea behind
+        <strong>Neuroevolution of Augmenting Topologies (NEAT)</strong>.</p>
+
+    <p>NEAT starts with a population of the simplest possible networks (just inputs and outputs). As generations pass,
+        it uses structural mutations to add new neurons and new connections. This allows the complexity of the "brain"
+        to grow only as needed to solve the task. NEAT solves three critical problems: it protects innovation through
+        <strong>speciation</strong>, performs meaningful <strong>crossover</strong> by tracking gene history, and
+        starts with a <strong>minimal</strong> topology to keep search spaces manageable.</p>
+
+    <div class="interactive-container" style="min-height: 520px; padding-bottom: 2rem;">
+        <canvas id="neatCanvas" width="750" height="400" style="background:#050505;"></canvas>
+        <div class="controls">
+            <button id="neat-play-btn">START SIMULATION</button>
+            <button id="neat-speed-btn">SPEED: 1X</button>
+            <button id="neat-reset-btn" style="background:#333; color:#fff;">RESET</button>
+        </div>
+        <div id="neat-status" style="font-family: 'Courier New', monospace; font-size: 0.9rem; color: #00e5ff; margin-top: 1rem;">
+            Generation: 0 | Best Fitness: 0.00 | Alive: 0
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch a population of "birds" learn to fly through pipes using NEAT. On the left, you see the game simulation;
+            on the right, the neural network of the current best-performing bird. As generations pass, the networks
+            evolve more complex topologies to perfect their flight.
+        </p>
+    </div>
+
+    <span class="section-tag tag-advanced">ADVANCED</span>
+    <h2 id="sec-dqn">33. The Neural Strategist (Deep Q-Learning)</h2>
     <p>Our Q-Table from the previous section works beautifully for a small grid. But what happens when the
         state space explodes? A game of Atari has billions of possible screen configurations. A Go board has more
         legal positions than atoms in the universe. No table could ever hold all of those entries.</p>
@@ -1319,7 +1349,7 @@
     </p>
 
     <span class="section-tag tag-advanced">ADVANCED</span>
-    <h2 id="sec-bfs-dfs">33. Exploring the Maze (BFS & DFS)</h2>
+    <h2 id="sec-bfs-dfs">34. Exploring the Maze (BFS & DFS)</h2>
 
     <p>Before an AI can evaluate the quality of future paths, it must first know <em>how</em> to explore them. The
         algorithmic capability to search through possible states—whether it's moves on a chessboard or intersecting
@@ -1355,7 +1385,7 @@
     </div>
 
     <span class="section-tag tag-advanced">ADVANCED</span>
-    <h2 id="sec-astar">34. The Heuristic Shortcut (A* Search)</h2>
+    <h2 id="sec-astar">35. The Heuristic Shortcut (A* Search)</h2>
 
     <p>Both BFS and DFS are <em>uninformed</em> search algorithms. They look at every possible path without knowing
         where the target actually is. This is like trying to drive from New York to Los Angeles by systematically trying
@@ -1389,7 +1419,7 @@
     </div>
 
     <span class="section-tag tag-advanced">ADVANCED</span>
-    <h2 id="sec-minimax">35. Seeing the Future (Minimax)</h2>
+    <h2 id="sec-minimax">36. Seeing the Future (Minimax)</h2>
 
     <p>We know how an AI can learn a strategy through trial and error (Reinforcement Learning), but classical
         game-playing AI didn't learn—it <em>searched</em>. If you define every possible legal move in a game, you create
@@ -1424,7 +1454,7 @@
         games using Minimax alone.</p>
 
     <span class="section-tag tag-advanced">ADVANCED</span>
-    <h2 id="sec-alphabeta">36. Pruning the Tree (Alpha-Beta & Deep Blue)</h2>
+    <h2 id="sec-alphabeta">37. Pruning the Tree (Alpha-Beta & Deep Blue)</h2>
     <p>Minimax provides a perfect strategy, but as we saw, the game trees for Chess or Go are unimaginably vast.
         Evaluating every single possible move all the way to the end of the game is impossible. But what if we didn't
         <em>have</em> to check every branch? What if we could mathematically prove that a branch is so bad we don't even
@@ -1466,7 +1496,7 @@
         Champion, Garry Kasparov.</p>
 
     <span class="section-tag tag-advanced">ADVANCED</span>
-    <h2 id="sec-mcts">37. Mastering Games (AlphaZero & MCTS)</h2>
+    <h2 id="sec-mcts">38. Mastering Games (AlphaZero & MCTS)</h2>
     <p>Deep Q-Networks learn to play games by trial and error, but there's a fundamentally different approach:
         <strong>planning ahead</strong>. When a chess grandmaster considers a move, they don't just react to the
         current board—they simulate future sequences of play, evaluating which paths lead to victory. This is
@@ -1504,7 +1534,7 @@
         All from pure self-play, guided by search and a neural network working in concert.</p>
 
     <span class="section-tag tag-alignment">ALIGNMENT</span>
-    <h2 id="sec-rlhf">38. Aligning with Humanity (RLHF)</h2>
+    <h2 id="sec-rlhf">39. Aligning with Humanity (RLHF)</h2>
     <p>A raw Language Model is a statistical mirror. It has read the entire internet, and its only goal is to predict
         the most likely next word. If prompted with <em>"How to steal a..."</em>, a raw model doesn't understand
         morality; it simply knows that the internet frequently follows that phrase with <em>"car"</em>. It assigns a
@@ -1559,7 +1589,7 @@
         RLHF to pure autonomous reasoning—which leads us directly to Chain of Thought.</p>
 
     <span class="section-tag tag-reasoning">REASONING</span>
-    <h2 id="sec-cot">39. Thinking Out Loud (Chain of Thought)</h2>
+    <h2 id="sec-cot">40. Thinking Out Loud (Chain of Thought)</h2>
     <p>Every technique we have built so far—self-supervised pre-training, attention, MCTS—produces
         models that answer <em>instantly</em>. One forward pass, one prediction. For simple questions
         this works beautifully. But ask a model to solve a hard math problem like <span class="equation">17 × 24</span>,
@@ -1615,7 +1645,7 @@
     </p>
 
     <span class="section-tag tag-advanced">HARDWARE FUTURE</span>
-    <h2 id="sec-snn">40. Efficiency and Spikes (Spiking Neural Networks)</h2>
+    <h2 id="sec-snn">41. Efficiency and Spikes (Spiking Neural Networks)</h2>
     <p>Everything we have discussed so far—from the simplest neuron to the largest Transformer—operates on the same
         fundamental principle: dense, continuous mathematics. At every layer, for every input, millions of
         floating-point numbers are multiplied and added together. This is incredibly powerful, but it is also massively
@@ -1654,7 +1684,7 @@
         and sensors—while consuming mere milliwatts of power.</p>
 
     <span class="section-tag">PHILOSOPHY</span>
-    <h2 id="sec-singularity">41. The Recursive Horizon (The Singularity)</h2>
+    <h2 id="sec-singularity">42. The Recursive Horizon (The Singularity)</h2>
     <p>We have just witnessed something unsettling. A model trained with reinforcement learning
         <em>spontaneously invented self-correction</em> — it learned to doubt itself, to backtrack, to
         think harder. Nobody told it to do this. The reward signal alone was enough. Now ask yourself: what
@@ -1707,7 +1737,7 @@
         descent, attention, reinforcement learning, chain of thought — is a rung on this ladder. The
         question is not whether we will build each rung. It is whether the ladder has a ceiling.</p>
 
-    <h2 id="sec-quiz">42. Test Your Understanding</h2>
+    <h2 id="sec-quiz">43. Test Your Understanding</h2>
     <p>To truly understand it from first principles, you must build it yourself. Below is a live Python environment.
         Write the code for each core component we discussed. You can use <code>print()</code> to debug your logic—the
         output will appear in the console below.</p>
@@ -1722,6 +1752,7 @@
                 <option value="update">05. GRADIENT DESCENT UPDATE</option>
                 <option value="pipeline">06. THE BOSS PUZZLE (FORWARD PASS)</option>
                 <option value="backward">07. THE BACKWARD PASS</option>
+                <option value="neat_mutate">08. STRUCTURAL MUTATION (NEAT)</option>
             </select>
             <button id="quiz-run-btn" disabled>INITIALIZING KERNEL...</button>
         </div>
