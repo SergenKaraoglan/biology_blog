@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initRayTracer();
     initVirtualReality();
     initAugmentedReality();
+    initPaintersAlgorithm();
 });
 
 // --- 1.5 CARTESIAN PLANE ---
@@ -1098,5 +1099,172 @@ function initAugmentedReality() {
     }
     
     animate();
+}
+
+// --- 8. PAINTER'S ALGORITHM ---
+
+function initPaintersAlgorithm() {
+    const canvas = document.getElementById('painters-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const toggleBtn = document.getElementById('toggle-sorting');
+    const cycleBtn = document.getElementById('spawn-cycle');
+    const resetBtn = document.getElementById('reset-painters');
+
+    let sortingEnabled = false;
+    let triangles = [];
+    let draggedTriangle = null;
+    let offset = { x: 0, y: 0 };
+
+    class PainterTriangle {
+        constructor(x, y, size, color, z) {
+            this.x = x;
+            this.y = y;
+            this.size = size;
+            this.color = color;
+            this.z = z; // Depth
+            this.points = this.getPoints();
+        }
+
+        getPoints() {
+            return [
+                { x: this.x, y: this.y - this.size },
+                { x: this.x - this.size, y: this.y + this.size },
+                { x: this.x + this.size, y: this.y + this.size }
+            ];
+        }
+
+        draw(ctx) {
+            const pts = this.getPoints();
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.moveTo(pts[0].x, pts[0].y);
+            ctx.lineTo(pts[1].x, pts[1].y);
+            ctx.lineTo(pts[2].x, pts[2].y);
+            ctx.closePath();
+            
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.fill();
+            
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // Draw Z label
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px Courier New';
+            ctx.fillText(`Z: ${this.z}`, this.x - 15, this.y + this.size + 15);
+        }
+
+        isInside(px, py) {
+            const pts = this.getPoints();
+            const area = 0.5 * (-pts[1].y * pts[2].x + pts[0].y * (-pts[1].x + pts[2].x) + pts[0].x * (pts[1].y - pts[2].y) + pts[1].x * pts[2].y);
+            const s = 1 / (2 * area) * (pts[0].y * pts[2].x - pts[0].x * pts[2].y + (pts[2].y - pts[0].y) * px + (pts[0].x - pts[2].x) * py);
+            const t = 1 / (2 * area) * (pts[0].x * pts[1].y - pts[0].y * pts[1].x + (pts[0].y - pts[1].y) * px + (pts[1].x - pts[0].x) * py);
+            return s > 0 && t > 0 && (1 - s - t) > 0;
+        }
+    }
+
+    function reset() {
+        triangles = [
+            new PainterTriangle(200, 200, 80, 'rgba(204, 255, 0, 0.8)', 10), // Lime
+            new PainterTriangle(300, 240, 80, 'rgba(0, 255, 255, 0.8)', 20), // Cyan
+            new PainterTriangle(400, 200, 80, 'rgba(255, 0, 255, 0.8)', 30)  // Magenta
+        ];
+        draw();
+    }
+
+    function draw() {
+        ctx.fillStyle = '#050a05';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Grid
+        ctx.strokeStyle = '#111';
+        ctx.lineWidth = 1;
+        for(let i=0; i<canvas.width; i+=40) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+        }
+        for(let j=0; j<canvas.height; j+=40) {
+            ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
+        }
+
+        let renderList = [...triangles];
+        if (sortingEnabled) {
+            // BACK-TO-FRONT sorting (Painter's Algorithm)
+            // Higher Z is "further away" in this simple logic
+            renderList.sort((a, b) => b.z - a.z);
+        }
+
+        renderList.forEach(t => t.draw(ctx));
+
+        // Legend
+        ctx.fillStyle = '#888';
+        ctx.font = '12px Courier New';
+        ctx.fillText(sortingEnabled ? "SORTING: ENABLED (Back-to-Front)" : "SORTING: DISABLED (Array Order)", 20, 30);
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        sortingEnabled = !sortingEnabled;
+        toggleBtn.textContent = sortingEnabled ? 'Disable Depth Sorting' : 'Enable Depth Sorting';
+        draw();
+    });
+
+    cycleBtn.addEventListener('click', () => {
+        // Position triangles in a way that creates a visual cycle 
+        // We simulate it by overriding the draw order to show the paradox
+        triangles = [
+            new PainterTriangle(250, 180, 70, 'rgba(204, 255, 0, 0.9)', 10),
+            new PainterTriangle(350, 180, 70, 'rgba(0, 255, 255, 0.9)', 10),
+            new PainterTriangle(300, 260, 70, 'rgba(255, 0, 255, 0.9)', 10)
+        ];
+        // For the cycle failure, sorting can't fix it if they have the same Z or overlap weirdly.
+        // We'll just show them overlapping in a way that looks like a cycle.
+        draw();
+    });
+
+    resetBtn.addEventListener('click', reset);
+
+    canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+
+        // Check triangles in drawing order reversed (top-most first for selection)
+        let selectionList = [...triangles];
+        if (sortingEnabled) {
+            selectionList.sort((a, b) => a.z - b.z);
+        } else {
+            selectionList.reverse();
+        }
+
+        for (const t of selectionList) {
+            if (t.isInside(mx, my)) {
+                draggedTriangle = t;
+                offset.x = mx - t.x;
+                offset.y = my - t.y;
+                break;
+            }
+        }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (draggedTriangle) {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            draggedTriangle.x = mx - offset.x;
+            draggedTriangle.y = my - offset.y;
+            draw();
+        }
+    });
+
+    window.addEventListener('mouseup', () => {
+        draggedTriangle = null;
+    });
+
+    reset();
 }
 

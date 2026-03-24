@@ -40,6 +40,7 @@
                 <ol>
                     <li><a href="#rasterization"><span class="section-tag tag-raster">RASTER</span> Scan-line
                             Conversion</a></li>
+                    <li><a href="#painters-algorithm"><span class="section-tag tag-raster">RASTER</span> Painter's Algorithm</a></li>
                     <li><a href="#antialiasing"><span class="section-tag tag-raster">RASTER</span> Anti-Aliasing</a></li>
                     <li><a href="#fragment-shading">Fragment Shaders: Painting the Pixels</a></li>
                 </ol>
@@ -128,6 +129,23 @@
                 </div>
                 <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Watch how the continuous mathematical
                     triangle is "sampled" into discrete pixel points.</p>
+            </div>
+        </section>
+
+        <section id="painters-algorithm">
+            <h2>The Painter's Algorithm</h2>
+            <p>In a 3D scene, many objects may overlap. To ensure the correct objects appear "in front," we must solve the <strong>visibility problem</strong>. One of the simplest methods is the <strong>Painter's Algorithm</strong>.</p>
+            <p>Just as a painter paints the background first and then layers the foreground objects on top, this algorithm sorts polygons by their distance from the viewer (depth) and renders them in back-to-front order. While efficient for simple scenes, it can fail when polygons intersect or form cycles.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Depth Sorting Simulator</div>
+                <canvas id="painters-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <button id="toggle-sorting" style="margin-bottom: 1rem; width: 100%;">Enable Depth Sorting</button>
+                    <button id="spawn-cycle">Show Cyclical Overlap Failure</button>
+                    <button id="reset-painters">Reset Scene</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Drag the triangles to reposition them. Toggle sorting to see how the draw order (Painter's Algorithm) resolves visibility.</p>
             </div>
         </section>
 
