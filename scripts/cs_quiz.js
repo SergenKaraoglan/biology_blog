@@ -72,7 +72,28 @@ data = sorted([1, 5, 8, 12, 15, 23, 38, 45, 56, 72])
 target = 23
 print(f"Searching for {target} in sorted data...")
 index = binary_search(data, target)
-print(f"Found at index: {index}")`
+print(f"Found at index: {index}")`,
+        compiler: `def generate_asm(op, left, right):
+    # Very basic "compiler" backend
+    asm = f"MOV R1, {left}\\n"
+    if op == '+':
+        asm += f"ADD R1, {right}\\n"
+    elif op == '*':
+        asm += f"MUL R1, {right}\\n"
+    asm += "STR R1, [result]"
+    return asm
+
+print("Compiling expression: 5 + 3")
+print(generate_asm('+', 5, 3))`,
+        interpreter: `def evaluate(expr):
+    # Base interpreter logic: split by '+' and sum components
+    parts = expr.split('+')
+    total = sum(int(p.strip()) for p in parts)
+    return total
+
+expression = "8 + 4 + 2"
+print(f"Interpreting: {expression}")
+print(f"Result: {evaluate(expression)}")`
     };
 
     editor.value = challenges[select.value];

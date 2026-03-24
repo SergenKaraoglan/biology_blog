@@ -57,6 +57,8 @@
 
         <p class="toc-part">Part V — Higher Abstractions</p>
         <ol start="7">
+            <li><a href="#sec-compiler">The Architecture of Translation (Compilers)</a></li>
+            <li><a href="#sec-interpreter">The Ghost in the Machine (Interpreters)</a></li>
             <li><a href="#sec-synthesis">Code That Writes Itself (Program Synthesis)</a></li>
             <li><a href="#sec-quiz">Test Your Computational Intuition</a></li>
         </ol>
@@ -132,7 +134,23 @@
         </p>
     </div>
 
-    <span class="section-tag" style="background:#ff3333; color:#fff; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">SECURITY</span>
+    <span class="section-tag tag-algo">ALGORITHMS</span>
+    <h2 id="sec-complexity">5. The Speed of Thought (Big O)</h2>
+    <p>Writing code that works is only half the battle. Writing code that scales is the other half. <strong>Computational Complexity</strong>, or Big O notation, is how we measure the efficiency of an algorithm.</p>
+    
+    <p>O(1) means constant time—no matter how much data you have, it takes the same time. O(n) means linear time—if data doubles, time doubles. O(n²) means quadratic time—if data doubles, time quadruples. In the world of billions of users, the difference between these can be seconds versus centuries.</p>
+
+    <div class="interactive-container">
+        <canvas id="complexityCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <button id="complexity-start-btn">PLOT GRAPHS</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Observe how different growth rates affect execution time as the input size (n) increases.
+        </p>
+    </div>
+
+    <span class="section-tag tag-security">SECURITY</span>
     <h2 id="sec-pentest">6. Penetration Testing: The Defensive Art</h2>
     <p>In the digital world, "Security" is not a state but a process. <strong>Penetration Testing</strong> (or ethical hacking) is the practice of testing a computer system, network, or web application to find security vulnerabilities that an attacker could exploit.</p>
     
@@ -151,8 +169,48 @@
         </div>
     </div>
 
+    <span class="section-tag tag-compiler">ABSTRACTION</span>
+    <h2 id="sec-compiler">7. The Architecture of Translation (Compilers)</h2>
+    <p>A <strong>Compiler</strong> is a sophisticated translation engine. It takes a program written in a high-level language and transforms it into a lower-level representation—often machine code that the processor can execute directly.</p>
+    
+    <p>The compilation process is a multi-stage pipeline: <strong>Lexical Analysis</strong>, <strong>Syntax Analysis</strong>, <strong>Optimization</strong>, and <strong>Code Generation</strong>. By performing these steps ahead of time, compilers can apply deep optimizations that make the final program extremely efficient.</p>
+
+    <div class="interactive-container">
+        <canvas id="compilerCanvas" width="600" height="250"></canvas>
+        <div class="controls">
+            <button id="compiler-run-btn">START COMPILATION</button>
+            <button id="compiler-reset-btn">RESET</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch the source code descend through levels of abstraction until it becomes raw machine instructions.
+        </p>
+    </div>
+
+    <span class="section-tag tag-interpreter">ABSTRACTION</span>
+    <h2 id="sec-interpreter">8. The Ghost in the Machine (Interpreters)</h2>
+    <p>If a compiler is a translator that converts an entire book from one language to another before you read it, an <strong>Interpreter</strong> is a live translator who listens to a speech and translates it sentence by sentence as it happens.</p>
+    
+    <p>Interpreters don't produce a standalone executable file. Instead, they read the source code, parse it into an <strong>Abstract Syntax Tree (AST)</strong>, and execute the instructions directly. This allows for rapid development and dynamic features, at the cost of some execution overhead.</p>
+
+    <div class="interactive-container">
+        <div id="interpreter-input" style="font-family: 'Courier New', monospace; font-size: 1.2rem; color: #fff; margin-bottom: 20px; background: #000; padding: 15px; border: 1px solid #222; width: 100%; text-align: center;">
+            x = 8 + 4 * 2
+        </div>
+        <canvas id="interpreterCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <button id="interpreter-step-btn">NEXT PHASE</button>
+            <button id="interpreter-reset-btn">RESET</button>
+        </div>
+        <div id="interpreter-status" style="font-family: 'Courier New', monospace; font-size: 0.9rem; color: #00ffff; margin-top: 1rem;">
+            Awaiting Source Code...
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Follow the lifecycle of an expression from raw text to tokens, to a structural tree, and finally to a computed value.
+        </p>
+    </div>
+
     <span class="section-tag" style="background:#00ffff; color:#000; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">ABSTRACTION</span>
-    <h2 id="sec-synthesis">7. Program Synthesis: Code That Writes Itself</h2>
+    <h2 id="sec-synthesis">9. Program Synthesis: Code That Writes Itself</h2>
     <p>If a compiler translates code from one language to another, a <strong>Program Synthesizer</strong> generates code from a high-level specification. This is the holy grail of computer science: the ability for a machine to understand <em>what</em> we want and determine <em>how</em> to achieve it.</p>
     
     <p>Using <strong>Deductive Synthesis</strong>, the engine searches through millions of possible logical combinations to find the exact function that matches your provided examples. It is a massive search problem over the space of all possible programs.</p>
@@ -183,7 +241,7 @@
         </p>
     </div>
 
-    <h2 id="sec-quiz">8. Test Your Computational Intuition</h2>
+    <h2 id="sec-quiz">10. Test Your Computational Intuition</h2>
     <p>Can you implement a basic sort? Use the Python environment below to sort a list of numbers from first principles.</p>
 
     <div class="interactive-container" style="align-items: stretch; padding: 2rem;">
@@ -192,6 +250,8 @@
                 <option value="bubble">01. BUBBLE SORT</option>
                 <option value="complexity">02. TIME COMPLEXITY</option>
                 <option value="binary_search">03. BINARY SEARCH</option>
+                <option value="compiler">04. CODE GENERATION</option>
+                <option value="interpreter">05. EXPRESSION EVALUATOR</option>
             </select>
             <button id="quiz-run-btn" disabled>INITIALIZING...</button>
         </div>

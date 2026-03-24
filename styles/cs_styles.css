@@ -187,6 +187,10 @@ button:hover {
 .tag-info { background: rgba(0, 255, 255, 0.1); color: var(--cs-cyan); }
 .tag-logic { background: rgba(0, 136, 255, 0.1); color: var(--cs-blue); }
 .tag-struct { background: rgba(255, 255, 255, 0.05); color: #fff; }
+.tag-algo { background: rgba(0, 255, 0, 0.1); color: #00ff00; }
+.tag-security { background: rgba(255, 51, 51, 0.1); color: #ff3333; }
+.tag-interpreter { background: rgba(255, 0, 255, 0.1); color: #ff00ff; }
+.tag-compiler { background: rgba(255, 119, 0, 0.1); color: #ff7700; }
 
 footer {
     margin-top: 100px;

@@ -6,11 +6,281 @@ document.addEventListener('DOMContentLoaded', () => {
     initLogic();
     initGPUVisualizer();
     initStructs();
+    initComplexityVisualizer();
     initPenTestVisualizer();
     initProgramSynthesis();
+    initInterpreterVisualizer();
+    initCompilerVisualizer();
 });
 
-// --- 1. HERO VISUAL (Circuit Stream) ---
+// --- 5. COMPUTATIONAL COMPLEXITY (Big O Curves) ---
+function initComplexityVisualizer() {
+    const canvas = document.getElementById('complexityCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const startBtn = document.getElementById('complexity-start-btn');
+
+    let progress = 0;
+    let animating = false;
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Axes
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(50, 20); ctx.lineTo(50, 250); ctx.lineTo(550, 250);
+        ctx.stroke();
+
+        ctx.fillStyle = '#888';
+        ctx.font = '10px Courier New';
+        ctx.fillText('TIME (t)', 20, 30);
+        ctx.fillText('DATA (n)', 280, 275);
+
+        const drawCurve = (fn, color, label) => {
+            ctx.strokeStyle = color;
+            ctx.beginPath();
+            for (let n = 0; n <= progress; n += 5) {
+                const x = 50 + n;
+                const y = 250 - fn(n);
+                if (n === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            if (progress > 50) {
+                ctx.fillStyle = color;
+                ctx.fillText(label, 50 + progress, 250 - fn(progress) - 10);
+            }
+        };
+
+        drawCurve(n => 30, '#00ffff', 'O(1)');
+        drawCurve(n => n * 0.4, '#ccff00', 'O(n)');
+        drawCurve(n => (n * n) * 0.001, '#ff3333', 'O(n²)');
+    }
+
+    startBtn.addEventListener('click', () => {
+        if (animating) return;
+        animating = true;
+        progress = 0;
+        const animate = () => {
+            progress += 5;
+            draw();
+            if (progress < 500) requestAnimationFrame(animate);
+            else animating = false;
+        };
+        animate();
+    });
+
+    draw();
+}
+
+// --- 8. COMPILER (Translation Pipeline) ---
+function initCompilerVisualizer() {
+    const canvas = document.getElementById('compilerCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const runBtn = document.getElementById('compiler-run-btn');
+    const resetBtn = document.getElementById('compiler-reset-btn');
+
+    let phase = 0; // 0: Idle, 1: Lex, 2: AST, 3: Opt, 4: CodeGen
+    let progress = 0;
+
+    const stages = [
+        { name: 'SOURCE', code: 'x = 5 + 3', color: '#fff' },
+        { name: 'TOKENS', code: '[ID:x] [OP:=] [NUM:5] [OP:+] [NUM:3]', color: '#00ffff' },
+        { name: 'AST', code: '(Assign x (Add 5 3))', color: '#ccff00' },
+        { name: 'ASM', code: 'MOV R1, 5\nADD R1, 3\nSTR R1, [x]', color: '#ff3333' }
+    ];
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const stageW = 120;
+        const spacing = (canvas.width - (stages.length * stageW)) / (stages.length + 1);
+
+        stages.forEach((s, i) => {
+            const x = spacing + i * (stageW + spacing);
+            const y = 80;
+
+            // Box
+            ctx.strokeStyle = phase > i ? s.color : '#222';
+            if (phase === i + 1) ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x, y, stageW, 100);
+
+            // Label
+            ctx.fillStyle = ctx.strokeStyle;
+            ctx.font = '10px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(s.name, x + stageW/2, y - 10);
+
+            // Code snippet
+            ctx.fillStyle = '#fff';
+            ctx.font = '8px Courier New';
+            const lines = s.code.split('\n');
+            lines.forEach((line, li) => {
+                ctx.fillText(line, x + stageW/2, y + 40 + li * 12);
+            });
+
+            // Arrow
+            if (i < stages.length - 1) {
+                ctx.strokeStyle = phase > i + 1 ? '#444' : '#111';
+                ctx.beginPath();
+                ctx.moveTo(x + stageW + 5, y + 50);
+                ctx.lineTo(x + stageW + spacing - 5, y + 50);
+                ctx.stroke();
+            }
+        });
+
+        if (phase > 0 && phase <= stages.length) {
+            // Draw "compiling" beam
+            const activeX = spacing + (phase - 1) * (stageW + spacing) + stageW / 2;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.beginPath();
+            ctx.moveTo(activeX, 180);
+            ctx.lineTo(activeX, 220);
+            ctx.stroke();
+        }
+    }
+
+    runBtn.addEventListener('click', () => {
+        if (phase >= stages.length) return;
+        const interval = setInterval(() => {
+            phase++;
+            draw();
+            if (phase >= stages.length) clearInterval(interval);
+        }, 800);
+    });
+
+    resetBtn.addEventListener('click', () => {
+        phase = 0;
+        draw();
+    });
+
+    draw();
+}
+
+// --- 7. INTERPRETER (AST / Execution lifecycle) ---
+function initInterpreterVisualizer() {
+    const canvas = document.getElementById('interpreterCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const stepBtn = document.getElementById('interpreter-step-btn');
+    const resetBtn = document.getElementById('interpreter-reset-btn');
+    const status = document.getElementById('interpreter-status');
+
+    let phase = 0; // 0: Idle, 1: Lexing, 2: Parsing, 3: Evaluation
+    const tokens = [
+        { type: 'ID', val: 'x' }, { type: 'OP', val: '=' }, 
+        { type: 'NUM', val: '8' }, { type: 'OP', val: '+' }, 
+        { type: 'NUM', val: '4' }, { type: 'OP', val: '*' }, 
+        { type: 'NUM', val: '2' }
+    ];
+
+    const ast = {
+        type: 'Assign',
+        left: 'x',
+        right: {
+            type: 'Add',
+            left: '8',
+            right: {
+                type: 'Mul',
+                left: '4',
+                right: '2'
+            }
+        }
+    };
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (phase === 1) { // Lexing
+            const startX = 50;
+            tokens.forEach((t, i) => {
+                const x = startX + i * 75;
+                ctx.strokeStyle = '#00ffff';
+                ctx.strokeRect(x, 100, 60, 40);
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(t.type, x + 30, 115);
+                ctx.fillStyle = '#00ffff';
+                ctx.fillText(`"${t.val}"`, x + 30, 130);
+            });
+        } else if (phase >= 2) { // Parsing & Eval
+            function drawNode(node, x, y, level) {
+                ctx.beginPath();
+                ctx.arc(x, y, 25, 0, Math.PI * 2);
+                ctx.strokeStyle = phase === 3 && node.result ? '#ccff00' : '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.fillStyle = ctx.strokeStyle;
+                ctx.font = '10px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(node.type || node, x, y + 5);
+
+                if (node.left) {
+                    ctx.beginPath();
+                    ctx.moveTo(x - 15, y + 20);
+                    ctx.lineTo(x - 50, y + 60);
+                    ctx.stroke();
+                    drawNode(node.left, x - 60, y + 80, level + 1);
+                }
+                if (node.right) {
+                    ctx.beginPath();
+                    ctx.moveTo(x + 15, y + 20);
+                    ctx.lineTo(x + 50, y + 60);
+                    ctx.stroke();
+                    drawNode(node.right, x + 60, y + 80, level + 1);
+                }
+
+                if (phase === 3 && node.result) {
+                    ctx.fillStyle = '#ccff00';
+                    ctx.fillText(` -> ${node.result}`, x, y - 30);
+                }
+            }
+
+            // Simple annotation for eval phase
+            if (phase === 3) {
+                ast.right.right.result = '8';
+                ast.right.result = '16';
+                ast.result = 'x = 16';
+            }
+
+            drawNode(ast, canvas.width / 2, 50, 0);
+        }
+    }
+
+    stepBtn.addEventListener('click', () => {
+        phase++;
+        if (phase === 1) {
+            status.innerText = "PHASE 1: Lexical Analysis (Tokens generated)";
+        } else if (phase === 2) {
+            status.innerText = "PHASE 2: Parsing (Abstract Syntax Tree built)";
+        } else if (phase === 3) {
+            status.innerText = "PHASE 3: Evaluation (Executing instructions)";
+        } else {
+            phase = 3;
+        }
+        draw();
+    });
+
+    resetBtn.addEventListener('click', () => {
+        phase = 0;
+        status.innerText = "Awaiting Source Code...";
+        ast.result = null;
+        ast.right.result = null;
+        ast.right.right.result = null;
+        draw();
+    });
+
+    draw();
+}
 function initHero() {
     const canvas = document.getElementById('heroCanvas');
     if (!canvas) return;
