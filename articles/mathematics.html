@@ -49,6 +49,12 @@
         <ol start="3">
             <li><a href="#sec-chaos">Beauty in Chaos (Fractals & Dynamics)</a></li>
         </ol>
+
+        <p class="toc-part">Part IV — The Science of Chance</p>
+        <ol start="4">
+            <li><a href="#sec-statistics">The Bell Curve (Statistics & Probability)</a></li>
+            <li><a href="#sec-bayes">The Logic of Belief (Bayesian Statistics)</a></li>
+        </ol>
     </nav>
 
     <span class="section-tag tag-patterns">PURE PATTERN</span>
@@ -119,6 +125,64 @@
             style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
             Move your mouse over the canvas to explore different snapshots of the Julia Set. Each pixel is the result of
             thousands of iterations of a simple rule: z = z² + c.
+        </p>
+    </div>
+
+    <span class="section-tag tag-stats" style="background: #00ff88; color: #000;">CHANCE</span>
+    <h2 id="sec-statistics">4. The Bell Curve (Statistics & Probability)</h2>
+    <p>Individual events may be unpredictable, but in large numbers, randomness becomes a science. This is the <strong>Law
+            of Large Numbers</strong>. When thousands of random choices are made, they tend to cluster around a central
+        value, forming the iconic <strong>Normal Distribution</strong> (or Bell Curve).</p>
+
+    <p>The Galton Board (or "Bean Machine") is a perfect physical illustration of this principle. As balls drop through
+        a grid of pegs, each bounce is a 50/50 random choice. Yet, as more balls fall, they unfailingly arrange
+        themselves into a predictable mathematical curve.</p>
+
+    <div class="interactive-container">
+        <canvas id="statsCanvas" width="600" height="400"></canvas>
+        <div class="controls">
+            <button id="drop-ball-btn">DROP 10 BALLS</button>
+            <button id="drop-multi-btn">DROP 100 BALLS</button>
+            <button id="reset-stats-btn">RESET BOARD</button>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Observe how random individual bounces aggregate into a perfect normal distribution. The more data points we
+            have, the more "certain" the pattern becomes.
+        </p>
+    </div>
+
+    <span class="section-tag tag-bayes" style="background: #ff00ff; color: #fff;">INFERENCE</span>
+    <h2 id="sec-bayes">5. The Logic of Belief (Bayesian Probability)</h2>
+    <p>Traditional statistics asks: "What is the probability of the data, given a hypothesis?" <strong>Bayesian
+            Statistics</strong> flips the script: "What is the probability of my hypothesis, given the new data?"</p>
+
+    <p>This is the mathematics of <strong>Learning</strong>. We start with a <strong>Prior</strong> belief and update it
+        with <strong>Likelihood</strong> (new evidence) to reach a <strong>Posterior</strong> conclusion. It is how human
+        intuition—and modern AI—handles uncertainty.</p>
+
+    <div class="interactive-container">
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <canvas id="bayesCanvas" width="600" height="200"></canvas>
+            <div class="controls" style="width: 100%; max-width: 500px;">
+                <div class="slider-group">
+                    <label>PRIOR BELIEF: <span id="prior-val">50</span>%</label>
+                    <input type="range" id="prior-slider" min="1" max="99" step="1" value="50">
+                </div>
+                <div class="slider-group">
+                    <label>EVIDENCE STRENGTH: <span id="evidence-val">80</span>%</label>
+                    <input type="range" id="evidence-slider" min="50" max="99" step="1" value="80">
+                </div>
+            </div>
+            <div
+                style="margin-top: 20px; font-family: 'Courier New', monospace; font-size: 1.2rem; color: #ff00ff; border: 1px solid #ff00ff; padding: 10px; background: rgba(255, 0, 255, 0.1);">
+                POSTERIOR PROBABILITY: <span id="posterior-val">0</span>%
+            </div>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch how your certainty shifts. Even a strong piece of evidence might not convince you if your prior belief
+            was extremely low (The "Extraordinary claims require extraordinary evidence" principle).
         </p>
     </div>
 
