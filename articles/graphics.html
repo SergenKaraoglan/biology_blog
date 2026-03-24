@@ -41,6 +41,7 @@
                     <li><a href="#rasterization"><span class="section-tag tag-raster">RASTER</span> Scan-line
                             Conversion</a></li>
                     <li><a href="#painters-algorithm"><span class="section-tag tag-raster">RASTER</span> Painter's Algorithm</a></li>
+                    <li><a href="#z-buffering"><span class="section-tag tag-raster">RASTER</span> Z-Buffering</a></li>
                     <li><a href="#antialiasing"><span class="section-tag tag-raster">RASTER</span> Anti-Aliasing</a></li>
                     <li><a href="#fragment-shading">Fragment Shaders: Painting the Pixels</a></li>
                 </ol>
@@ -146,6 +147,31 @@
                     <button id="reset-painters">Reset Scene</button>
                 </div>
                 <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Drag the triangles to reposition them. Toggle sorting to see how the draw order (Painter's Algorithm) resolves visibility.</p>
+            </div>
+        </section>
+
+        <section id="z-buffering">
+            <h2>Z-Buffering: The modern Standard</h2>
+            <p>The Painter's Algorithm fails when objects intersect or form cycles. To solve this, modern graphics hardware uses a <strong>Z-Buffer</strong> (or Depth Buffer). Instead of sorting whole polygons, we store the "depth" of the closest object at <em>every single pixel</em>.</p>
+            <p>When drawing a new pixel, the hardware compares its depth (Z-value) against the value already stored in the Z-buffer. If the new pixel is closer, it's drawn and the Z-buffer is updated; otherwise, it's discarded. This per-pixel test handles any degree of complexity without the need for expensive sorting.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Per-Pixel Depth Tester</div>
+                <div style="display: flex; gap: 20px; width: 100%; justify-content: center; flex-wrap: wrap;">
+                    <div style="text-align: center;">
+                        <span style="font-size: 0.8rem; color: #888; font-family: 'Courier New';">COLOR BUFFER</span><br>
+                        <canvas id="zbuffer-color-canvas" width="280" height="280" style="background: #000; border: 1px solid #222; margin-top: 10px;"></canvas>
+                    </div>
+                    <div style="text-align: center;">
+                        <span style="font-size: 0.8rem; color: #888; font-family: 'Courier New';">Z-BUFFER (DEPTH MAP)</span><br>
+                        <canvas id="zbuffer-depth-canvas" width="280" height="280" style="background: #000; border: 1px solid #222; margin-top: 10px;"></canvas>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button id="toggle-ztest" style="margin-bottom: 1rem; width: 100%;">Enable Z-Buffer Testing</button>
+                    <button id="reset-zbuffer">Reset Scene</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Observe how the Z-buffer (right) stores the depth of each pixel (brighter = closer). Toggle testing to see how it resolves intersections that the Painter's Algorithm cannot.</p>
             </div>
         </section>
 

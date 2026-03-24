@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initVirtualReality();
     initAugmentedReality();
     initPaintersAlgorithm();
+    initZBuffering();
 });
 
 // --- 1.5 CARTESIAN PLANE ---
@@ -1266,5 +1267,118 @@ function initPaintersAlgorithm() {
     });
 
     reset();
+}
+
+// --- 9. Z-BUFFERING ---
+
+function initZBuffering() {
+    const colorCanvas = document.getElementById('zbuffer-color-canvas');
+    const depthCanvas = document.getElementById('zbuffer-depth-canvas');
+    if (!colorCanvas || !depthCanvas) return;
+
+    const colorCtx = colorCanvas.getContext('2d');
+    const depthCtx = depthCanvas.getContext('2d');
+
+    const toggleBtn = document.getElementById('toggle-ztest');
+    const resetBtn = document.getElementById('reset-zbuffer');
+
+    let zTestEnabled = false;
+    const width = colorCanvas.width;
+    const height = colorCanvas.height;
+
+    // Use a smaller resolution for "per-pixel" feel and performance
+    const res = 2; 
+    const cols = width / res;
+    const rows = height / res;
+
+    let zBuffer = new Float32Array(cols * rows).fill(1000); // 1000 is "far"
+
+    const triangles = [
+        {
+            points: [{x: 40, y: 40, z: 10}, {x: 240, y: 100, z: 50}, {x: 100, y: 240, z: 30}],
+            color: {r: 204, g: 255, b: 0} // Lime
+        },
+        {
+            points: [{x: 240, y: 40, z: 40}, {x: 40, y: 180, z: 10}, {x: 240, y: 240, z: 60}],
+            color: {r: 0, g: 255, b: 255} // Cyan
+        }
+    ];
+
+    function getBarycentric(px, py, p1, p2, p3) {
+        const det = (p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y);
+        const l1 = ((p2.y - p3.y) * (px - p3.x) + (p3.x - p2.x) * (py - p3.y)) / det;
+        const l2 = ((p3.y - p1.y) * (px - p3.x) + (p1.x - p3.x) * (py - p3.y)) / det;
+        const l3 = 1 - l1 - l2;
+        return { l1, l2, l3 };
+    }
+
+    function render() {
+        // Clear buffers
+        colorCtx.fillStyle = '#000';
+        colorCtx.fillRect(0, 0, width, height);
+        depthCtx.fillStyle = '#000';
+        depthCtx.fillRect(0, 0, width, height);
+        zBuffer.fill(1000);
+
+        const colorImg = colorCtx.getImageData(0, 0, width, height);
+        const depthImg = depthCtx.getImageData(0, 0, width, height);
+
+        triangles.forEach((tri, triIdx) => {
+            const [p1, p2, p3] = tri.points;
+            
+            // Bounding box
+            const minX = Math.max(0, Math.floor(Math.min(p1.x, p2.x, p3.x)));
+            const maxX = Math.min(width - 1, Math.ceil(Math.max(p1.x, p2.x, p3.x)));
+            const minY = Math.max(0, Math.floor(Math.min(p1.y, p2.y, p3.y)));
+            const maxY = Math.min(height - 1, Math.ceil(Math.max(p1.y, p2.y, p3.y)));
+
+            for (let y = minY; y <= maxY; y++) {
+                for (let x = minX; x <= maxX; x++) {
+                    const { l1, l2, l3 } = getBarycentric(x, y, p1, p2, p3);
+                    
+                    if (l1 >= 0 && l2 >= 0 && l3 >= 0) {
+                        const depth = l1 * p1.z + l2 * p2.z + l3 * p3.z;
+                        const bufferIdx = (Math.floor(y/res) * cols) + Math.floor(x/res);
+
+                        if (!zTestEnabled || depth < zBuffer[bufferIdx]) {
+                            if (zTestEnabled) zBuffer[bufferIdx] = depth;
+
+                            // Update Color Buffer
+                            const pixelIdx = (y * width + x) * 4;
+                            colorImg.data[pixelIdx] = tri.color.r;
+                            colorImg.data[pixelIdx + 1] = tri.color.g;
+                            colorImg.data[pixelIdx + 2] = tri.color.b;
+                            colorImg.data[pixelIdx + 3] = 255;
+
+                            // Update Depth Buffer Visualization (white = close, black = far)
+                            // Map depth 0-100 to 255-0
+                            const depthVal = Math.max(0, 255 - (depth * 2.5));
+                            depthImg.data[pixelIdx] = depthVal;
+                            depthImg.data[pixelIdx + 1] = depthVal;
+                            depthImg.data[pixelIdx + 2] = depthVal;
+                            depthImg.data[pixelIdx + 3] = 255;
+                        }
+                    }
+                }
+            }
+        });
+
+        colorCtx.putImageData(colorImg, 0, 0);
+        depthCtx.putImageData(depthImg, 0, 0);
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        zTestEnabled = !zTestEnabled;
+        toggleBtn.textContent = zTestEnabled ? 'Disable Z-Buffer Testing' : 'Enable Z-Buffer Testing';
+        render();
+    });
+
+    resetBtn.addEventListener('click', () => {
+        zTestEnabled = false;
+        toggleBtn.textContent = 'Enable Z-Buffer Testing';
+        render();
+    });
+
+    render();
 }
 
