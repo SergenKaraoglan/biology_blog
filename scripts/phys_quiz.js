@@ -21,6 +21,13 @@ const QUIZ_CHALLENGES = {
         description: "Calculate the orbital velocity: v = sqrt(G * M / r). Use G = 1 for simplicity.",
         initialCode: "import math\n\ndef orbital_velocity(mass, radius):\n    # Calculate required velocity for a stable orbit\n    return 0\n\n# Test\nprint(orbital_velocity(100, 10))",
         solution: (code) => code.includes("math.sqrt")
+    },
+    light: {
+        id: "light",
+        title: "04. TIME DILATION",
+        description: "Calculate the time dilation factor (gamma): γ = 1 / sqrt(1 - v²/c²). Assume c = 1.",
+        initialCode: "import math\n\ndef calculate_gamma(velocity):\n    # Return the Lorentz factor γ\n    return 0\n\n# Test cases\nprint(calculate_gamma(0.6))  # Expected ~1.25",
+        solution: (code) => code.includes("math.sqrt") && code.includes("velocity**2")
     }
 };
 

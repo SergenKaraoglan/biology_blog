@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A first-principles guide to the laws of physics. Explore entropy, quantum mechanics, and relativity through interactive visualizations.">
+    <meta name="description"
+        content="A first-principles guide to the laws of physics. Explore entropy, quantum mechanics, and relativity through interactive visualizations.">
     <title>Physics: First Principles — The Architecture of Reality</title>
     <link rel="stylesheet" href="../styles/fonts.css">
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
@@ -13,6 +15,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
     <link rel="stylesheet" href="../styles/phys_styles.css">
 </head>
+
 <body>
     <nav class="home-nav">
         <a href="../index.html">← BACK TO HOME</a>
@@ -24,15 +27,18 @@
         <canvas id="heroCanvas" class="hero-canvas" width="800" height="300"></canvas>
     </div>
 
-    <p>Physics is the study of everything. It is the search for the fundamental rules that govern the universe, from the subatomic jitter of a quark to the slow, gravitational waltz of colliding galaxies.</p>
+    <p>Physics is the study of everything. It is the search for the fundamental rules that govern the universe, from the
+        subatomic jitter of a quark to the slow, gravitational waltz of colliding galaxies.</p>
 
-    <p>At its heart, physics is not about memorizing formulas. It is about understanding the <strong>Symmetry</strong> and <strong>Logic</strong> of the universe. It is the realization that the same principles that cause a coffee cup to cool also dictate the eventual fate of all stars.</p>
+    <p>At its heart, physics is not about memorizing formulas. It is about understanding the <strong>Symmetry</strong>
+        and <strong>Logic</strong> of the universe. It is the realization that the same principles that cause a coffee
+        cup to cool also dictate the eventual fate of all stars.</p>
 
     <p>Let's strip away the complexity and look at reality from absolute first principles.</p>
 
     <nav class="toc">
         <p class="toc-title">CONTENTS</p>
-        
+
         <p class="toc-part">Part I — Thermodynamics</p>
         <ol>
             <li><a href="#sec-entropy">The Architecture of Chaos (Entropy)</a></li>
@@ -46,15 +52,19 @@
         <p class="toc-part">Part III — Relativity</p>
         <ol start="3">
             <li><a href="#sec-relativity">The Fabric of Reality (Relativity)</a></li>
+            <li><a href="#sec-light">The Cosmic Limit (Speed of Light)</a></li>
             <li><a href="#sec-quiz">Test Your Physics Intuition</a></li>
         </ol>
     </nav>
 
     <span class="section-tag tag-thermo">THERMODYNAMICS</span>
     <h2 id="sec-entropy">1. The Architecture of Chaos (Entropy)</h2>
-    <p>Why does time only move in one direction? Why do we never see a broken egg spontaneously reassemble itself? The answer lies in <strong>Entropy</strong>.</p>
-    
-    <p>Entropy is often described as "disorder," but it is more accurately the number of ways a system can be arranged. There are billions of ways for gas molecules to be scattered randomly, but only one way for them all to be huddled in a single corner. Nature naturally drifts toward the most probable state: chaos.</p>
+    <p>Why does time only move in one direction? Why do we never see a broken egg spontaneously reassemble itself? The
+        answer lies in <strong>Entropy</strong>.</p>
+
+    <p>Entropy is often described as "disorder," but it is more accurately the number of ways a system can be arranged.
+        There are billions of ways for gas molecules to be scattered randomly, but only one way for them all to be
+        huddled in a single corner. Nature naturally drifts toward the most probable state: chaos.</p>
 
     <div class="interactive-container">
         <canvas id="entropyCanvas" width="600" height="350"></canvas>
@@ -64,32 +74,43 @@
                 <label>PARTICLE COUNT: <span id="entropy-count-val">50</span></label>
             </div>
         </div>
-        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
-            Observe how the particles spread evenly over time. This uniform distribution is the state of maximum entropy.
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Observe how the particles spread evenly over time. This uniform distribution is the state of maximum
+            entropy.
         </p>
     </div>
 
     <span class="section-tag tag-quantum">QUANTUM</span>
     <h2 id="sec-quantum">2. The Wave-Particle Duality</h2>
-    <p>On the smallest scales, the universe stops acting like a machine and starts acting like a dream. Particles like electrons do not have a single, definite location. Instead, they exist as a <strong>Wave of Probability</strong>.</p>
+    <p>On the smallest scales, the universe stops acting like a machine and starts acting like a dream. Particles like
+        electrons do not have a single, definite location. Instead, they exist as a <strong>Wave of
+            Probability</strong>.</p>
 
-    <p>When we aren't looking, an electron is "everywhere" at once. Only when we measure it does the wave "collapse" into a single point. This is the heart of the Double-Slit experiment: things can be both a localized particle and a spreading wave simultaneously.</p>
+    <p>When we aren't looking, an electron is "everywhere" at once. Only when we measure it does the wave "collapse"
+        into a single point. This is the heart of the Double-Slit experiment: things can be both a localized particle
+        and a spreading wave simultaneously.</p>
 
     <div class="interactive-container">
         <canvas id="waveCanvas" width="600" height="300"></canvas>
         <div class="controls">
             <button id="wave-observe-btn">OBSERVE PARTICLE</button>
         </div>
-        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
             The ripples represent probability density. Click to collapse the wave into a single particle detection.
         </p>
     </div>
 
     <span class="section-tag tag-relativity">RELATIVITY</span>
     <h2 id="sec-relativity">3. The Fabric of Reality (Relativity)</h2>
-    <p>Space and time are not separate. They are woven together into a four-dimensional fabric called <strong>Space-time</strong>. Mass doesn't just "pull" on things; it actually warps the geometry of this fabric.</p>
+    <p>Space and time are not separate. They are woven together into a four-dimensional fabric called
+        <strong>Space-time</strong>. Mass doesn't just "pull" on things; it actually warps the geometry of this fabric.
+    </p>
 
-    <p>Imagine placing a bowling ball on a trampoline. The fabric dips. If you roll a marble nearby, it will curve toward the ball—not because of an invisible force, but because it is following the curvature of the surface. This curvature is what we feel as <strong>Gravity</strong>.</p>
+    <p>Imagine placing a bowling ball on a trampoline. The fabric dips. If you roll a marble nearby, it will curve
+        toward the ball—not because of an invisible force, but because it is following the curvature of the surface.
+        This curvature is what we feel as <strong>Gravity</strong>.</p>
 
     <div class="interactive-container">
         <canvas id="gravityCanvas" width="600" height="400"></canvas>
@@ -99,25 +120,56 @@
                 <input type="range" id="gravity-mass-slider" min="10" max="200" step="1" value="50">
             </div>
         </div>
-        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
             Drag to add more mass and watch the space-time grid deform. Larger dips create stronger gravitational wells.
         </p>
     </div>
 
-    <h2 id="sec-quiz">4. Test Your Physics Intuition</h2>
-    <p>Can you simulate a simple gravitational orbit? Use the Python environment below to calculate the velocity needed to maintain a circular path.</p>
+    <span class="section-tag tag-relativity">RELATIVITY</span>
+    <h2 id="sec-light">4. The Cosmic Limit (Speed of Light)</h2>
+    <p>In our everyday experience, speeds simply add up. If you run at 10 mph on a train moving at 50 mph, you are moving
+        at 60 mph relative to the ground. But <strong>Light</strong> is different.</p>
+    
+    <p>The speed of light ($c$) is the universe's absolute speed limit. No matter how fast you travel, light always
+        races away from you at exactly 299,792,458 meters per second. This constancy forces space and time themselves
+        to warp to keep the math consistent. This phenomenon is known as <strong>Time Dilation</strong>.</p>
+
+    <div class="interactive-container">
+        <canvas id="lightClockCanvas" width="600" height="300"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>VELOCITY (v/c): <span id="light-v-val">0.00</span></label>
+                <input type="range" id="light-v-slider" min="0" max="0.95" step="0.01" value="0.00">
+            </div>
+        </div>
+        <p
+            style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            As velocity increases, the photon's path lengths increase. Since the speed of light is constant, time must
+            slow down for the moving clock to compensate.
+        </p>
+    </div>
+
+    <h2 id="sec-quiz">5. Test Your Physics Intuition</h2>
+    <p>Can you simulate a simple gravitational orbit? Use the Python environment below to calculate the velocity needed
+        to maintain a circular path.</p>
 
     <div class="interactive-container" style="align-items: stretch; padding: 2rem;">
         <div class="controls" style="justify-content: space-between; margin-top: 0; margin-bottom: 1rem;">
-            <select id="quiz-select" style="background:#111; color:#fff; border:1px solid #444; padding:0.5rem; font-family:'Courier New', monospace; flex-grow:1; margin-right:1rem;">
+            <select id="quiz-select"
+                style="background:#111; color:#fff; border:1px solid #444; padding:0.5rem; font-family:'Courier New', monospace; flex-grow:1; margin-right:1rem;">
                 <option value="entropy">01. ENTROPY LOGIC</option>
                 <option value="quantum">02. PROBABILITY WAVE</option>
                 <option value="gravity">03. ORBITAL MECHANICS</option>
+                <option value="light">04. TIME DILATION</option>
             </select>
             <button id="quiz-run-btn" disabled>INITIALIZING...</button>
         </div>
-        <textarea id="quiz-editor" style="width:100%; height:200px; background:#0a0a0a; color:#fff; border:1px solid #333; font-family:'Courier New', monospace; padding:1rem; outline:none;"></textarea>
-        <div class="output-console" id="quiz-output" style="margin-top:1rem; background:#050505; color:#ffaa00; padding:1rem; border:1px solid #333; font-family:'Courier New', monospace; min-height:60px; white-space:pre-wrap;">Awaiting Python Kernel...</div>
+        <textarea id="quiz-editor"
+            style="width:100%; height:200px; background:#0a0a0a; color:#fff; border:1px solid #333; font-family:'Courier New', monospace; padding:1rem; outline:none;"></textarea>
+        <div class="output-console" id="quiz-output"
+            style="margin-top:1rem; background:#050505; color:#ffaa00; padding:1rem; border:1px solid #333; font-family:'Courier New', monospace; min-height:60px; white-space:pre-wrap;">
+            Awaiting Python Kernel...</div>
     </div>
 
     <footer>
@@ -127,4 +179,5 @@
     <script src="../scripts/phys_visuals.js"></script>
     <script src="../scripts/phys_quiz.js"></script>
 </body>
+
 </html>
