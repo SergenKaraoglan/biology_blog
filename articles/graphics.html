@@ -30,7 +30,8 @@
             <li>
                 <div class="toc-part">PART I: GEOMETRY</div>
                 <ol>
-                    <li><a href="#cartesian-coordinates"><span class="section-tag tag-geometry">GEOMETRY</span> The Cartesian Coordinate System</a></li>
+                    <li><a href="#cartesian-coordinates"><span class="section-tag tag-geometry">GEOMETRY</span> The
+                            Cartesian Coordinate System</a></li>
                     <li><a href="#vertex-processing">Vertex Processing & Matrices</a></li>
                     <li><a href="#transformations">Transformations in 3D Space</a></li>
                 </ol>
@@ -40,9 +41,11 @@
                 <ol>
                     <li><a href="#rasterization"><span class="section-tag tag-raster">RASTER</span> Scan-line
                             Conversion</a></li>
-                    <li><a href="#painters-algorithm"><span class="section-tag tag-raster">RASTER</span> Painter's Algorithm</a></li>
+                    <li><a href="#painters-algorithm"><span class="section-tag tag-raster">RASTER</span> Painter's
+                            Algorithm</a></li>
                     <li><a href="#z-buffering"><span class="section-tag tag-raster">RASTER</span> Z-Buffering</a></li>
-                    <li><a href="#antialiasing"><span class="section-tag tag-raster">RASTER</span> Anti-Aliasing</a></li>
+                    <li><a href="#antialiasing"><span class="section-tag tag-raster">RASTER</span> Anti-Aliasing</a>
+                    </li>
                     <li><a href="#fragment-shading">Fragment Shaders: Painting the Pixels</a></li>
                 </ol>
             </li>
@@ -51,8 +54,10 @@
                 <ol>
                     <li><a href="#ray-tracing"><span class="section-tag tag-raytracing">LIGHT</span> Ray Tracing & Path
                             Tracing</a></li>
-                    <li><a href="#virtual-reality"><span class="section-tag tag-raytracing">PRESENCE</span> Virtual Reality</a></li>
-                    <li><a href="#augmented-reality"><span class="section-tag tag-raytracing">AUGMENT</span> Augmented Reality</a></li>
+                    <li><a href="#virtual-reality"><span class="section-tag tag-raytracing">PRESENCE</span> Virtual
+                            Reality</a></li>
+                    <li><a href="#augmented-reality"><span class="section-tag tag-raytracing">AUGMENT</span> Augmented
+                            Reality</a></li>
                 </ol>
             </li>
         </ol>
@@ -61,8 +66,12 @@
     <main>
         <section id="cartesian-coordinates">
             <h2>The Cartesian Coordinate System</h2>
-            <p>Every digital image, 3D model, and pixel on your screen exists within a mathematical space known as the <strong>Cartesian Coordinate System</strong>. Developed by René Descartes, it bridges the gap between algebra and geometry, allowing us to define any point in space using numerical coordinates (X, Y, and Z).</p>
-            <p>Without this foundational grid, computer graphics as we know them would be impossible. It provides the absolute reference frame necessary to map abstract shapes into a format the machine can render.</p>
+            <p>Every digital image, 3D model, and pixel on your screen exists within a mathematical space known as the
+                <strong>Cartesian Coordinate System</strong>. Developed by René Descartes, it bridges the gap between
+                algebra and geometry, allowing us to define any point in space using numerical coordinates (X, Y, and
+                Z).</p>
+            <p>Without this foundational grid, computer graphics as we know them would be impossible. It provides the
+                absolute reference frame necessary to map abstract shapes into a format the machine can render.</p>
 
             <div class="interactive-container">
                 <div class="visual-label">Cartesian Plane Mapper</div>
@@ -82,15 +91,18 @@
                         <input type="range" id="slider-cz" min="-10" max="10" step="0.5" value="0">
                     </div>
                 </div>
-                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Move the sliders to translate the point across the coordinate plane, mapping numerical values to spatial positions.</p>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Move the sliders to translate the point
+                    across the coordinate plane, mapping numerical values to spatial positions.</p>
             </div>
         </section>
 
         <section id="vertex-processing">
             <h2>The Geometry of Sight</h2>
-            <p>At its core, computer graphics is an exercise in linear algebra. Every object is defined by a collection of
+            <p>At its core, computer graphics is an exercise in linear algebra. Every object is defined by a collection
+                of
                 <strong>vertices</strong>—points in 3D space. To render these on a 2D screen, we must project them. This
-                involves multiplying them by a series of matrices: Model, View, and Projection.</p>
+                involves multiplying them by a series of matrices: Model, View, and Projection.
+            </p>
 
             <div class="interactive-container">
                 <div class="visual-label">Interactive Vertex Transformer</div>
@@ -135,8 +147,12 @@
 
         <section id="painters-algorithm">
             <h2>The Painter's Algorithm</h2>
-            <p>In a 3D scene, many objects may overlap. To ensure the correct objects appear "in front," we must solve the <strong>visibility problem</strong>. One of the simplest methods is the <strong>Painter's Algorithm</strong>.</p>
-            <p>Just as a painter paints the background first and then layers the foreground objects on top, this algorithm sorts polygons by their distance from the viewer (depth) and renders them in back-to-front order. While efficient for simple scenes, it can fail when polygons intersect or form cycles.</p>
+            <p>In a 3D scene, many objects may overlap. To ensure the correct objects appear "in front," we must solve
+                the <strong>visibility problem</strong>. One of the simplest methods is the <strong>Painter's
+                    Algorithm</strong>.</p>
+            <p>Just as a painter paints the background first and then layers the foreground objects on top, this
+                algorithm sorts polygons by their distance from the viewer (depth) and renders them in back-to-front
+                order. While efficient for simple scenes, it can fail when polygons intersect or form cycles.</p>
 
             <div class="interactive-container">
                 <div class="visual-label">Depth Sorting Simulator</div>
@@ -146,51 +162,69 @@
                     <button id="spawn-cycle">Show Cyclical Overlap Failure</button>
                     <button id="reset-painters">Reset Scene</button>
                 </div>
-                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Drag the triangles to reposition them. Toggle sorting to see how the draw order (Painter's Algorithm) resolves visibility.</p>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Drag the triangles to reposition them.
+                    Toggle sorting to see how the draw order (Painter's Algorithm) resolves visibility.</p>
             </div>
         </section>
 
         <section id="z-buffering">
             <h2>Z-Buffering: The modern Standard</h2>
-            <p>The Painter's Algorithm fails when objects intersect or form cycles. To solve this, modern graphics hardware uses a <strong>Z-Buffer</strong> (or Depth Buffer). Instead of sorting whole polygons, we store the "depth" of the closest object at <em>every single pixel</em>.</p>
-            <p>When drawing a new pixel, the hardware compares its depth (Z-value) against the value already stored in the Z-buffer. If the new pixel is closer, it's drawn and the Z-buffer is updated; otherwise, it's discarded. This per-pixel test handles any degree of complexity without the need for expensive sorting.</p>
+            <p>The Painter's Algorithm fails when objects intersect or form cycles. To solve this, modern graphics
+                hardware uses a <strong>Z-Buffer</strong> (or Depth Buffer). Instead of sorting whole polygons, we store
+                the "depth" of the closest object at <em>every single pixel</em>.</p>
+            <p>When drawing a new pixel, the hardware compares its depth (Z-value) against the value already stored in
+                the Z-buffer. If the new pixel is closer, it's drawn and the Z-buffer is updated; otherwise, it's
+                discarded. This per-pixel test handles any degree of complexity without the need for expensive sorting.
+            </p>
 
             <div class="interactive-container">
                 <div class="visual-label">Per-Pixel Depth Tester</div>
                 <div style="display: flex; gap: 20px; width: 100%; justify-content: center; flex-wrap: wrap;">
                     <div style="text-align: center;">
-                        <span style="font-size: 0.8rem; color: #888; font-family: 'Courier New';">COLOR BUFFER</span><br>
-                        <canvas id="zbuffer-color-canvas" width="280" height="280" style="background: #000; border: 1px solid #222; margin-top: 10px;"></canvas>
+                        <span style="font-size: 0.8rem; color: #888; font-family: 'Courier New';">COLOR
+                            BUFFER</span><br>
+                        <canvas id="zbuffer-color-canvas" width="280" height="280"
+                            style="background: #000; border: 1px solid #222; margin-top: 10px;"></canvas>
                     </div>
                     <div style="text-align: center;">
-                        <span style="font-size: 0.8rem; color: #888; font-family: 'Courier New';">Z-BUFFER (DEPTH MAP)</span><br>
-                        <canvas id="zbuffer-depth-canvas" width="280" height="280" style="background: #000; border: 1px solid #222; margin-top: 10px;"></canvas>
+                        <span style="font-size: 0.8rem; color: #888; font-family: 'Courier New';">Z-BUFFER (DEPTH
+                            MAP)</span><br>
+                        <canvas id="zbuffer-depth-canvas" width="280" height="280"
+                            style="background: #000; border: 1px solid #222; margin-top: 10px;"></canvas>
                     </div>
                 </div>
                 <div class="controls">
                     <button id="toggle-ztest" style="margin-bottom: 1rem; width: 100%;">Enable Z-Buffer Testing</button>
                     <button id="reset-zbuffer">Reset Scene</button>
                 </div>
-                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Observe how the Z-buffer (right) stores the depth of each pixel (brighter = closer). Toggle testing to see how it resolves intersections that the Painter's Algorithm cannot.</p>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Observe how the Z-buffer (right) stores the
+                    depth of each pixel (brighter = closer). Toggle testing to see how it resolves intersections that
+                    the Painter's Algorithm cannot.</p>
             </div>
         </section>
 
         <section id="antialiasing">
             <h2>Anti-Aliasing: Smoothing the Edges</h2>
-            <p>Because pixels are discrete squares on a grid, rendering continuous mathematical lines or curves results in "jaggies"—stair-step edges known as <strong>aliasing</strong>.</p>
-            <p><strong>Anti-aliasing (AA)</strong> solves this by calculating the fractional coverage of a pixel by the mathematical geometry. Instead of simply turning a pixel 100% on or 100% off (Bresenham's algorithm), it blends the pixel's color with the background proportionally based on how much the geometry overlaps it (Wu's algorithm), tricking our eyes into perceiving a perfectly smooth edge.</p>
+            <p>Because pixels are discrete squares on a grid, rendering continuous mathematical lines or curves results
+                in "jaggies"—stair-step edges known as <strong>aliasing</strong>.</p>
+            <p><strong>Anti-aliasing (AA)</strong> solves this by calculating the fractional coverage of a pixel by the
+                mathematical geometry. Instead of simply turning a pixel 100% on or 100% off (Bresenham's algorithm), it
+                blends the pixel's color with the background proportionally based on how much the geometry overlaps it
+                (Wu's algorithm), tricking our eyes into perceiving a perfectly smooth edge.</p>
 
             <div class="interactive-container">
                 <div class="visual-label">Pixel Sampling Simulator</div>
                 <canvas id="aa-canvas" width="600" height="400"></canvas>
                 <div class="controls">
-                    <button id="toggle-aa" style="margin-bottom: 1rem; width: 100%;">Enable Anti-Aliasing (Wu's Algorithm)</button>
+                    <button id="toggle-aa" style="margin-bottom: 1rem; width: 100%;">Enable Anti-Aliasing (Wu's
+                        Algorithm)</button>
                     <div class="slider-group">
                         <label>Angle: <span id="aa-angle-display">25</span>°</label>
                         <input type="range" id="aa-angle" min="0" max="90" step="1" value="25">
                     </div>
                 </div>
-                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Toggle algorithms to see how the stark stair-stepping (aliasing) becomes a visually smooth gradient edge under anti-aliasing.</p>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Toggle algorithms to see how the stark
+                    stair-stepping (aliasing) becomes a visually smooth gradient edge under anti-aliasing.</p>
             </div>
         </section>
 
@@ -222,9 +256,12 @@
             <h2>The Future: Ray Tracing</h2>
             <p>While rasterization is fast, it struggles with realistic shadows, reflections, and global illumination.
                 <strong>Ray Tracing</strong> simulates the physical path of light rays. By shooting rays
-                into a scene and calculating their intersections with objects, we can accurately model realistic phenomena. 
-                When a ray hits a surface, it can reflect, refract, or scatter, recursively generating new rays to sample indirect lighting.</p>
-            
+                into a scene and calculating their intersections with objects, we can accurately model realistic
+                phenomena.
+                When a ray hits a surface, it can reflect, refract, or scatter, recursively generating new rays to
+                sample indirect lighting.
+            </p>
+
             <div class="interactive-container">
                 <div class="visual-label">2D Ray Tracing Engine</div>
                 <canvas id="raytrace-canvas" width="600" height="400"></canvas>
@@ -242,21 +279,32 @@
                         <input type="range" id="rt-bounces" min="0" max="5" step="1" value="3">
                     </div>
                 </div>
-                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Observe how light rays emit from a source, interact with obstacles, and bounce to calculate accurate lighting paths.</p>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Observe how light rays emit from a source,
+                    interact with obstacles, and bounce to calculate accurate lighting paths.</p>
             </div>
         </section>
 
         <section id="virtual-reality">
-            <span class="section-tag" style="background:var(--accent-color); color:#fff; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">PRESENCE</span>
+            <span class="section-tag"
+                style="background:var(--accent-color); color:#fff; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">PRESENCE</span>
             <h2>Virtual Reality: Hacking Perception</h2>
-            <p>Traditional computer graphics map a 3D world to a flat 2D rectangle. <strong>Virtual Reality (VR)</strong> hacks the human brain's binocular vision by rendering two slightly different perspectives of the same scene—one for each eye.</p>
-            <p>When combined with ultra-low latency head tracking and distortion lenses, the brain fuses the two 2D images into a solitary, immersive 3D space. The mathematics of projection matrices must perfectly mirror the physical optics of the headset to maintain the illusion of absolute presence.</p>
-            
+            <p>Traditional computer graphics map a 3D world to a flat 2D rectangle. <strong>Virtual Reality
+                    (VR)</strong> hacks the human brain's binocular vision by rendering two slightly different
+                perspectives of the same scene—one for each eye.</p>
+            <p>When combined with ultra-low latency head tracking and distortion lenses, the brain fuses the two 2D
+                images into a solitary, immersive 3D space. The mathematics of projection matrices must perfectly mirror
+                the physical optics of the headset to maintain the illusion of absolute presence.</p>
+
             <div class="interactive-container">
                 <div class="visual-label">Stereoscopic Renderer</div>
-                <div style="display: flex; gap: 10px; width: 100%; justify-content: center; background: #000; padding: 10px;">
-                    <div style="text-align: center; color: #666; font-size: 12px; font-family: 'Courier New';">LEFT EYE<br><canvas id="vr-left-canvas" width="280" height="280" style="background: #050505; border: 1px solid #333; margin-top: 5px;"></canvas></div>
-                    <div style="text-align: center; color: #666; font-size: 12px; font-family: 'Courier New';">RIGHT EYE<br><canvas id="vr-right-canvas" width="280" height="280" style="background: #050505; border: 1px solid #333; margin-top: 5px;"></canvas></div>
+                <div
+                    style="display: flex; gap: 10px; width: 100%; justify-content: center; background: #000; padding: 10px;">
+                    <div style="text-align: center; color: #666; font-size: 12px; font-family: 'Courier New';">LEFT
+                        EYE<br><canvas id="vr-left-canvas" width="280" height="280"
+                            style="background: #050505; border: 1px solid #333; margin-top: 5px;"></canvas></div>
+                    <div style="text-align: center; color: #666; font-size: 12px; font-family: 'Courier New';">RIGHT
+                        EYE<br><canvas id="vr-right-canvas" width="280" height="280"
+                            style="background: #050505; border: 1px solid #333; margin-top: 5px;"></canvas></div>
                 </div>
                 <div class="controls">
                     <div class="slider-group">
@@ -264,27 +312,38 @@
                         <input type="range" id="vr-ipd-slider" min="0" max="15" step="0.5" value="6.0">
                     </div>
                 </div>
-                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Adjust the IPD (distance between the cameras) to watch how the left and right perspectives shift horizontally to form stereoscopic depth. Cross your eyes to fuse the two cubes manually!</p>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Adjust the IPD (distance between the
+                    cameras) to watch how the left and right perspectives shift horizontally to form stereoscopic depth.
+                    Cross your eyes to fuse the two cubes manually!</p>
             </div>
         </section>
 
         <section id="augmented-reality">
-            <span class="section-tag" style="background:var(--graphics-lime); color:#000; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">AUGMENT</span>
+            <span class="section-tag"
+                style="background:var(--graphics-lime); color:#000; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">AUGMENT</span>
             <h2>Augmented Reality: Anchoring the Digital to the Physical</h2>
-            <p>Unlike Virtual Reality, which replaces your environment entirely, <strong>Augmented Reality (AR)</strong> superimposes digital geometry onto the real world. This requires extreme precision in camera pose estimation: the machine must constantly track the physical space to align virtual objects flawlessly.</p>
-            <p>By detecting feature points in a camera feed or tracking physical markers, AR systems compute a projection matrix relative to the real-world camera lens. When this math is perfectly synchronized, digital objects behave as if they physically exist in your room.</p>
-            
+            <p>Unlike Virtual Reality, which replaces your environment entirely, <strong>Augmented Reality (AR)</strong>
+                superimposes digital geometry onto the real world. This requires extreme precision in camera pose
+                estimation: the machine must constantly track the physical space to align virtual objects flawlessly.
+            </p>
+            <p>By detecting feature points in a camera feed or tracking physical markers, AR systems compute a
+                projection matrix relative to the real-world camera lens. When this math is perfectly synchronized,
+                digital objects behave as if they physically exist in your room.</p>
+
             <div class="interactive-container">
                 <div class="visual-label">AR Tracker Simulator</div>
                 <canvas id="ar-canvas" width="600" height="400" style="background: #1a1a1a;"></canvas>
                 <div class="controls">
-                    <button id="toggle-ar-tracking" style="margin-bottom: 1rem; width: 100%;">Disable Marker Tracking</button>
+                    <button id="toggle-ar-tracking" style="margin-bottom: 1rem; width: 100%;">Disable Marker
+                        Tracking</button>
                     <div class="slider-group">
                         <label>Object Rotation Speed</label>
                         <input type="range" id="ar-rot-speed" min="0" max="0.1" step="0.01" value="0.02">
                     </div>
                 </div>
-                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Drag the AR marker (the green square) on the canvas to see how the 3D projection anchors itself to the physical coordinate system in real-time.</p>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Drag the AR marker (the green square) on
+                    the canvas to see how the 3D projection anchors itself to the physical coordinate system in
+                    real-time.</p>
             </div>
         </section>
     </main>

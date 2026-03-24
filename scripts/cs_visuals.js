@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initLogic();
     initGPUVisualizer();
     initStructs();
+    initPenTestVisualizer();
 });
 
 // --- 1. HERO VISUAL (Circuit Stream) ---
@@ -311,6 +312,128 @@ function initStructs() {
                 setTimeout(() => { searching = -1; draw(); }, 500);
             }
         }, 300);
+    });
+
+    draw();
+}
+
+// --- 5. PENETRATION TESTING (Network Intrusion Simulator) ---
+function initPenTestVisualizer() {
+    const canvas = document.getElementById('pentestCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const reconBtn = document.getElementById('recon-btn');
+    const scanBtn = document.getElementById('scan-btn');
+    const exploitBtn = document.getElementById('exploit-btn');
+    const resetBtn = document.getElementById('reset-pentest-btn');
+    const log = document.getElementById('pentest-log');
+
+    let phase = 0; // 0: Idle, 1: Recon, 2: Scan, 3: Exploit
+    let nodes = [
+        { id: 'Local', x: 100, y: 150, type: 'attacker', status: 'ready' },
+        { id: 'SRV-01', x: 300, y: 80, type: 'target', status: 'unknown', info: 'Linux 5.10' },
+        { id: 'DB-MAIN', x: 300, y: 220, type: 'target', status: 'unknown', info: 'PostgreSQL 12' },
+        { id: 'WS-01', x: 500, y: 150, type: 'target', status: 'unknown', info: 'Win 10' }
+    ];
+
+    function writeLog(msg) {
+        log.innerHTML += `<br>> ${msg}`;
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Connections
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        nodes.forEach(n => {
+            if (n.type === 'target') {
+                ctx.strokeStyle = phase >= 1 ? '#444' : 'transparent';
+                ctx.beginPath();
+                ctx.moveTo(100, 150);
+                ctx.lineTo(n.x, n.y);
+                ctx.stroke();
+            }
+        });
+        ctx.setLineDash([]);
+
+        // Nodes
+        nodes.forEach(n => {
+            ctx.fillStyle = n.type === 'attacker' ? '#00ffff' : '#111';
+            if (phase >= 2 && n.status === 'vulnerable') ctx.fillStyle = '#ff3333';
+            if (phase === 3 && n.status === 'compromised') ctx.fillStyle = '#ff3333';
+            
+            ctx.strokeStyle = '#fff';
+            if (phase >= 1 || n.type === 'attacker') {
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, 25, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(n.id, n.x, n.y + 40);
+
+                if (phase >= 2 && n.type === 'target') {
+                    ctx.fillStyle = n.status === 'vulnerable' ? '#ff3333' : '#888';
+                    ctx.fillText(n.status.toUpperCase(), n.x, n.y + 52);
+                }
+            }
+        });
+
+        if (phase === 3) {
+            // Draw exploit animation
+            ctx.strokeStyle = '#ff3333';
+            ctx.setLineDash([2, 5]);
+            ctx.beginPath();
+            ctx.moveTo(100, 150);
+            ctx.lineTo(300, 80);
+            ctx.stroke();
+        }
+    }
+
+    reconBtn.addEventListener('click', () => {
+        phase = 1;
+        writeLog("Starting reconnaissance... Network map acquired.");
+        reconBtn.disabled = true;
+        scanBtn.disabled = false;
+        draw();
+    });
+
+    scanBtn.addEventListener('click', () => {
+        phase = 2;
+        writeLog("Scanning targets... Found high-risk vulnerability on SRV-01 (CVE-2023-XXXX).");
+        nodes[1].status = 'vulnerable';
+        nodes[2].status = 'secure';
+        nodes[3].status = 'secure';
+        scanBtn.disabled = true;
+        exploitBtn.disabled = false;
+        draw();
+    });
+
+    exploitBtn.addEventListener('click', () => {
+        phase = 3;
+        writeLog("Executing exploit... Payload delivered to SRV-01.");
+        setTimeout(() => {
+            nodes[1].status = 'compromised';
+            writeLog("ROOT ACCESS GRANTED. System compromised.");
+            exploitBtn.disabled = true;
+            draw();
+        }, 1000);
+        draw();
+    });
+
+    resetBtn.addEventListener('click', () => {
+        phase = 0;
+        nodes.forEach(n => { n.status = 'unknown'; });
+        reconBtn.disabled = false;
+        scanBtn.disabled = true;
+        exploitBtn.disabled = true;
+        log.innerHTML = "> System Ready. Awaiting instructions...";
+        draw();
     });
 
     draw();
