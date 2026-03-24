@@ -53,6 +53,11 @@
         <p class="toc-part">Part IV — Security</p>
         <ol start="6">
             <li><a href="#sec-pentest">The Defensive Art (Penetration Testing)</a></li>
+        </ol>
+
+        <p class="toc-part">Part V — Higher Abstractions</p>
+        <ol start="7">
+            <li><a href="#sec-synthesis">Code That Writes Itself (Program Synthesis)</a></li>
             <li><a href="#sec-quiz">Test Your Computational Intuition</a></li>
         </ol>
     </nav>
@@ -146,7 +151,39 @@
         </div>
     </div>
 
-    <h2 id="sec-quiz">7. Test Your Computational Intuition</h2>
+    <span class="section-tag" style="background:#00ffff; color:#000; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">ABSTRACTION</span>
+    <h2 id="sec-synthesis">7. Program Synthesis: Code That Writes Itself</h2>
+    <p>If a compiler translates code from one language to another, a <strong>Program Synthesizer</strong> generates code from a high-level specification. This is the holy grail of computer science: the ability for a machine to understand <em>what</em> we want and determine <em>how</em> to achieve it.</p>
+    
+    <p>Using <strong>Deductive Synthesis</strong>, the engine searches through millions of possible logical combinations to find the exact function that matches your provided examples. It is a massive search problem over the space of all possible programs.</p>
+
+    <div class="interactive-container">
+        <div style="display: flex; gap: 20px; width: 100%; align-items: center; justify-content: center; margin-bottom: 20px;">
+            <div style="text-align: center;">
+                <span style="font-size: 0.8rem; color: #888;">INPUT/OUTPUT EXAMPLES</span>
+                <div id="synthesis-examples" style="font-family: 'Courier New', monospace; font-size: 0.9rem; color: #00ffff; margin-top: 10px; background: #050505; padding: 10px; border: 1px solid #222;">
+                    2 &rarr; 4<br>3 &rarr; 9<br>4 &rarr; 16
+                </div>
+            </div>
+            <div style="font-size: 2rem; color: #444;">&rarr;</div>
+            <div style="text-align: center;">
+                <span style="font-size: 0.8rem; color: #888;">SYNTHESIZED CODE</span>
+                <div id="synthesized-code" style="font-family: 'Courier New', monospace; font-size: 1rem; color: #ccff00; margin-top: 10px; background: #050505; padding: 10px; border: 1px solid #222; min-width: 150px; min-height: 40px;">
+                    ???
+                </div>
+            </div>
+        </div>
+        <canvas id="synthesisCanvas" width="600" height="150" style="background: #000; border: 1px solid #111;"></canvas>
+        <div class="controls">
+            <button id="synthesize-btn">START SYNTHESIS ENGINE</button>
+            <button id="reset-synthesis-btn">CLEAR</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch the engine prune the literal search space of all possible mathematical functions to find the one that fits the observed data.
+        </p>
+    </div>
+
+    <h2 id="sec-quiz">8. Test Your Computational Intuition</h2>
     <p>Can you implement a basic sort? Use the Python environment below to sort a list of numbers from first principles.</p>
 
     <div class="interactive-container" style="align-items: stretch; padding: 2rem;">

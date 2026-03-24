@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initGPUVisualizer();
     initStructs();
     initPenTestVisualizer();
+    initProgramSynthesis();
 });
 
 // --- 1. HERO VISUAL (Circuit Stream) ---
@@ -433,6 +434,120 @@ function initPenTestVisualizer() {
         scanBtn.disabled = true;
         exploitBtn.disabled = true;
         log.innerHTML = "> System Ready. Awaiting instructions...";
+        draw();
+    });
+
+    draw();
+}
+
+// --- 6. PROGRAM SYNTHESIS (Deductive Synthesis Engine) ---
+function initProgramSynthesis() {
+    const canvas = document.getElementById('synthesisCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const startBtn = document.getElementById('synthesize-btn');
+    const resetBtn = document.getElementById('reset-synthesis-btn');
+    const codeDisplay = document.getElementById('synthesized-code');
+
+    let isRunning = false;
+    let candidates = [
+        { formula: 'x + 2', status: 'pending' },
+        { formula: 'x * 2', status: 'pending' },
+        { formula: 'x ** 2', status: 'pending' },
+        { formula: 'x / 2', status: 'pending' },
+        { formula: 'x + 10', status: 'pending' },
+        { formula: 'x * 4', status: 'pending' }
+    ];
+    let currentIndex = -1;
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const spacing = 100;
+        const startX = (canvas.width - (candidates.length * spacing)) / 2 + 50;
+
+        candidates.forEach((c, i) => {
+            const x = startX + i * spacing;
+            const y = canvas.height / 2;
+
+            // Box
+            ctx.strokeStyle = '#333';
+            if (i === currentIndex) ctx.strokeStyle = '#00ffff';
+            if (c.status === 'fail') ctx.strokeStyle = '#ff3333';
+            if (c.status === 'pass') ctx.strokeStyle = '#ccff00';
+            
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x - 40, y - 20, 80, 40);
+
+            // Text
+            ctx.fillStyle = ctx.strokeStyle;
+            ctx.font = '12px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(c.formula, x, y + 5);
+
+            if (c.status === 'fail') {
+                ctx.font = '10px Courier New';
+                ctx.fillText('PRUNED', x, y + 35);
+            }
+        });
+    }
+
+    function runSynthesis() {
+        if (!isRunning) return;
+        currentIndex++;
+
+        if (currentIndex >= candidates.length) {
+            isRunning = false;
+            startBtn.disabled = false;
+            return;
+        }
+
+        const c = candidates[currentIndex];
+        const examples = [{i:2, o:4}, {i:3, o:9}, {i:4, o:16}];
+        
+        let pass = true;
+        try {
+            // Very simple "interpreter" for our DSL
+            const func = new Function('x', `return ${c.formula}`);
+            for (let ex of examples) {
+                if (func(ex.i) !== ex.o) {
+                    pass = false;
+                    break;
+                }
+            }
+        } catch(e) { pass = false; }
+
+        setTimeout(() => {
+            c.status = pass ? 'pass' : 'fail';
+            if (pass) {
+                codeDisplay.innerText = `f(x) = ${c.formula}`;
+                isRunning = false;
+                startBtn.disabled = false;
+            }
+            draw();
+            if (isRunning) runSynthesis();
+        }, 600);
+        
+        draw();
+    }
+
+    startBtn.addEventListener('click', () => {
+        if (isRunning) return;
+        isRunning = true;
+        currentIndex = -1;
+        candidates.forEach(c => c.status = 'pending');
+        codeDisplay.innerText = '???';
+        startBtn.disabled = true;
+        runSynthesis();
+    });
+
+    resetBtn.addEventListener('click', () => {
+        isRunning = false;
+        currentIndex = -1;
+        candidates.forEach(c => c.status = 'pending');
+        codeDisplay.innerText = '???';
+        startBtn.disabled = false;
         draw();
     });
 
