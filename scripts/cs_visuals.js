@@ -1,18 +1,21 @@
 // Computer Science Visuals - First Principles
 
-document.addEventListener('DOMContentLoaded', () => {
-    initHero();
-    initBinary();
-    initLogic();
-    initGPUVisualizer();
-    initStructs();
-    initComplexityVisualizer();
-    initPvsNPVisualizer();
-    initPenTestVisualizer();
-    initProgramSynthesis();
-    initInterpreterVisualizer();
-    initCompilerVisualizer();
-});
+function startInitializers() {
+    const initializers = [
+        initHero, initBinary, initLogic, initGPUVisualizer, initStructs,
+        initComplexityVisualizer, initPvsNPVisualizer, initKnightsTourVisualizer,
+        initPenTestVisualizer, initProgramSynthesis, initInterpreterVisualizer, initCompilerVisualizer
+    ];
+    initializers.forEach(init => {
+        try { if (typeof init === 'function') init(); } catch (e) { console.error(e); }
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startInitializers);
+} else {
+    startInitializers();
+}
 
 // --- 5. COMPUTATIONAL COMPLEXITY (Big O Curves) ---
 function initComplexityVisualizer() {
@@ -1039,6 +1042,182 @@ function initPvsNPVisualizer() {
             }
         }
     });
+
+    draw();
+}
+
+// --- 5.7 HAMILTONIAN PATH (Knight's Tour) ---
+function initKnightsTourVisualizer() {
+    const canvas = document.getElementById('knightsCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const solveBtn = document.getElementById('knights-solve-btn');
+    const resetBtn = document.getElementById('knights-reset-btn');
+
+    if (!solveBtn || !resetBtn) return;
+
+    const size = 5;
+    let cellSize = canvas.width / size;
+    let board = Array(size * size).fill(-1);
+    let currentPos = { r: -1, c: -1 };
+    let stepCount = 0;
+    let isSolving = false;
+    let solveInterval = null;
+
+    function getMoves(r, c) {
+        const moves = [
+            {r: r-2, c: c-1}, {r: r-2, c: c+1},
+            {r: r-1, c: c-2}, {r: r-1, c: c+2},
+            {r: r+1, c: c-2}, {r: r+1, c: c+2},
+            {r: r+2, c: c-1}, {r: r+2, c: c+1}
+        ];
+        return moves.filter(m => m.r >= 0 && m.r < size && m.c >= 0 && m.c < size);
+    }
+
+    function draw() {
+        cellSize = canvas.width / size;
+        ctx.fillStyle = '#0f0f0f';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        for (let r = 0; r < size; r++) {
+            for (let c = 0; c < size; c++) {
+                const x = c * cellSize;
+                const y = r * cellSize;
+                
+                ctx.fillStyle = (r + c) % 2 === 0 ? '#1a1a1a' : '#111';
+                if (board[r * size + c] !== -1) ctx.fillStyle = '#003333';
+                if (r === currentPos.r && c === currentPos.c) ctx.fillStyle = '#00ffff';
+                
+                ctx.fillRect(x, y, cellSize, cellSize);
+                ctx.strokeStyle = '#222';
+                ctx.strokeRect(x, y, cellSize, cellSize);
+
+                if (board[r * size + c] !== -1) {
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 20px Outfit, sans-serif';
+                    ctx.textAlign = 'center';
+                    const num = board[r * size + c] + 1;
+                    ctx.fillText(num, x + cellSize/2, y + cellSize/2 + 8);
+                }
+            }
+        }
+
+        if (currentPos.r !== -1) {
+            ctx.fillStyle = '#fff';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#00ffff';
+            ctx.font = '44px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('♞', currentPos.c * cellSize + cellSize/2, currentPos.r * cellSize + cellSize/2 + 15);
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    function findSolution() {
+        // Fast Warnsdorff's solver (non-async)
+        const startR = 0; // Fixed start for 5x5 consistency
+        const startC = 0;
+        const tempBoard = Array(size * size).fill(-1);
+        const path = [];
+
+        function backtrack(r, c, step) {
+            tempBoard[r * size + c] = step;
+            path.push({r, c});
+            if (step === size * size - 1) return true;
+
+            const moves = getMoves(r, c).filter(m => tempBoard[m.r * size + m.c] === -1);
+            moves.sort((a, b) => {
+                const countA = getMoves(a.r, a.c).filter(m => tempBoard[m.r * size + m.c] === -1).length;
+                const countB = getMoves(b.r, b.c).filter(m => tempBoard[m.r * size + m.c] === -1).length;
+                return countA - countB;
+            });
+
+            for (const m of moves) {
+                if (backtrack(m.r, m.c, step + 1)) return true;
+            }
+
+            tempBoard[r * size + c] = -1;
+            path.pop();
+            return false;
+        }
+
+        if (backtrack(startR, startC, 0)) return path;
+        return null;
+    }
+
+    function solve() {
+        if (isSolving) {
+            stopSolving();
+            return;
+        }
+
+        const path = findSolution();
+        if (!path) return;
+
+        reset();
+        isSolving = true;
+        solveBtn.innerText = 'STOP SOLVING';
+        
+        let step = 0;
+        solveInterval = setInterval(() => {
+            if (step >= path.length) {
+                stopSolving(true);
+                return;
+            }
+            const pos = path[step];
+            board[pos.r * size + pos.c] = step;
+            currentPos = pos;
+            draw();
+            step++;
+        }, 150);
+    }
+
+    function stopSolving(complete = false) {
+        isSolving = false;
+        if (solveInterval) clearInterval(solveInterval);
+        solveInterval = null;
+        solveBtn.innerText = complete ? 'TOUR COMPLETE!' : 'ANIMATE SOLVE';
+        if (complete) {
+            setTimeout(() => { if (!isSolving) solveBtn.innerText = 'ANIMATE SOLVE'; }, 3000);
+        }
+    }
+
+    function reset() {
+        stopSolving();
+        board = Array(size * size).fill(-1);
+        currentPos = { r: -1, c: -1 };
+        stepCount = 0;
+        draw();
+    }
+
+    canvas.addEventListener('click', (e) => {
+        if (isSolving) return;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (e.clientX - rect.left) * scaleX;
+        const mouseY = (e.clientY - rect.top) * scaleY;
+        
+        const c = Math.floor(mouseX / cellSize);
+        const r = Math.floor(mouseY / cellSize);
+
+        if (r < 0 || r >= size || c < 0 || c >= size) return;
+
+        if (stepCount === 0) {
+            board[r * size + c] = stepCount++;
+            currentPos = { r, c };
+        } else {
+            const moves = getMoves(currentPos.r, currentPos.c);
+            if (moves.some(m => m.r === r && m.c === c) && board[r * size + c] === -1) {
+                board[r * size + c] = stepCount++;
+                currentPos = { r, c };
+            }
+        }
+        draw();
+    });
+
+    solveBtn.addEventListener('click', solve);
+    resetBtn.addEventListener('click', reset);
 
     draw();
 }

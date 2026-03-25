@@ -49,15 +49,16 @@
             <li><a href="#sec-structures">Architectures of Memory (Data Structures)</a></li>
             <li><a href="#sec-complexity">The Speed of Thought (Big O)</a></li>
             <li><a href="#sec-pvnp">The Holy Grail (P versus NP)</a></li>
+            <li><a href="#sec-hamiltonian">The Labyrinth of Vertices (Hamiltonian Path)</a></li>
         </ol>
 
         <p class="toc-part">Part IV — Security</p>
-        <ol start="7">
+        <ol start="8">
             <li><a href="#sec-pentest">The Defensive Art (Penetration Testing)</a></li>
         </ol>
 
         <p class="toc-part">Part V — Higher Abstractions</p>
-        <ol start="8">
+        <ol start="9">
             <li><a href="#sec-compiler">The Architecture of Translation (Compilers)</a></li>
             <li><a href="#sec-interpreter">The Ghost in the Machine (Interpreters)</a></li>
             <li><a href="#sec-synthesis">Code That Writes Itself (Program Synthesis)</a></li>
@@ -169,8 +170,25 @@
         </p>
     </div>
 
+    <span class="section-tag tag-struct">GRAPH THEORY</span>
+    <h2 id="sec-hamiltonian">7. The Labyrinth of Vertices (Hamiltonian Path)</h2>
+    <p>A <strong>Hamiltonian Path</strong> is a trajectory through a graph that visits every single node exactly once. It sounds simple, but finding such a path is one of the most difficult problems in computation—often used as a benchmark for NP-hardness.</p>
+    
+    <p>The <strong>Knight's Tour</strong> is a classic puzzle: can a knight visit every square on a chessboard using only legal L-shaped moves? On a small board, it's a fun diversion. On a large board, it reveals the "combinatorial explosion" of possibilities that makes graph problems so computationally expensive.</p>
+
+    <div class="interactive-container">
+        <canvas id="knightsCanvas" width="500" height="500" style="background: #000; border: 1px solid #222; max-width: 100%; height: auto;"></canvas>
+        <div class="controls">
+            <button id="knights-solve-btn">ANIMATE SOLVE</button>
+            <button id="knights-reset-btn">RESET BOARD</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Select a square to start, or hit "Animate Solve" to watch the algorithm find a Hamiltonian Path (Knight's Tour) on this 5x5 board.
+        </p>
+    </div>
+
     <span class="section-tag tag-security">SECURITY</span>
-    <h2 id="sec-pentest">7. Penetration Testing: The Defensive Art</h2>
+    <h2 id="sec-pentest">8. Penetration Testing: The Defensive Art</h2>
     <p>In the digital world, "Security" is not a state but a process. <strong>Penetration Testing</strong> (or ethical hacking) is the practice of testing a computer system, network, or web application to find security vulnerabilities that an attacker could exploit.</p>
     
     <p>Experts follow a structured methodology: <strong>Reconnaissance</strong> to gather information, <strong>Scanning</strong> to identify open ports and services, and <strong>Exploitation</strong> to safely simulate an attack. By thinking like a hacker, we can build stronger shields for the systems that power our lives.</p>
@@ -189,7 +207,7 @@
     </div>
 
     <span class="section-tag tag-compiler">ABSTRACTION</span>
-    <h2 id="sec-compiler">8. The Architecture of Translation (Compilers)</h2>
+    <h2 id="sec-compiler">9. The Architecture of Translation (Compilers)</h2>
     <p>A <strong>Compiler</strong> is a sophisticated translation engine. It takes a program written in a high-level language and transforms it into a lower-level representation—often machine code that the processor can execute directly.</p>
     
     <p>The compilation process is a multi-stage pipeline: <strong>Lexical Analysis</strong>, <strong>Syntax Analysis</strong>, <strong>Optimization</strong>, and <strong>Code Generation</strong>. By performing these steps ahead of time, compilers can apply deep optimizations that make the final program extremely efficient.</p>
@@ -206,7 +224,7 @@
     </div>
 
     <span class="section-tag tag-interpreter">ABSTRACTION</span>
-    <h2 id="sec-interpreter">9. The Ghost in the Machine (Interpreters)</h2>
+    <h2 id="sec-interpreter">10. The Ghost in the Machine (Interpreters)</h2>
     <p>If a compiler is a translator that converts an entire book from one language to another before you read it, an <strong>Interpreter</strong> is a live translator who listens to a speech and translates it sentence by sentence as it happens.</p>
     
     <p>Interpreters don't produce a standalone executable file. Instead, they read the source code, parse it into an <strong>Abstract Syntax Tree (AST)</strong>, and execute the instructions directly. This allows for rapid development and dynamic features, at the cost of some execution overhead.</p>
@@ -229,7 +247,7 @@
     </div>
 
     <span class="section-tag" style="background:#00ffff; color:#000; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">ABSTRACTION</span>
-    <h2 id="sec-synthesis">10. Program Synthesis: Code That Writes Itself</h2>
+    <h2 id="sec-synthesis">11. Program Synthesis: Code That Writes Itself</h2>
     <p>If a compiler translates code from one language to another, a <strong>Program Synthesizer</strong> generates code from a high-level specification. This is the holy grail of computer science: the ability for a machine to understand <em>what</em> we want and determine <em>how</em> to achieve it.</p>
     
     <p>Using <strong>Deductive Synthesis</strong>, the engine searches through millions of possible logical combinations to find the exact function that matches your provided examples. It is a massive search problem over the space of all possible programs.</p>
@@ -260,7 +278,7 @@
         </p>
     </div>
 
-    <h2 id="sec-quiz">11. Test Your Computational Intuition</h2>
+    <h2 id="sec-quiz">12. Test Your Computational Intuition</h2>
     <p>Can you implement a basic sort? Use the Python environment below to sort a list of numbers from first principles.</p>
 
     <div class="interactive-container" style="align-items: stretch; padding: 2rem;">
