@@ -48,15 +48,16 @@
         <ol start="4">
             <li><a href="#sec-structures">Architectures of Memory (Data Structures)</a></li>
             <li><a href="#sec-complexity">The Speed of Thought (Big O)</a></li>
+            <li><a href="#sec-pvnp">The Holy Grail (P versus NP)</a></li>
         </ol>
 
         <p class="toc-part">Part IV — Security</p>
-        <ol start="6">
+        <ol start="7">
             <li><a href="#sec-pentest">The Defensive Art (Penetration Testing)</a></li>
         </ol>
 
         <p class="toc-part">Part V — Higher Abstractions</p>
-        <ol start="7">
+        <ol start="8">
             <li><a href="#sec-compiler">The Architecture of Translation (Compilers)</a></li>
             <li><a href="#sec-interpreter">The Ghost in the Machine (Interpreters)</a></li>
             <li><a href="#sec-synthesis">Code That Writes Itself (Program Synthesis)</a></li>
@@ -150,8 +151,26 @@
         </p>
     </div>
 
+    <span class="section-tag tag-algo">COMPLEXITY</span>
+    <h2 id="sec-pvnp">6. The Holy Grail: P versus NP</h2>
+    <p>If the solution to a problem can be quickly verified, can the problem also be quickly solved? This is the <strong>P versus NP</strong> problem, the most famous unsolved question in computer science. The quintessential example of this is <strong>Sudoku</strong>.</p>
+    
+    <p><strong>P</strong> represents "Polynomial time"—problems like basic arithmetic that are "easy" to solve. <strong>NP</strong> represents "Nondeterministic Polynomial time"—problems where a solution is "easy" to verify, even if it's hard to find. A 9x9 Sudoku is easy for a master, but as the grid grows to 100x100 or 1000x1000, finding a solution becomes exponentially harder, while checking if a completed grid is correct remains a simple matter of counting rows and columns. If P = NP, then every hard puzzle would have a fast solution, potentially breaking all modern security.</p>
+
+    <div class="interactive-container">
+        <canvas id="pvnpCanvas" width="600" height="360"></canvas>
+        <div class="controls">
+            <button id="pvnp-solve-btn">SOLVE (NP SEARCH)</button>
+            <button id="pvnp-verify-btn">VERIFY (P CHECK)</button>
+            <button id="pvnp-reset-btn">RESET GRID</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Try solving this 4x4 Sudoku. "NP SEARCH" simulates the exhaustive process of finding a valid config, while "P CHECK" demonstrates the near-instant validation of constraints.
+        </p>
+    </div>
+
     <span class="section-tag tag-security">SECURITY</span>
-    <h2 id="sec-pentest">6. Penetration Testing: The Defensive Art</h2>
+    <h2 id="sec-pentest">7. Penetration Testing: The Defensive Art</h2>
     <p>In the digital world, "Security" is not a state but a process. <strong>Penetration Testing</strong> (or ethical hacking) is the practice of testing a computer system, network, or web application to find security vulnerabilities that an attacker could exploit.</p>
     
     <p>Experts follow a structured methodology: <strong>Reconnaissance</strong> to gather information, <strong>Scanning</strong> to identify open ports and services, and <strong>Exploitation</strong> to safely simulate an attack. By thinking like a hacker, we can build stronger shields for the systems that power our lives.</p>
@@ -170,7 +189,7 @@
     </div>
 
     <span class="section-tag tag-compiler">ABSTRACTION</span>
-    <h2 id="sec-compiler">7. The Architecture of Translation (Compilers)</h2>
+    <h2 id="sec-compiler">8. The Architecture of Translation (Compilers)</h2>
     <p>A <strong>Compiler</strong> is a sophisticated translation engine. It takes a program written in a high-level language and transforms it into a lower-level representation—often machine code that the processor can execute directly.</p>
     
     <p>The compilation process is a multi-stage pipeline: <strong>Lexical Analysis</strong>, <strong>Syntax Analysis</strong>, <strong>Optimization</strong>, and <strong>Code Generation</strong>. By performing these steps ahead of time, compilers can apply deep optimizations that make the final program extremely efficient.</p>
@@ -187,7 +206,7 @@
     </div>
 
     <span class="section-tag tag-interpreter">ABSTRACTION</span>
-    <h2 id="sec-interpreter">8. The Ghost in the Machine (Interpreters)</h2>
+    <h2 id="sec-interpreter">9. The Ghost in the Machine (Interpreters)</h2>
     <p>If a compiler is a translator that converts an entire book from one language to another before you read it, an <strong>Interpreter</strong> is a live translator who listens to a speech and translates it sentence by sentence as it happens.</p>
     
     <p>Interpreters don't produce a standalone executable file. Instead, they read the source code, parse it into an <strong>Abstract Syntax Tree (AST)</strong>, and execute the instructions directly. This allows for rapid development and dynamic features, at the cost of some execution overhead.</p>
@@ -210,7 +229,7 @@
     </div>
 
     <span class="section-tag" style="background:#00ffff; color:#000; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">ABSTRACTION</span>
-    <h2 id="sec-synthesis">9. Program Synthesis: Code That Writes Itself</h2>
+    <h2 id="sec-synthesis">10. Program Synthesis: Code That Writes Itself</h2>
     <p>If a compiler translates code from one language to another, a <strong>Program Synthesizer</strong> generates code from a high-level specification. This is the holy grail of computer science: the ability for a machine to understand <em>what</em> we want and determine <em>how</em> to achieve it.</p>
     
     <p>Using <strong>Deductive Synthesis</strong>, the engine searches through millions of possible logical combinations to find the exact function that matches your provided examples. It is a massive search problem over the space of all possible programs.</p>
@@ -241,7 +260,7 @@
         </p>
     </div>
 
-    <h2 id="sec-quiz">10. Test Your Computational Intuition</h2>
+    <h2 id="sec-quiz">11. Test Your Computational Intuition</h2>
     <p>Can you implement a basic sort? Use the Python environment below to sort a list of numbers from first principles.</p>
 
     <div class="interactive-container" style="align-items: stretch; padding: 2rem;">

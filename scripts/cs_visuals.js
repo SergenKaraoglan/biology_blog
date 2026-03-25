@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initGPUVisualizer();
     initStructs();
     initComplexityVisualizer();
+    initPvsNPVisualizer();
     initPenTestVisualizer();
     initProgramSynthesis();
     initInterpreterVisualizer();
@@ -819,6 +820,224 @@ function initProgramSynthesis() {
         codeDisplay.innerText = '???';
         startBtn.disabled = false;
         draw();
+    });
+
+    draw();
+}
+
+// --- 5.5 P VERSUS NP (Sudoku Example) ---
+function initPvsNPVisualizer() {
+    const canvas = document.getElementById('pvnpCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const solveBtn = document.getElementById('pvnp-solve-btn');
+    const verifyBtn = document.getElementById('pvnp-verify-btn');
+    const resetBtn = document.getElementById('pvnp-reset-btn');
+
+    let grid = [
+        1, 0, 0, 0,
+        0, 0, 2, 0,
+        0, 3, 0, 0,
+        0, 0, 0, 4
+    ];
+    let state = 'idle'; // 'idle', 'solving', 'verifying'
+
+    function checkConstraints(g) {
+        let errs = [];
+        // Rows
+        for (let r = 0; r < 4; r++) {
+            let seen = new Set();
+            for (let c = 0; c < 4; c++) {
+                let val = g[r * 4 + c];
+                if (val !== 0) {
+                    if (seen.has(val)) errs.push({type:'row', idx:r});
+                    seen.add(val);
+                }
+            }
+        }
+        // Cols
+        for (let c = 0; c < 4; c++) {
+            let seen = new Set();
+            for (let r = 0; r < 4; r++) {
+                let val = g[r * 4 + c];
+                if (val !== 0) {
+                    if (seen.has(val)) errs.push({type:'col', idx:c});
+                    seen.add(val);
+                }
+            }
+        }
+        // Subgrids (2x2)
+        for (let b = 0; b < 4; b++) {
+            let seen = new Set();
+            let startR = Math.floor(b / 2) * 2;
+            let startC = (b % 2) * 2;
+            for (let r = 0; r < 2; r++) {
+                for (let c = 0; c < 2; c++) {
+                    let val = g[(startR + r) * 4 + (startC + c)];
+                    if (val !== 0) {
+                        if (seen.has(val)) errs.push({type:'box', idx:b});
+                        seen.add(val);
+                    }
+                }
+            }
+        }
+        return errs;
+    }
+
+    function isPerfect(g) {
+        if (g.includes(0)) return false;
+        return checkConstraints(g).length === 0;
+    }
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const cellSize = 60;
+        const totalSize = 4 * cellSize;
+        const startX = (canvas.width - totalSize) / 2;
+        const startY = (canvas.height - totalSize) / 2 + 20;
+
+        // Draw cells
+        for (let i = 0; i < 16; i++) {
+            const r = Math.floor(i / 4);
+            const c = i % 4;
+            const x = startX + c * cellSize;
+            const y = startY + r * cellSize;
+
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, cellSize, cellSize);
+
+            if (grid[i] !== 0) {
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 24px Outfit';
+                ctx.textAlign = 'center';
+                ctx.fillText(grid[i], x + cellSize/2, y + cellSize/2 + 8);
+            }
+        }
+
+        // Draw 2x2 borders
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(startX, startY, totalSize, totalSize);
+        ctx.beginPath();
+        ctx.moveTo(startX + 2 * cellSize, startY);
+        ctx.lineTo(startX + 2 * cellSize, startY + totalSize);
+        ctx.moveTo(startX, startY + 2 * cellSize);
+        ctx.lineTo(startX + totalSize, startY + 2 * cellSize);
+        ctx.stroke();
+
+        if (state === 'verifying') {
+            const perfect = isPerfect(grid);
+            ctx.fillStyle = perfect ? '#ccff00' : '#ff3333';
+            ctx.font = '20px Outfit';
+            ctx.textAlign = 'center';
+            ctx.fillText(perfect ? 'SUDOKU VALID!' : 'CONSTRAINTS FAILED', canvas.width / 2, startY - 30);
+        } else if (state === 'solving') {
+            ctx.fillStyle = '#00ffff';
+            ctx.font = '16px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('NP BACKTRACKING...', canvas.width / 2, startY - 30);
+        }
+    }
+
+    solveBtn.addEventListener('click', () => {
+        if (state === 'solving') return;
+        
+        // Initial check: is the current user setup even valid?
+        const initialErrs = checkConstraints(grid);
+        if (initialErrs.length > 0) {
+            state = 'verifying';
+            draw();
+            setTimeout(() => { state = 'idle'; draw(); }, 2000);
+            return;
+        }
+
+        const initialGrid = [...grid];
+        state = 'solving';
+        
+        let solveIdx = 0;
+        function backtrack() {
+            if (state !== 'solving') return;
+            
+            // Skip cells that were already filled by the user
+            while (solveIdx < 16 && initialGrid[solveIdx] !== 0) {
+                solveIdx++;
+            }
+
+            if (solveIdx >= 16) {
+                state = 'idle';
+                draw();
+                return;
+            }
+            
+            let possible = [1, 2, 3, 4].sort(() => Math.random() - 0.5);
+            let found = false;
+            for (let val of possible) {
+                grid[solveIdx] = val;
+                if (checkConstraints(grid).length === 0) {
+                    found = true;
+                    break;
+                }
+            }
+            
+            if (!found) {
+                // If stuck, reset only the cells the solver filled and restart
+                for(let i=0; i<16; i++) {
+                    if (initialGrid[i] === 0) grid[i] = 0;
+                }
+                solveIdx = 0;
+            } else {
+                solveIdx++;
+            }
+
+            draw();
+            setTimeout(() => requestAnimationFrame(backtrack), 50);
+        }
+        backtrack();
+    });
+
+    verifyBtn.addEventListener('click', () => {
+        state = 'verifying';
+        draw();
+        setTimeout(() => { state = 'idle'; draw(); }, 2000);
+    });
+
+    resetBtn.addEventListener('click', () => {
+        state = 'idle';
+        grid = [
+            1, 0, 0, 0,
+            0, 0, 2, 0,
+            0, 3, 0, 0,
+            0, 0, 0, 4
+        ];
+        draw();
+    });
+
+    canvas.addEventListener('click', (e) => {
+        if (state !== 'idle') return;
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const cellSize = 60;
+        const totalSize = 4 * cellSize;
+        const startX = (canvas.width - totalSize) / 2;
+        const startY = (canvas.height - totalSize) / 2 + 20;
+
+        for (let i = 0; i < 16; i++) {
+            const r = Math.floor(i / 4);
+            const c = i % 4;
+            const x = startX + c * cellSize;
+            const y = startY + r * cellSize;
+
+            if (mouseX >= x && mouseX <= x + cellSize && mouseY >= y && mouseY <= y + cellSize) {
+                grid[i] = (grid[i] % 4) + 1;
+                draw();
+                break;
+            }
+        }
     });
 
     draw();
