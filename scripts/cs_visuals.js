@@ -2,7 +2,7 @@
 
 function startInitializers() {
     const initializers = [
-        initHero, initBinary, initLogic, initGPUVisualizer, initStructs,
+        initHero, initBinary, initLogic, initGPUVisualizer, initRAMVisualizer, initStructs,
         initComplexityVisualizer, initPvsNPVisualizer, initKnightsTourVisualizer,
         initPenTestVisualizer, initProgramSynthesis, initInterpreterVisualizer, initCompilerVisualizer
     ];
@@ -1218,6 +1218,142 @@ function initKnightsTourVisualizer() {
 
     solveBtn.addEventListener('click', solve);
     resetBtn.addEventListener('click', reset);
+
+    draw();
+}
+
+// --- 4. THE MEMORY PALACE (RAM) ---
+function initRAMVisualizer() {
+    const canvas = document.getElementById('ramCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const addrInput = document.getElementById('ram-addr');
+    const dataInput = document.getElementById('ram-data');
+    const writeBtn = document.getElementById('ram-write-btn');
+    const readBtn = document.getElementById('ram-read-btn');
+    const cpuReg = document.getElementById('cpu-reg');
+
+    const rows = 8;
+    const cols = 8;
+    const cellSize = canvas.width / cols;
+    const cellHeight = canvas.height / rows;
+    
+    let memory = new Array(rows * cols).fill(0);
+    let activeCell = -1;
+    let animation = null;
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = 0; i < memory.length; i++) {
+            const r = Math.floor(i / cols);
+            const c = i % cols;
+            const x = c * cellSize;
+            const y = r * cellHeight;
+
+            // Cell background
+            ctx.fillStyle = (i === activeCell) ? 'rgba(0, 255, 255, 0.2)' : '#000';
+            ctx.fillRect(x + 2, y + 2, cellSize - 4, cellHeight - 4);
+            
+            // Border
+            ctx.strokeStyle = (i === activeCell) ? '#00ffff' : '#222';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x + 2, y + 2, cellSize - 4, cellHeight - 4);
+
+            // Address (Hex)
+            ctx.fillStyle = '#444';
+            ctx.font = '8px Courier New';
+            ctx.textAlign = 'left';
+            ctx.fillText('0x' + i.toString(16).toUpperCase().padStart(2, '0'), x + 6, y + 12);
+
+            // Value (Dec/Hex)
+            ctx.fillStyle = memory[i] > 0 ? '#ccff00' : '#888';
+            ctx.font = '12px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(memory[i].toString(16).toUpperCase().padStart(2, '0'), x + cellSize/2, y + cellHeight/2 + 5);
+        }
+
+        if (animation) {
+            ctx.fillStyle = animation.color;
+            ctx.beginPath();
+            ctx.arc(animation.x, animation.y, 10, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+    }
+
+    function animate(startX, startY, endX, endY, color, callback) {
+        const duration = 500;
+        const startTime = performance.now();
+
+        function step(now) {
+            const progress = Math.min((now - startTime) / duration, 1);
+            animation = {
+                x: startX + (endX - startX) * progress,
+                y: startY + (endY - startY) * progress,
+                color: color
+            };
+            draw();
+
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else {
+                animation = null;
+                callback();
+                draw();
+            }
+        }
+        requestAnimationFrame(step);
+    }
+
+    writeBtn.addEventListener('click', () => {
+        const addr = parseInt(addrInput.value, 16);
+        const data = parseInt(dataInput.value);
+
+        if (isNaN(addr) || addr < 0 || addr >= memory.length) {
+            alert('Invalid Address (0x00 - 0x3F)');
+            return;
+        }
+        if (isNaN(data) || data < 0 || data > 255) {
+            alert('Invalid Data (0 - 255)');
+            return;
+        }
+
+        activeCell = addr;
+        const r = Math.floor(addr / cols);
+        const c = addr % cols;
+        const targetX = c * cellSize + cellSize / 2;
+        const targetY = r * cellHeight + cellHeight / 2;
+
+        animate(canvas.width + 50, canvas.height / 2, targetX, targetY, '#ccff00', () => {
+            memory[addr] = data;
+            activeCell = -1;
+        });
+    });
+
+    readBtn.addEventListener('click', () => {
+        const addr = parseInt(addrInput.value, 16);
+        if (isNaN(addr) || addr < 0 || addr >= memory.length) {
+            alert('Invalid Address (0x00 - 0x3F)');
+            return;
+        }
+
+        activeCell = addr;
+        const r = Math.floor(addr / cols);
+        const c = addr % cols;
+        const startX = c * cellSize + cellSize / 2;
+        const startY = r * cellHeight + cellHeight / 2;
+
+        animate(startX, startY, canvas.width + 50, canvas.height / 2, '#00ffff', () => {
+            const val = memory[addr].toString(16).toUpperCase().padStart(2, '0');
+            cpuReg.innerText = val;
+            activeCell = -1;
+        });
+    });
 
     draw();
 }
