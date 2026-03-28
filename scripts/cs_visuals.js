@@ -2,7 +2,7 @@
 
 function startInitializers() {
     const initializers = [
-        initHero, initBinary, initLogic, initGPUVisualizer, initRAMVisualizer, initStructs,
+        initHero, initBinary, initTransistorVisualizer, initLogic, initGPUVisualizer, initRAMVisualizer, initStructs,
         initComplexityVisualizer, initPvsNPVisualizer, initKnightsTourVisualizer,
         initPenTestVisualizer, initProgramSynthesis, initInterpreterVisualizer, initCompilerVisualizer
     ];
@@ -1356,4 +1356,219 @@ function initRAMVisualizer() {
     });
 
     draw();
+}
+
+// --- 2. THE SILICON SWITCH (TRANSISTORS) ---
+function initTransistorVisualizer() {
+    const canvas = document.getElementById('transistorCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const toggleBtn = document.getElementById('transistor-toggle-btn');
+    const autoBtn = document.getElementById('transistor-auto-btn');
+
+    let gateOn = false;
+    let autoInterval = null;
+    let electrons = [];
+    let animId = null;
+
+    // Create electron particles
+    function resetElectrons() {
+        electrons = [];
+        for (let i = 0; i < 12; i++) {
+            electrons.push({
+                x: 80 + Math.random() * 80,
+                y: 200 + (Math.random() - 0.5) * 30,
+                speed: 1.5 + Math.random() * 2,
+                size: 3 + Math.random() * 2
+            });
+        }
+    }
+    resetElectrons();
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const cx = canvas.width / 2;
+        const cy = 180;
+
+        // --- Silicon substrate ---
+        ctx.fillStyle = '#111';
+        ctx.fillRect(100, cy - 10, 400, 60);
+        ctx.strokeStyle = '#333';
+        ctx.strokeRect(100, cy - 10, 400, 60);
+
+        // Label substrate
+        ctx.fillStyle = '#444';
+        ctx.font = '10px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('SILICON SUBSTRATE', cx, cy + 70);
+
+        // --- Source terminal (left) ---
+        ctx.fillStyle = '#0088ff';
+        ctx.fillRect(110, cy - 40, 80, 35);
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('SOURCE', 150, cy - 18);
+
+        // Source wire going up
+        ctx.strokeStyle = '#0088ff';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(150, cy - 40);
+        ctx.lineTo(150, cy - 70);
+        ctx.stroke();
+
+        // --- Drain terminal (right) ---
+        ctx.fillStyle = '#ff3333';
+        ctx.fillRect(410, cy - 40, 80, 35);
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('DRAIN', 450, cy - 18);
+
+        // Drain wire going up
+        ctx.strokeStyle = '#ff3333';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(450, cy - 40);
+        ctx.lineTo(450, cy - 70);
+        ctx.stroke();
+
+        // --- Gate terminal (top center) ---
+        const gateColor = gateOn ? '#ccff00' : '#333';
+        ctx.fillStyle = gateColor;
+        ctx.fillRect(cx - 50, cy - 80, 100, 30);
+        ctx.fillStyle = gateOn ? '#000' : '#888';
+        ctx.font = '12px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('GATE', cx, cy - 60);
+
+        // Gate wire going up
+        ctx.strokeStyle = gateColor;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - 80);
+        ctx.lineTo(cx, cy - 110);
+        ctx.stroke();
+
+        // Gate voltage label
+        ctx.fillStyle = gateOn ? '#ccff00' : '#666';
+        ctx.font = '11px Courier New';
+        ctx.fillText(gateOn ? 'V_G = HIGH' : 'V_G = LOW', cx, cy - 118);
+
+        // --- Oxide layer (thin insulator below gate) ---
+        ctx.fillStyle = '#222';
+        ctx.fillRect(cx - 50, cy - 50, 100, 8);
+        ctx.fillStyle = '#555';
+        ctx.font = '8px Courier New';
+        ctx.fillText('OXIDE', cx, cy - 44);
+
+        // --- Channel region ---
+        if (gateOn) {
+            // Draw conductive channel
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.15)';
+            ctx.fillRect(190, cy - 5, 220, 20);
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.4)';
+            ctx.setLineDash([4, 4]);
+            ctx.strokeRect(190, cy - 5, 220, 20);
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#00ffff';
+            ctx.font = '9px Courier New';
+            ctx.fillText('CHANNEL OPEN', cx, cy + 30);
+        } else {
+            ctx.fillStyle = '#ff3333';
+            ctx.font = '9px Courier New';
+            ctx.fillText('CHANNEL CLOSED', cx, cy + 30);
+
+            // Draw barrier
+            ctx.strokeStyle = '#ff3333';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - 8);
+            ctx.lineTo(cx, cy + 48);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // --- Electron particles ---
+        electrons.forEach(e => {
+            ctx.beginPath();
+            ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
+            ctx.fillStyle = gateOn ? '#00ffff' : '#0066aa';
+            ctx.fill();
+            ctx.strokeStyle = gateOn ? 'rgba(0,255,255,0.5)' : 'transparent';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // "e-" label on larger particles
+            if (e.size > 4) {
+                ctx.fillStyle = '#000';
+                ctx.font = '6px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText('e⁻', e.x, e.y + 2);
+            }
+        });
+
+        // --- Output bit indicator ---
+        ctx.fillStyle = gateOn ? '#ccff00' : '#333';
+        ctx.font = '28px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText(gateOn ? 'BIT = 1' : 'BIT = 0', cx, canvas.height - 30);
+
+        // Glow effect around the bit text when ON
+        if (gateOn) {
+            ctx.shadowColor = '#ccff00';
+            ctx.shadowBlur = 20;
+            ctx.fillText(gateOn ? 'BIT = 1' : 'BIT = 0', cx, canvas.height - 30);
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    function animate() {
+        if (gateOn) {
+            electrons.forEach(e => {
+                e.x += e.speed;
+                if (e.x > 490) {
+                    e.x = 110;
+                    e.y = 200 + (Math.random() - 0.5) * 30;
+                }
+            });
+        } else {
+            // Jitter electrons in the source region
+            electrons.forEach(e => {
+                if (e.x > 200) e.x -= 2;
+                e.x += (Math.random() - 0.5) * 1.5;
+                e.y += (Math.random() - 0.5) * 1.5;
+                e.x = Math.max(100, Math.min(190, e.x));
+                e.y = Math.max(175, Math.min(225, e.y));
+            });
+        }
+        draw();
+        animId = requestAnimationFrame(animate);
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        gateOn = !gateOn;
+        toggleBtn.innerText = `GATE VOLTAGE: ${gateOn ? 'ON' : 'OFF'}`;
+    });
+
+    autoBtn.addEventListener('click', () => {
+        if (autoInterval) {
+            clearInterval(autoInterval);
+            autoInterval = null;
+            autoBtn.innerText = 'AUTO SWITCH';
+        } else {
+            autoInterval = setInterval(() => {
+                gateOn = !gateOn;
+                toggleBtn.innerText = `GATE VOLTAGE: ${gateOn ? 'ON' : 'OFF'}`;
+            }, 1500);
+            autoBtn.innerText = 'STOP AUTO';
+        }
+    });
+
+    animate();
 }
