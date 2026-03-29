@@ -2,8 +2,8 @@
 
 function startInitializers() {
     const initializers = [
-        initHero, initBinary, initTransistorVisualizer, initLogic, initGPUVisualizer, initRAMVisualizer, initStructs,
-        initComplexityVisualizer, initPvsNPVisualizer, initKnightsTourVisualizer,
+        initHero, initBinary, initTransistorVisualizer, initLogic, initGPUVisualizer, initRAMVisualizer, initOSVisualizer,
+        initStructs, initComplexityVisualizer, initPvsNPVisualizer, initKnightsTourVisualizer,
         initPenTestVisualizer, initProgramSynthesis, initInterpreterVisualizer, initCompilerVisualizer
     ];
     initializers.forEach(init => {
@@ -1571,4 +1571,320 @@ function initTransistorVisualizer() {
     });
 
     animate();
+}
+
+// --- 6. THE CONDUCTOR (OPERATING SYSTEMS) ---
+function initOSVisualizer() {
+    const canvas = document.getElementById('osCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const rrBtn = document.getElementById('os-rr-btn');
+    const prBtn = document.getElementById('os-priority-btn');
+    const addBtn = document.getElementById('os-add-btn');
+    const resetBtn = document.getElementById('os-reset-btn');
+
+    const COLORS = ['#00ffff', '#ccff00', '#ff3333', '#ff00ff', '#0088ff', '#ffa500', '#00ff88', '#ff6699'];
+    const NAMES = ['Browser', 'Editor', 'Music', 'Backup', 'Mail', 'Terminal', 'Sync', 'Render'];
+    let nextPid = 1;
+    let readyQueue = [];
+    let completed = [];
+    let cpuProcess = null;
+    let cpuProgress = 0;
+    let mode = null;
+    let animId = null;
+    let quantum = 20;
+    let tickCount = 0;
+    let statusMsg = 'Scheduler idle. Choose a scheduling algorithm.';
+
+    function makeProcess() {
+        const pid = nextPid++;
+        return {
+            pid,
+            name: NAMES[(pid - 1) % NAMES.length],
+            color: COLORS[(pid - 1) % COLORS.length],
+            burst: 30 + Math.floor(Math.random() * 70),
+            remaining: 0,
+            priority: Math.floor(Math.random() * 5) + 1
+        };
+    }
+
+    function initProcesses() {
+        nextPid = 1;
+        readyQueue = [];
+        completed = [];
+        cpuProcess = null;
+        cpuProgress = 0;
+        tickCount = 0;
+        mode = null;
+        statusMsg = 'Scheduler idle. Choose a scheduling algorithm.';
+        for (let i = 0; i < 4; i++) {
+            const p = makeProcess();
+            p.remaining = p.burst;
+            readyQueue.push(p);
+        }
+    }
+
+    function draw() {
+        const W = canvas.width;
+        const H = canvas.height;
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, W, H);
+
+        const queueX = 20;
+        const queueW = 170;
+        const cpuX = 230;
+        const cpuW = 200;
+        const doneX = 475;
+        const doneW = 210;
+        const headerY = 20;
+        const bodyY = 50;
+
+        // ---- Ready Queue Column ----
+        ctx.fillStyle = '#888';
+        ctx.font = '11px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('READY QUEUE', queueX + queueW / 2, headerY);
+
+        ctx.strokeStyle = '#222';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(queueX, bodyY, queueW, H - bodyY - 40);
+
+        readyQueue.forEach((p, i) => {
+            const bx = queueX + 10;
+            const by = bodyY + 10 + i * 46;
+            if (by + 40 > H - 40) return;
+
+            ctx.fillStyle = p.color + '22';
+            ctx.fillRect(bx, by, queueW - 20, 38);
+            ctx.strokeStyle = p.color;
+            ctx.lineWidth = 1;
+            ctx.strokeRect(bx, by, queueW - 20, 38);
+
+            ctx.fillStyle = p.color;
+            ctx.font = '10px Courier New';
+            ctx.textAlign = 'left';
+            ctx.fillText(`P${p.pid} ${p.name}`, bx + 6, by + 14);
+
+            ctx.fillStyle = '#888';
+            ctx.font = '9px Courier New';
+            ctx.textAlign = 'right';
+            ctx.fillText(`PRI:${p.priority}`, bx + queueW - 26, by + 14);
+
+            ctx.fillStyle = '#111';
+            ctx.fillRect(bx + 6, by + 22, queueW - 32, 8);
+
+            const pct = 1 - (p.remaining / p.burst);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(bx + 6, by + 22, (queueW - 32) * pct, 8);
+
+            ctx.fillStyle = '#666';
+            ctx.font = '8px Courier New';
+            ctx.textAlign = 'left';
+            ctx.fillText(`${p.remaining}/${p.burst}`, bx + 6, by + 36);
+        });
+
+        // ---- CPU Core Column ----
+        ctx.fillStyle = '#888';
+        ctx.font = '11px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('CPU CORE', cpuX + cpuW / 2, headerY);
+
+        const cpuActive = cpuProcess !== null;
+        ctx.strokeStyle = cpuActive ? '#00ffff' : '#222';
+        ctx.lineWidth = cpuActive ? 2 : 1;
+        ctx.strokeRect(cpuX, bodyY, cpuW, H - bodyY - 40);
+
+        if (cpuActive) {
+            ctx.shadowColor = cpuProcess.color;
+            ctx.shadowBlur = 15;
+            ctx.fillStyle = cpuProcess.color + '11';
+            ctx.fillRect(cpuX + 1, bodyY + 1, cpuW - 2, H - bodyY - 42);
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = cpuProcess.color;
+            ctx.font = 'bold 16px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(`P${cpuProcess.pid}`, cpuX + cpuW / 2, bodyY + 60);
+
+            ctx.font = '12px Courier New';
+            ctx.fillText(cpuProcess.name, cpuX + cpuW / 2, bodyY + 82);
+
+            const cx = cpuX + cpuW / 2;
+            const cy = bodyY + 150;
+            const radius = 45;
+            const pct = 1 - (cpuProcess.remaining / cpuProcess.burst);
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.strokeStyle = '#222';
+            ctx.lineWidth = 8;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, -Math.PI / 2, -Math.PI / 2 + pct * Math.PI * 2);
+            ctx.strokeStyle = cpuProcess.color;
+            ctx.lineWidth = 8;
+            ctx.stroke();
+
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 18px Courier New';
+            ctx.fillText(Math.round(pct * 100) + '%', cx, cy + 6);
+
+            ctx.fillStyle = '#444';
+            ctx.font = '10px Courier New';
+            ctx.fillText(mode === 'rr' ? `QUANTUM: ${quantum}t` : `PRI: ${cpuProcess.priority}`, cpuX + cpuW / 2, bodyY + 220);
+        } else {
+            ctx.fillStyle = '#222';
+            ctx.font = '12px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('IDLE', cpuX + cpuW / 2, bodyY + 130);
+        }
+
+        // ---- Completed Column ----
+        ctx.fillStyle = '#888';
+        ctx.font = '11px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('COMPLETED', doneX + doneW / 2, headerY);
+
+        ctx.strokeStyle = '#222';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(doneX, bodyY, doneW, H - bodyY - 40);
+
+        completed.forEach((p, i) => {
+            const bx = doneX + 10;
+            const by = bodyY + 10 + i * 30;
+            if (by + 24 > H - 40) return;
+
+            ctx.fillStyle = p.color + '33';
+            ctx.fillRect(bx, by, doneW - 20, 22);
+            ctx.strokeStyle = p.color + '66';
+            ctx.strokeRect(bx, by, doneW - 20, 22);
+
+            ctx.fillStyle = p.color;
+            ctx.font = '10px Courier New';
+            ctx.textAlign = 'left';
+            ctx.fillText(`P${p.pid} ${p.name} \u2014 ${p.burst}t \u2713`, bx + 6, by + 15);
+        });
+
+        // ---- Arrows ----
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+
+        const arrowY = bodyY + (H - bodyY - 40) / 2;
+
+        ctx.beginPath();
+        ctx.moveTo(queueX + queueW + 5, arrowY);
+        ctx.lineTo(cpuX - 5, arrowY);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(cpuX + cpuW + 5, arrowY);
+        ctx.lineTo(doneX - 5, arrowY);
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+
+        drawArrow(cpuX - 5, arrowY, 8);
+        drawArrow(doneX - 5, arrowY, 8);
+
+        // ---- Status bar ----
+        ctx.fillStyle = '#111';
+        ctx.fillRect(0, H - 30, W, 30);
+        ctx.fillStyle = '#00ffff';
+        ctx.font = '10px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText(statusMsg, W / 2, H - 12);
+    }
+
+    function drawArrow(x, y, size) {
+        ctx.fillStyle = '#555';
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - size, y - size / 2);
+        ctx.lineTo(x - size, y + size / 2);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function tick() {
+        if (!mode) return;
+        if (readyQueue.length === 0 && cpuProcess === null) {
+            stopScheduler();
+            statusMsg = 'All processes completed.';
+            draw();
+            return;
+        }
+
+        tickCount++;
+
+        if (cpuProcess === null && readyQueue.length > 0) {
+            if (mode === 'priority') {
+                readyQueue.sort((a, b) => a.priority - b.priority);
+            }
+            cpuProcess = readyQueue.shift();
+            cpuProgress = 0;
+            statusMsg = `[${mode.toUpperCase()}] Dispatching P${cpuProcess.pid} (${cpuProcess.name})`;
+        }
+
+        if (cpuProcess) {
+            cpuProcess.remaining--;
+            cpuProgress++;
+
+            if (cpuProcess.remaining <= 0) {
+                statusMsg = `P${cpuProcess.pid} (${cpuProcess.name}) completed!`;
+                completed.push(cpuProcess);
+                cpuProcess = null;
+                cpuProgress = 0;
+            } else if (mode === 'rr' && cpuProgress >= quantum) {
+                statusMsg = `Quantum expired \u2014 preempting P${cpuProcess.pid}`;
+                readyQueue.push(cpuProcess);
+                cpuProcess = null;
+                cpuProgress = 0;
+            }
+        }
+
+        draw();
+        animId = setTimeout(tick, 60);
+    }
+
+    function stopScheduler() {
+        if (animId) { clearTimeout(animId); animId = null; }
+    }
+
+    function startScheduler(newMode) {
+        stopScheduler();
+        mode = newMode;
+        statusMsg = `Starting ${mode === 'rr' ? 'Round Robin' : 'Priority'} scheduler...`;
+        draw();
+        animId = setTimeout(tick, 300);
+    }
+
+    rrBtn.addEventListener('click', () => {
+        if (readyQueue.length === 0 && cpuProcess === null) initProcesses();
+        startScheduler('rr');
+    });
+
+    prBtn.addEventListener('click', () => {
+        if (readyQueue.length === 0 && cpuProcess === null) initProcesses();
+        startScheduler('priority');
+    });
+
+    addBtn.addEventListener('click', () => {
+        if (readyQueue.length + completed.length + (cpuProcess ? 1 : 0) >= 8) return;
+        const p = makeProcess();
+        p.remaining = p.burst;
+        readyQueue.push(p);
+        statusMsg = `Added P${p.pid} (${p.name}) to ready queue.`;
+        draw();
+    });
+
+    resetBtn.addEventListener('click', () => {
+        stopScheduler();
+        initProcesses();
+        draw();
+    });
+
+    initProcesses();
+    draw();
 }
