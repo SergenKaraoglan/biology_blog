@@ -2,9 +2,10 @@
 
 function startInitializers() {
     const initializers = [
-        initHero, initBinary, initTransistorVisualizer, initLogic, initGPUVisualizer, initRAMVisualizer, initOSVisualizer,
-        initStructs, initComplexityVisualizer, initPvsNPVisualizer, initKnightsTourVisualizer,
-        initPenTestVisualizer, initProgramSynthesis, initInterpreterVisualizer, initCompilerVisualizer
+        initHero, initBinary, initTransistorVisualizer, initLogic, initGPUVisualizer, initRAMVisualizer,
+        initOSVisualizer, initKernelVisualizer, initStructs, initComplexityVisualizer, initPvsNPVisualizer,
+        initKnightsTourVisualizer, initPenTestVisualizer, initProgramSynthesis, initInterpreterVisualizer,
+        initCompilerVisualizer
     ];
     initializers.forEach(init => {
         try { if (typeof init === 'function') init(); } catch (e) { console.error(e); }
@@ -1886,5 +1887,235 @@ function initOSVisualizer() {
     });
 
     initProcesses();
+    draw();
+}
+
+// --- 7. THE HEART OF THE MACHINE (THE KERNEL) ---
+function initKernelVisualizer() {
+    const canvas = document.getElementById('kernelCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const openBtn = document.getElementById('kernel-open-btn');
+    const readBtn = document.getElementById('kernel-read-btn');
+    const writeBtn = document.getElementById('kernel-write-btn');
+    const mallocBtn = document.getElementById('kernel-malloc-btn');
+    const resetBtn = document.getElementById('kernel-reset-btn');
+
+    const W = canvas.width;
+    const H = canvas.height;
+
+    // Layer layout (top → bottom)
+    const layers = [
+        { name: 'USER SPACE', y: 0, h: 60, color: '#0088ff', bg: 'rgba(0,136,255,0.06)' },
+        { name: 'SYSCALL INTERFACE', y: 70, h: 30, color: '#ffa500', bg: 'rgba(255,165,0,0.06)' },
+        { name: 'KERNEL SPACE', y: 110, h: 140, color: '#ff3333', bg: 'rgba(255,51,51,0.05)' },
+        { name: 'HARDWARE', y: 265, h: 55, color: '#ccff00', bg: 'rgba(204,255,0,0.06)' }
+    ];
+
+    const subsystems = [
+        { name: 'File System', x: 30, w: 140, color: '#00ffff' },
+        { name: 'Memory Mgr', x: 190, w: 140, color: '#ccff00' },
+        { name: 'Net Stack', x: 350, w: 140, color: '#ff00ff' },
+        { name: 'Device Drivers', x: 510, w: 160, color: '#ffa500' }
+    ];
+
+    const SYSCALLS = {
+        'open':   { label: 'open("/data")',   subsystem: 0, result: 'fd=3',        hwLabel: 'DISK I/O' },
+        'read':   { label: 'read(fd, buf)',   subsystem: 0, result: '128 bytes',   hwLabel: 'DISK I/O' },
+        'write':  { label: 'write(fd, buf)',  subsystem: 0, result: 'OK',          hwLabel: 'DISK I/O' },
+        'malloc': { label: 'malloc(4096)',    subsystem: 1, result: '0x7fA0',      hwLabel: 'DRAM' }
+    };
+
+    let packets = [];    // animated syscall packets
+    let logLines = [];   // status log
+
+    function addLog(msg) {
+        logLines.push(msg);
+        if (logLines.length > 4) logLines.shift();
+    }
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, W, H);
+
+        // Draw layers
+        layers.forEach(l => {
+            ctx.fillStyle = l.bg;
+            ctx.fillRect(0, l.y, W, l.h);
+            ctx.strokeStyle = l.color + '44';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([6, 4]);
+            ctx.beginPath();
+            ctx.moveTo(0, l.y);
+            ctx.lineTo(W, l.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = l.color;
+            ctx.font = '10px Courier New';
+            ctx.textAlign = 'right';
+            ctx.fillText(l.name, W - 10, l.y + 16);
+        });
+
+        // Draw privilege boundary (thick line between user and kernel)
+        ctx.strokeStyle = '#ff3333';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 4]);
+        ctx.beginPath();
+        ctx.moveTo(0, layers[1].y + layers[1].h);
+        ctx.lineTo(W, layers[1].y + layers[1].h);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = '#ff3333';
+        ctx.font = '9px Courier New';
+        ctx.textAlign = 'left';
+        ctx.fillText('\u25bc PRIVILEGE BOUNDARY \u25bc', 10, layers[1].y + layers[1].h + 12);
+
+        // Draw kernel subsystem boxes
+        subsystems.forEach(s => {
+            const sy = layers[2].y + 30;
+            const sh = layers[2].h - 50;
+
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(s.x, sy, s.w, sh);
+            ctx.strokeStyle = s.color + '66';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(s.x, sy, s.w, sh);
+
+            ctx.fillStyle = s.color;
+            ctx.font = '10px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(s.name, s.x + s.w / 2, sy + sh / 2 + 4);
+        });
+
+        // Draw hardware components
+        const hwY = layers[3].y + 10;
+        ['CPU', 'DRAM', 'DISK', 'NIC'].forEach((name, i) => {
+            const hx = 60 + i * 170;
+            ctx.fillStyle = '#111';
+            ctx.fillRect(hx, hwY, 80, 30);
+            ctx.strokeStyle = '#ccff0066';
+            ctx.strokeRect(hx, hwY, 80, 30);
+            ctx.fillStyle = '#ccff00';
+            ctx.font = '10px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(name, hx + 40, hwY + 19);
+        });
+
+        // Draw packets
+        packets.forEach(p => {
+            // Glow
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 12;
+
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+
+            // Label
+            ctx.fillStyle = '#fff';
+            ctx.font = '9px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(p.label, p.x, p.y - 14);
+        });
+
+        // Draw log
+        ctx.fillStyle = '#111';
+        ctx.fillRect(0, H - 35, W, 35);
+        logLines.forEach((msg, i) => {
+            ctx.fillStyle = i === logLines.length - 1 ? '#00ffff' : '#444';
+            ctx.font = '9px Courier New';
+            ctx.textAlign = 'left';
+            ctx.fillText('> ' + msg, 10, H - 22 + i * 0);
+        });
+        if (logLines.length > 0) {
+            ctx.fillStyle = '#00ffff';
+            ctx.font = '10px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(logLines[logLines.length - 1], W / 2, H - 12);
+        }
+    }
+
+    function animatePacket(syscallKey) {
+        const sc = SYSCALLS[syscallKey];
+        const sub = subsystems[sc.subsystem];
+        const packetX = sub.x + sub.w / 2;
+
+        // Waypoints: user space → syscall → kernel subsystem → hardware → return
+        const waypoints = [
+            { x: packetX, y: 30, label: sc.label, color: '#0088ff' },
+            { x: packetX, y: layers[1].y + 15, label: sc.label, color: '#ffa500' },
+            { x: packetX, y: layers[2].y + 30 + (layers[2].h - 50) / 2, label: sc.label, color: sub.color },
+            { x: packetX, y: layers[3].y + 25, label: sc.hwLabel, color: '#ccff00' },
+            // Return journey
+            { x: packetX, y: layers[2].y + 30 + (layers[2].h - 50) / 2, label: sc.result, color: sub.color },
+            { x: packetX, y: layers[1].y + 15, label: sc.result, color: '#ffa500' },
+            { x: packetX, y: 30, label: sc.result, color: '#0088ff' }
+        ];
+
+        const logMessages = [
+            `User calls ${sc.label}`,
+            `Trapped into syscall interface`,
+            `Kernel: routing to ${sub.name}`,
+            `${sub.name} \u2192 ${sc.hwLabel}`,
+            `Hardware returns \u2192 ${sub.name}`,
+            `Kernel returns result: ${sc.result}`,
+            `${sc.label} \u2192 ${sc.result} (complete)`
+        ];
+
+        let step = 0;
+        const packet = { x: waypoints[0].x, y: waypoints[0].y, label: waypoints[0].label, color: waypoints[0].color };
+        packets.push(packet);
+
+        function animStep() {
+            if (step >= waypoints.length - 1) {
+                packets.splice(packets.indexOf(packet), 1);
+                draw();
+                return;
+            }
+
+            const from = waypoints[step];
+            const to = waypoints[step + 1];
+            addLog(logMessages[step]);
+            const duration = 400;
+            const startTime = performance.now();
+
+            function frame(now) {
+                const t = Math.min((now - startTime) / duration, 1);
+                const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+                packet.x = from.x + (to.x - from.x) * ease;
+                packet.y = from.y + (to.y - from.y) * ease;
+                packet.label = to.label;
+                packet.color = to.color;
+                draw();
+
+                if (t < 1) {
+                    requestAnimationFrame(frame);
+                } else {
+                    step++;
+                    setTimeout(animStep, 150);
+                }
+            }
+            requestAnimationFrame(frame);
+        }
+
+        animStep();
+    }
+
+    openBtn.addEventListener('click', () => animatePacket('open'));
+    readBtn.addEventListener('click', () => animatePacket('read'));
+    writeBtn.addEventListener('click', () => animatePacket('write'));
+    mallocBtn.addEventListener('click', () => animatePacket('malloc'));
+
+    resetBtn.addEventListener('click', () => {
+        packets = [];
+        logLines = [];
+        draw();
+    });
+
     draw();
 }
