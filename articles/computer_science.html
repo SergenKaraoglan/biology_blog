@@ -64,6 +64,7 @@
         <p class="toc-part">Part V — Higher Abstractions</p>
         <ol start="13">
             <li><a href="#sec-compiler">The Architecture of Translation (Compilers)</a></li>
+            <li><a href="#sec-llvm">The Universal Backbone (LLVM)</a></li>
             <li><a href="#sec-interpreter">The Ghost in the Machine (Interpreters)</a></li>
             <li><a href="#sec-synthesis">Code That Writes Itself (Program Synthesis)</a></li>
             <li><a href="#sec-quiz">Test Your Computational Intuition</a></li>
@@ -317,8 +318,27 @@
         </p>
     </div>
 
+    <span class="section-tag tag-compiler">ABSTRACTION</span>
+    <h2 id="sec-llvm">14. The Universal Backbone (LLVM)</h2>
+    <p>Traditional compilers are monolithic—one front-end language married to one back-end architecture. <strong>LLVM</strong> (Low Level Virtual Machine) shatters this model. It introduces a universal <strong>Intermediate Representation (IR)</strong>—a language-agnostic, hardware-agnostic middle layer that decouples the "what" from the "where."</p>
+
+    <p>Any language—C, Rust, Swift, or even a language you invent today—can compile its source into LLVM IR. From there, the LLVM back-end can generate optimized machine code for x86, ARM, RISC-V, or any supported target. This is why LLVM has become the backbone of the modern compiler ecosystem: write one front-end, and you instantly speak to every processor on Earth.</p>
+
+    <div class="interactive-container">
+        <canvas id="llvmCanvas" width="700" height="340"></canvas>
+        <div class="controls">
+            <button id="llvm-c-btn">C</button>
+            <button id="llvm-rust-btn">RUST</button>
+            <button id="llvm-swift-btn">SWIFT</button>
+            <button id="llvm-reset-btn">RESET</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Select a source language. Watch its front-end emit LLVM IR, which the optimizer refines before the back-end generates native machine code for multiple architectures.
+        </p>
+    </div>
+
     <span class="section-tag tag-interpreter">ABSTRACTION</span>
-    <h2 id="sec-interpreter">14. The Ghost in the Machine (Interpreters)</h2>
+    <h2 id="sec-interpreter">15. The Ghost in the Machine (Interpreters)</h2>
     <p>If a compiler is a translator that converts an entire book from one language to another before you read it, an <strong>Interpreter</strong> is a live translator who listens to a speech and translates it sentence by sentence as it happens.</p>
     
     <p>Interpreters don't produce a standalone executable file. Instead, they read the source code, parse it into an <strong>Abstract Syntax Tree (AST)</strong>, and execute the instructions directly. This allows for rapid development and dynamic features, at the cost of some execution overhead.</p>
@@ -341,7 +361,7 @@
     </div>
 
     <span class="section-tag" style="background:#00ffff; color:#000; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">ABSTRACTION</span>
-    <h2 id="sec-synthesis">15. Program Synthesis: Code That Writes Itself</h2>
+    <h2 id="sec-synthesis">16. Program Synthesis: Code That Writes Itself</h2>
     <p>If a compiler translates code from one language to another, a <strong>Program Synthesizer</strong> generates code from a high-level specification. This is the holy grail of computer science: the ability for a machine to understand <em>what</em> we want and determine <em>how</em> to achieve it.</p>
     
     <p>Using <strong>Deductive Synthesis</strong>, the engine searches through millions of possible logical combinations to find the exact function that matches your provided examples. It is a massive search problem over the space of all possible programs.</p>
@@ -372,7 +392,7 @@
         </p>
     </div>
 
-    <h2 id="sec-quiz">16. Test Your Computational Intuition</h2>
+    <h2 id="sec-quiz">17. Test Your Computational Intuition</h2>
     <p>Can you implement a basic sort? Use the Python environment below to sort a list of numbers from first principles.</p>
 
     <div class="interactive-container" style="align-items: stretch; padding: 2rem;">

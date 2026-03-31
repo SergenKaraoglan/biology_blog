@@ -4,8 +4,8 @@ function startInitializers() {
     const initializers = [
         initHero, initBinary, initTransistorVisualizer, initLogic, initGPUVisualizer, initRAMVisualizer,
         initOSVisualizer, initKernelVisualizer, initStructs, initComplexityVisualizer, initPvsNPVisualizer,
-        initKnightsTourVisualizer, initPenTestVisualizer, initProgramSynthesis, initInterpreterVisualizer,
-        initCompilerVisualizer
+        initKnightsTourVisualizer, initPenTestVisualizer, initProgramSynthesis, initLLVMVisualizer,
+        initInterpreterVisualizer, initCompilerVisualizer
     ];
     initializers.forEach(init => {
         try { if (typeof init === 'function') init(); } catch (e) { console.error(e); }
@@ -2114,6 +2114,253 @@ function initKernelVisualizer() {
     resetBtn.addEventListener('click', () => {
         packets = [];
         logLines = [];
+        draw();
+    });
+
+    draw();
+}
+
+// --- 14. THE UNIVERSAL BACKBONE (LLVM) ---
+function initLLVMVisualizer() {
+    const canvas = document.getElementById('llvmCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const cBtn = document.getElementById('llvm-c-btn');
+    const rustBtn = document.getElementById('llvm-rust-btn');
+    const swiftBtn = document.getElementById('llvm-swift-btn');
+    const resetBtn = document.getElementById('llvm-reset-btn');
+
+    const W = canvas.width;
+    const H = canvas.height;
+
+    const LANGS = {
+        C:     { color: '#0088ff', snippet: 'int x = a + b;',     ir: '%x = add i32 %a, %b' },
+        RUST:  { color: '#ff3333', snippet: 'let x = a + b;',     ir: '%x = add i32 %a, %b' },
+        SWIFT: { color: '#ffa500', snippet: 'var x = a + b',      ir: '%x = add i32 %a, %b' }
+    };
+
+    const TARGETS = [
+        { name: 'x86_64',  asm: 'ADD EAX, EBX',   color: '#00ffff' },
+        { name: 'ARM64',   asm: 'ADD W0, W1, W2',  color: '#ccff00' },
+        { name: 'RISC-V',  asm: 'add a0, a1, a2',  color: '#ff00ff' }
+    ];
+
+    let activeLang = null;
+    let phase = 0;       // 0: idle, 1: frontend, 2: IR, 3: optimizer, 4: backends
+    let animId = null;
+    let particleProgress = 0;
+
+    // Layout
+    const COL_FRONT = 40;
+    const COL_IR    = 240;
+    const COL_OPT   = 390;
+    const COL_BACK  = 540;
+    const BOX_W     = 130;
+    const BOX_H     = 45;
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, W, H);
+
+        // --- Column headers ---
+        ctx.font = '10px Courier New';
+        ctx.textAlign = 'center';
+
+        const headers = [
+            { x: COL_FRONT + BOX_W / 2, label: 'FRONT-ENDS', color: '#888' },
+            { x: COL_IR + BOX_W / 2,    label: 'LLVM IR',     color: '#ffa500' },
+            { x: COL_OPT + BOX_W / 2,   label: 'OPTIMIZER',   color: '#ccff00' },
+            { x: COL_BACK + BOX_W / 2,  label: 'BACK-ENDS',   color: '#888' }
+        ];
+        headers.forEach(h => {
+            ctx.fillStyle = h.color;
+            ctx.fillText(h.label, h.x, 22);
+        });
+
+        // --- Front-end boxes (source languages) ---
+        const langKeys = Object.keys(LANGS);
+        langKeys.forEach((key, i) => {
+            const lang = LANGS[key];
+            const y = 40 + i * 65;
+            const isActive = activeLang === key;
+
+            ctx.fillStyle = isActive ? lang.color + '22' : '#0a0a0a';
+            ctx.fillRect(COL_FRONT, y, BOX_W, BOX_H);
+            ctx.strokeStyle = isActive ? lang.color : '#222';
+            ctx.lineWidth = isActive ? 2 : 1;
+            ctx.strokeRect(COL_FRONT, y, BOX_W, BOX_H);
+
+            ctx.fillStyle = isActive ? lang.color : '#555';
+            ctx.font = 'bold 12px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(key, COL_FRONT + BOX_W / 2, y + 18);
+
+            ctx.font = '8px Courier New';
+            ctx.fillStyle = isActive ? '#fff' : '#444';
+            ctx.fillText(lang.snippet, COL_FRONT + BOX_W / 2, y + 34);
+        });
+
+        // --- IR box (middle) ---
+        const irY = 40 + 65;
+        const irActive = phase >= 2;
+        ctx.fillStyle = irActive ? 'rgba(255,165,0,0.08)' : '#0a0a0a';
+        ctx.fillRect(COL_IR, irY - 20, BOX_W, BOX_H + 40);
+        ctx.strokeStyle = irActive ? '#ffa500' : '#222';
+        ctx.lineWidth = irActive ? 2 : 1;
+        ctx.strokeRect(COL_IR, irY - 20, BOX_W, BOX_H + 40);
+
+        ctx.fillStyle = irActive ? '#ffa500' : '#555';
+        ctx.font = 'bold 12px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('LLVM IR', COL_IR + BOX_W / 2, irY + 5);
+
+        if (irActive && activeLang) {
+            ctx.font = '8px Courier New';
+            ctx.fillStyle = '#fff';
+            ctx.fillText(LANGS[activeLang].ir, COL_IR + BOX_W / 2, irY + 22);
+        }
+
+        // --- Optimizer box ---
+        const optY = irY - 10;
+        const optActive = phase >= 3;
+        ctx.fillStyle = optActive ? 'rgba(204,255,0,0.06)' : '#0a0a0a';
+        ctx.fillRect(COL_OPT, optY, BOX_W, BOX_H + 20);
+        ctx.strokeStyle = optActive ? '#ccff00' : '#222';
+        ctx.lineWidth = optActive ? 2 : 1;
+        ctx.strokeRect(COL_OPT, optY, BOX_W, BOX_H + 20);
+
+        ctx.fillStyle = optActive ? '#ccff00' : '#555';
+        ctx.font = 'bold 11px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('PASS MANAGER', COL_OPT + BOX_W / 2, optY + 20);
+
+        if (optActive) {
+            ctx.font = '8px Courier New';
+            ctx.fillStyle = '#888';
+            ctx.fillText('DCE → Inline → Reg Alloc', COL_OPT + BOX_W / 2, optY + 38);
+        }
+
+        // --- Back-end boxes (targets) ---
+        TARGETS.forEach((t, i) => {
+            const y = 40 + i * 65;
+            const tActive = phase >= 4;
+
+            ctx.fillStyle = tActive ? t.color + '15' : '#0a0a0a';
+            ctx.fillRect(COL_BACK, y, BOX_W, BOX_H);
+            ctx.strokeStyle = tActive ? t.color : '#222';
+            ctx.lineWidth = tActive ? 2 : 1;
+            ctx.strokeRect(COL_BACK, y, BOX_W, BOX_H);
+
+            ctx.fillStyle = tActive ? t.color : '#555';
+            ctx.font = 'bold 11px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(t.name, COL_BACK + BOX_W / 2, y + 18);
+
+            if (tActive) {
+                ctx.font = '8px Courier New';
+                ctx.fillStyle = '#fff';
+                ctx.fillText(t.asm, COL_BACK + BOX_W / 2, y + 34);
+            }
+        });
+
+        // --- Animated connection lines ---
+        if (phase >= 1 && activeLang) {
+            const langIdx = langKeys.indexOf(activeLang);
+            const fromY = 40 + langIdx * 65 + BOX_H / 2;
+
+            // Front-end → IR
+            drawConnector(COL_FRONT + BOX_W, fromY, COL_IR, irY + 12, LANGS[activeLang].color, phase >= 2 ? 1 : particleProgress);
+        }
+        if (phase >= 2) {
+            // IR → Optimizer
+            drawConnector(COL_IR + BOX_W, irY + 12, COL_OPT, optY + 30, '#ffa500', phase >= 3 ? 1 : particleProgress);
+        }
+        if (phase >= 3) {
+            // Optimizer → all back-ends
+            TARGETS.forEach((t, i) => {
+                const toY = 40 + i * 65 + BOX_H / 2;
+                drawConnector(COL_OPT + BOX_W, optY + 30, COL_BACK, toY, t.color, phase >= 4 ? 1 : particleProgress);
+            });
+        }
+
+        // --- Status bar ---
+        ctx.fillStyle = '#111';
+        ctx.fillRect(0, H - 30, W, 30);
+        const msgs = [
+            'Select a source language to begin.',
+            `Compiling ${activeLang} source through front-end...`,
+            'Front-end emitted LLVM IR.',
+            'Running optimization passes...',
+            'Back-ends generated native code for all targets!'
+        ];
+        ctx.fillStyle = '#00ffff';
+        ctx.font = '10px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText(msgs[phase] || msgs[0], W / 2, H - 12);
+    }
+
+    function drawConnector(x1, y1, x2, y2, color, progress) {
+        ctx.strokeStyle = color + '44';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        if (progress > 0 && progress <= 1) {
+            const px = x1 + (x2 - x1) * progress;
+            const py = y1 + (y2 - y1) * progress;
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 12;
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(px, py, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    function runPipeline(lang) {
+        if (animId) clearTimeout(animId);
+        activeLang = lang;
+        phase = 0;
+        particleProgress = 0;
+
+        function advancePhase() {
+            phase++;
+            particleProgress = 0;
+
+            function animateParticle() {
+                particleProgress += 0.04;
+                draw();
+                if (particleProgress < 1) {
+                    animId = setTimeout(animateParticle, 20);
+                } else {
+                    particleProgress = 1;
+                    draw();
+                    if (phase < 4) {
+                        animId = setTimeout(advancePhase, 300);
+                    }
+                }
+            }
+            animateParticle();
+        }
+
+        draw();
+        animId = setTimeout(advancePhase, 200);
+    }
+
+    cBtn.addEventListener('click', () => runPipeline('C'));
+    rustBtn.addEventListener('click', () => runPipeline('RUST'));
+    swiftBtn.addEventListener('click', () => runPipeline('SWIFT'));
+
+    resetBtn.addEventListener('click', () => {
+        if (animId) clearTimeout(animId);
+        activeLang = null;
+        phase = 0;
+        particleProgress = 0;
         draw();
     });
 
