@@ -2,7 +2,7 @@
 
 function startInitializers() {
     const initializers = [
-        initHero, initBinary, initTransistorVisualizer, initLogic, initGPUVisualizer, initRAMVisualizer,
+        initHero, initBinary, initTransistorVisualizer, initLogic, initALUVisualizer, initGPUVisualizer, initRAMVisualizer,
         initOSVisualizer, initKernelVisualizer, initStructs, initComplexityVisualizer, initPvsNPVisualizer,
         initKnightsTourVisualizer, initPenTestVisualizer, initProgramSynthesis, initLLVMVisualizer,
         initInterpreterVisualizer, initCompilerVisualizer
@@ -2361,6 +2361,325 @@ function initLLVMVisualizer() {
         activeLang = null;
         phase = 0;
         particleProgress = 0;
+        draw();
+    });
+
+    draw();
+}
+
+// --- 4. THE CALCULATOR CORE (ALU) ---
+function initALUVisualizer() {
+    const canvas = document.getElementById('aluCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const opBtn = document.getElementById('alu-op-btn');
+    const stepBtn = document.getElementById('alu-step-btn');
+    const resetBtn = document.getElementById('alu-reset-btn');
+
+    const W = canvas.width;
+    const H = canvas.height;
+    const BITS = 8;
+
+    const OPS = ['ADD', 'SUB', 'AND', 'OR', 'XOR'];
+    let opIdx = 0;
+    let regA = new Array(BITS).fill(0);
+    let regB = new Array(BITS).fill(0);
+    let regOut = new Array(BITS).fill(0);
+    let carryFlag = 0;
+    let zeroFlag = 0;
+    let computing = false;
+    let computeStep = -1; // -1 = idle, 0..7 = bit index being processed
+    let computeAnimId = null;
+    let particleTrails = []; // animated data path particles
+
+    function bitsToInt(bits) {
+        let v = 0;
+        for (let i = 0; i < BITS; i++) v += bits[i] * Math.pow(2, BITS - 1 - i);
+        return v;
+    }
+
+    function intToBits(val) {
+        const bits = new Array(BITS).fill(0);
+        for (let i = 0; i < BITS; i++) bits[BITS - 1 - i] = (val >> i) & 1;
+        return bits;
+    }
+
+    function computeResult() {
+        const a = bitsToInt(regA);
+        const b = bitsToInt(regB);
+        let result;
+        const op = OPS[opIdx];
+
+        if (op === 'ADD') result = a + b;
+        else if (op === 'SUB') result = a - b;
+        else if (op === 'AND') result = a & b;
+        else if (op === 'OR') result = a | b;
+        else if (op === 'XOR') result = a ^ b;
+
+        carryFlag = (op === 'ADD' && result > 255) || (op === 'SUB' && result < 0) ? 1 : 0;
+        const masked = ((result % 256) + 256) % 256;
+        zeroFlag = masked === 0 ? 1 : 0;
+        return intToBits(masked);
+    }
+
+    // Layout constants
+    const REG_Y_A = 30;
+    const REG_Y_B = 110;
+    const ALU_Y = 160;
+    const ALU_H = 80;
+    const REG_Y_OUT = 280;
+    const BIT_W = 42;
+    const BIT_H = 32;
+    const REG_START_X = (W - BITS * (BIT_W + 4)) / 2;
+
+    function drawBitRegister(bits, y, label, color, activeIdx) {
+        // Label
+        ctx.fillStyle = color;
+        ctx.font = 'bold 11px Courier New';
+        ctx.textAlign = 'right';
+        ctx.fillText(label, REG_START_X - 10, y + BIT_H / 2 + 4);
+
+        // Decimal value
+        ctx.fillStyle = '#888';
+        ctx.font = '10px Courier New';
+        ctx.textAlign = 'left';
+        ctx.fillText('= ' + bitsToInt(bits), REG_START_X + BITS * (BIT_W + 4) + 8, y + BIT_H / 2 + 4);
+
+        for (let i = 0; i < BITS; i++) {
+            const x = REG_START_X + i * (BIT_W + 4);
+            const isActive = i === activeIdx;
+
+            // Bit box
+            ctx.fillStyle = bits[i] ? (isActive ? color : color + '44') : '#0a0a0a';
+            ctx.fillRect(x, y, BIT_W, BIT_H);
+
+            ctx.strokeStyle = isActive ? '#fff' : (bits[i] ? color : '#333');
+            ctx.lineWidth = isActive ? 2 : 1;
+            ctx.strokeRect(x, y, BIT_W, BIT_H);
+
+            // Bit value
+            ctx.fillStyle = bits[i] ? '#fff' : '#555';
+            ctx.font = 'bold 16px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(bits[i], x + BIT_W / 2, y + BIT_H / 2 + 6);
+
+            // Bit weight label
+            ctx.fillStyle = '#333';
+            ctx.font = '7px Courier New';
+            ctx.fillText('2' + String.fromCharCode(0x2070 + (BITS - 1 - i > 3 ? (BITS - 1 - i > 9 ? 0x2070 : 0x2070) : 0x2070)), x + BIT_W / 2, y - 4);
+            // Simpler: just show bit position index
+            ctx.fillText(BITS - 1 - i, x + BIT_W / 2, y - 4);
+        }
+    }
+
+    function drawALUBlock() {
+        const cx = W / 2;
+        const aluW = 200;
+
+        // Trapezoid shape (wider at top, narrower at bottom)
+        ctx.beginPath();
+        ctx.moveTo(cx - aluW / 2, ALU_Y);          // top-left
+        ctx.lineTo(cx + aluW / 2, ALU_Y);          // top-right
+        ctx.lineTo(cx + aluW / 3, ALU_Y + ALU_H);  // bottom-right
+        ctx.lineTo(cx - aluW / 3, ALU_Y + ALU_H);  // bottom-left
+        ctx.closePath();
+
+        ctx.fillStyle = computing ? 'rgba(0, 255, 255, 0.08)' : '#0a0a0a';
+        ctx.fill();
+        ctx.strokeStyle = computing ? '#00ffff' : '#444';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // ALU label
+        ctx.fillStyle = computing ? '#00ffff' : '#888';
+        ctx.font = 'bold 18px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('ALU', cx, ALU_Y + 32);
+
+        // Operation
+        ctx.fillStyle = '#ccff00';
+        ctx.font = 'bold 14px Courier New';
+        ctx.fillText(OPS[opIdx], cx, ALU_Y + 54);
+
+        // Glow when computing
+        if (computing) {
+            ctx.shadowColor = '#00ffff';
+            ctx.shadowBlur = 20;
+            ctx.strokeStyle = '#00ffff';
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    function drawFlags() {
+        const flagX = W - 80;
+        const flagY = ALU_Y + 10;
+
+        // Carry flag
+        ctx.fillStyle = carryFlag ? '#ff3333' : '#222';
+        ctx.fillRect(flagX, flagY, 60, 24);
+        ctx.strokeStyle = carryFlag ? '#ff3333' : '#333';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(flagX, flagY, 60, 24);
+        ctx.fillStyle = carryFlag ? '#fff' : '#555';
+        ctx.font = '10px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('CARRY', flagX + 30, flagY + 10);
+        ctx.fillText(carryFlag, flagX + 30, flagY + 21);
+
+        // Zero flag
+        ctx.fillStyle = zeroFlag ? '#ccff00' : '#222';
+        ctx.fillRect(flagX, flagY + 34, 60, 24);
+        ctx.strokeStyle = zeroFlag ? '#ccff00' : '#333';
+        ctx.strokeRect(flagX, flagY + 34, 60, 24);
+        ctx.fillStyle = zeroFlag ? '#000' : '#555';
+        ctx.fillText('ZERO', flagX + 30, flagY + 44);
+        ctx.fillText(zeroFlag, flagX + 30, flagY + 55);
+    }
+
+    function drawDataPaths() {
+        const cx = W / 2;
+
+        // Input A → ALU (vertical lines from register A down to ALU top)
+        ctx.strokeStyle = computing ? '#00ffff33' : '#1a1a1a';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(cx, REG_Y_A + BIT_H);
+        ctx.lineTo(cx, ALU_Y);
+        ctx.stroke();
+
+        // Input B → ALU
+        ctx.beginPath();
+        ctx.moveTo(cx - 40, REG_Y_B + BIT_H);
+        ctx.lineTo(cx - 40, ALU_Y);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(cx + 40, REG_Y_B + BIT_H);
+        ctx.lineTo(cx + 40, ALU_Y);
+        ctx.stroke();
+
+        // ALU → Output
+        ctx.beginPath();
+        ctx.moveTo(cx, ALU_Y + ALU_H);
+        ctx.lineTo(cx, REG_Y_OUT);
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+
+        // Draw animated particles
+        particleTrails.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 10;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        });
+    }
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, W, H);
+
+        drawDataPaths();
+        drawBitRegister(regA, REG_Y_A, 'REG A', '#00ffff', computing ? computeStep : -1);
+        drawBitRegister(regB, REG_Y_B, 'REG B', '#ff3333', computing ? computeStep : -1);
+        drawALUBlock();
+        drawFlags();
+        drawBitRegister(regOut, REG_Y_OUT, 'OUT', '#ccff00', computing ? computeStep : -1);
+    }
+
+    function animateCompute() {
+        if (computeStep >= BITS) {
+            computing = false;
+            computeStep = -1;
+            particleTrails = [];
+            draw();
+            return;
+        }
+
+        computing = true;
+        const finalBits = computeResult();
+
+        // Set the current output bit
+        regOut[computeStep] = finalBits[computeStep];
+
+        // Create particle trails for this step
+        const cx = W / 2;
+        const bitX = REG_START_X + computeStep * (BIT_W + 4) + BIT_W / 2;
+
+        particleTrails = [
+            { x: bitX, y: REG_Y_A + BIT_H + 10, color: '#00ffff' },
+            { x: bitX, y: REG_Y_B + BIT_H + 10, color: '#ff3333' },
+            { x: bitX, y: ALU_Y + ALU_H + 10, color: '#ccff00' }
+        ];
+
+        draw();
+
+        computeStep++;
+        computeAnimId = setTimeout(animateCompute, 180);
+    }
+
+    // Handle clicks on register bits
+    canvas.addEventListener('click', (e) => {
+        if (computing) return;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = W / rect.width;
+        const scaleY = H / rect.height;
+        const mx = (e.clientX - rect.left) * scaleX;
+        const my = (e.clientY - rect.top) * scaleY;
+
+        // Check Register A clicks
+        for (let i = 0; i < BITS; i++) {
+            const x = REG_START_X + i * (BIT_W + 4);
+            if (mx >= x && mx <= x + BIT_W && my >= REG_Y_A && my <= REG_Y_A + BIT_H) {
+                regA[i] = regA[i] ? 0 : 1;
+                draw();
+                return;
+            }
+        }
+
+        // Check Register B clicks
+        for (let i = 0; i < BITS; i++) {
+            const x = REG_START_X + i * (BIT_W + 4);
+            if (mx >= x && mx <= x + BIT_W && my >= REG_Y_B && my <= REG_Y_B + BIT_H) {
+                regB[i] = regB[i] ? 0 : 1;
+                draw();
+                return;
+            }
+        }
+    });
+
+    opBtn.addEventListener('click', () => {
+        if (computing) return;
+        opIdx = (opIdx + 1) % OPS.length;
+        opBtn.innerText = 'OP: ' + OPS[opIdx];
+        draw();
+    });
+
+    stepBtn.addEventListener('click', () => {
+        if (computing) return;
+        regOut = new Array(BITS).fill(0);
+        carryFlag = 0;
+        zeroFlag = 0;
+        computeStep = 0;
+        computing = true;
+        animateCompute();
+    });
+
+    resetBtn.addEventListener('click', () => {
+        if (computeAnimId) clearTimeout(computeAnimId);
+        computing = false;
+        computeStep = -1;
+        regA = new Array(BITS).fill(0);
+        regB = new Array(BITS).fill(0);
+        regOut = new Array(BITS).fill(0);
+        carryFlag = 0;
+        zeroFlag = 0;
+        particleTrails = [];
         draw();
     });
 
