@@ -4,7 +4,7 @@ function startInitializers() {
     const initializers = [
         initHero, initBinary, initTransistorVisualizer, initLogic, initALUVisualizer, initGPUVisualizer, initRAMVisualizer,
         initOSVisualizer, initKernelVisualizer, initStructs, initComplexityVisualizer, initPvsNPVisualizer,
-        initKnightsTourVisualizer, initPenTestVisualizer, initProgramSynthesis, initLLVMVisualizer,
+        initKnightsTourVisualizer, initBeamSearchVisualizer, initPenTestVisualizer, initProgramSynthesis, initLLVMVisualizer,
         initInterpreterVisualizer, initCompilerVisualizer
     ];
     initializers.forEach(init => {
@@ -2683,5 +2683,266 @@ function initALUVisualizer() {
         draw();
     });
 
+    draw();
+}
+
+// --- 13. THE GUIDED FRONTIER (BEAM SEARCH) ---
+function initBeamSearchVisualizer() {
+    const canvas = document.getElementById('beamCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const k1Btn = document.getElementById('beam-k1-btn');
+    const k2Btn = document.getElementById('beam-k2-btn');
+    const k3Btn = document.getElementById('beam-k3-btn');
+    const startBtn = document.getElementById('beam-start-btn');
+    const resetBtn = document.getElementById('beam-reset-btn');
+
+    const W = canvas.width;
+    const H = canvas.height;
+    const DEPTH = 4;
+    const BRANCH = 3;
+    let beamWidth = 2;
+    let tree = [];
+    let searchLevel = -1;
+    let animId = null;
+    let bestPath = [];
+    let statusMsg = 'Select beam width and press START.';
+
+    const TOKENS = [
+        ['the', 'a', 'one'],
+        ['quick', 'slow', 'red'],
+        ['fox', 'cat', 'dog'],
+        ['jumps', 'runs', 'sits']
+    ];
+
+    function buildTree() {
+        tree = [];
+        let id = 0;
+        tree.push({ id: id++, depth: 0, parent: -1, score: 1.0, cumScore: 1.0, label: '<s>', active: true, selected: false, children: [] });
+
+        for (let d = 0; d < DEPTH; d++) {
+            const parents = tree.filter(n => n.depth === d);
+            for (const p of parents) {
+                for (let b = 0; b < BRANCH; b++) {
+                    const score = Math.round((0.1 + Math.random() * 0.85) * 100) / 100;
+                    const child = {
+                        id: id++,
+                        depth: d + 1,
+                        parent: p.id,
+                        score,
+                        cumScore: Math.round(p.cumScore * score * 100) / 100,
+                        label: TOKENS[d][b],
+                        active: false,
+                        selected: false,
+                        children: []
+                    };
+                    p.children.push(child.id);
+                    tree.push(child);
+                }
+            }
+        }
+    }
+
+    function getNodePos(node) {
+        const nodesAtDepth = tree.filter(n => n.depth === node.depth);
+        const idx = nodesAtDepth.indexOf(node);
+        const count = nodesAtDepth.length;
+
+        const levelX = 80 + node.depth * ((W - 120) / DEPTH);
+        const availH = H - 80;
+        const spacing = count > 1 ? availH / (count - 1) : 0;
+        const startY = count > 1 ? 40 : H / 2;
+        const levelY = startY + idx * spacing;
+
+        return { x: levelX, y: levelY };
+    }
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, W, H);
+
+        // Draw edges
+        for (const node of tree) {
+            if (node.parent === -1) continue;
+            const parent = tree[node.parent];
+            const pPos = getNodePos(parent);
+            const nPos = getNodePos(node);
+
+            let edgeColor = '#1a1a1a';
+            if (node.selected && parent.selected) edgeColor = '#ccff00';
+            else if (node.active) edgeColor = '#00ffff44';
+
+            ctx.strokeStyle = edgeColor;
+            ctx.lineWidth = (node.selected && parent.selected) ? 3 : 1;
+            ctx.beginPath();
+            ctx.moveTo(pPos.x + 14, pPos.y);
+            ctx.bezierCurveTo(pPos.x + 50, pPos.y, nPos.x - 50, nPos.y, nPos.x - 14, nPos.y);
+            ctx.stroke();
+        }
+
+        // Draw nodes
+        for (const node of tree) {
+            const pos = getNodePos(node);
+            const radius = 14;
+
+            let fillColor = '#111';
+            let strokeColor = '#333';
+            let textColor = '#555';
+
+            if (node.depth === 0) {
+                fillColor = '#222';
+                strokeColor = '#888';
+                textColor = '#fff';
+            } else if (node.selected) {
+                fillColor = '#ccff0022';
+                strokeColor = '#ccff00';
+                textColor = '#ccff00';
+            } else if (node.active) {
+                fillColor = '#00ffff15';
+                strokeColor = '#00ffff';
+                textColor = '#fff';
+            }
+
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = fillColor;
+            ctx.fill();
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = node.selected ? 2.5 : 1;
+            ctx.stroke();
+
+            if (node.selected) {
+                ctx.shadowColor = '#ccff00';
+                ctx.shadowBlur = 12;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+
+            ctx.fillStyle = textColor;
+            ctx.font = '9px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(node.label, pos.x, pos.y + 3);
+
+            if (node.depth > 0 && (node.active || node.selected)) {
+                ctx.fillStyle = node.selected ? '#ccff00' : '#00ffff';
+                ctx.font = '8px Courier New';
+                ctx.fillText(node.score.toFixed(2), pos.x, pos.y + radius + 12);
+
+                ctx.fillStyle = '#666';
+                ctx.font = '7px Courier New';
+                ctx.fillText('\u03a3' + node.cumScore.toFixed(2), pos.x, pos.y + radius + 22);
+            }
+        }
+
+        // Depth labels
+        ctx.fillStyle = '#444';
+        ctx.font = '9px Courier New';
+        ctx.textAlign = 'center';
+        for (let d = 0; d <= DEPTH; d++) {
+            const x = 80 + d * ((W - 120) / DEPTH);
+            ctx.fillText(d === 0 ? 'START' : 't=' + d, x, H - 10);
+        }
+
+        // Beam width indicator
+        ctx.fillStyle = '#00ffff';
+        ctx.font = 'bold 11px Courier New';
+        ctx.textAlign = 'left';
+        ctx.fillText('BEAM WIDTH: k=' + beamWidth, 10, 20);
+
+        // Status bar
+        ctx.fillStyle = '#111';
+        ctx.fillRect(0, H - 28, W, 28);
+        ctx.fillStyle = '#00ffff';
+        ctx.font = '10px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText(statusMsg, W / 2, H - 10);
+    }
+
+    function runBeamSearch() {
+        if (searchLevel >= DEPTH) {
+            const leaves = tree.filter(n => n.depth === DEPTH && n.active);
+            leaves.sort((a, b) => b.cumScore - a.cumScore);
+            if (leaves.length > 0) {
+                let node = leaves[0];
+                while (node) {
+                    node.selected = true;
+                    bestPath.unshift(node.id);
+                    node = node.parent >= 0 ? tree[node.parent] : null;
+                }
+                const tokens = bestPath.map(id => tree[id].label).join(' \u2192 ');
+                statusMsg = 'Best: ' + tokens + ' (score: ' + leaves[0].cumScore.toFixed(3) + ')';
+            }
+            draw();
+            return;
+        }
+
+        searchLevel++;
+
+        if (searchLevel === 0) {
+            searchLevel++;
+        }
+
+        const currentActive = tree.filter(n => n.depth === searchLevel - 1 && n.active);
+        const candidates = [];
+        for (const p of currentActive) {
+            for (const cid of p.children) {
+                const child = tree[cid];
+                child.active = true;
+                candidates.push(child);
+            }
+        }
+
+        candidates.sort((a, b) => b.cumScore - a.cumScore);
+        const kept = candidates.slice(0, beamWidth);
+        const pruned = candidates.slice(beamWidth);
+
+        for (const p of pruned) {
+            p.active = false;
+        }
+
+        statusMsg = 'Level ' + searchLevel + ': expanded ' + candidates.length + ' candidates, kept top ' + kept.length;
+        draw();
+
+        animId = setTimeout(runBeamSearch, 900);
+    }
+
+    function setBeamWidth(k) {
+        if (searchLevel >= 0) return;
+        beamWidth = k;
+        [k1Btn, k2Btn, k3Btn].forEach((btn, i) => {
+            btn.style.borderColor = (i + 1 === k) ? '#00ffff' : '';
+        });
+        statusMsg = 'Beam width set to k=' + k + '. Press START.';
+        draw();
+    }
+
+    function resetVis() {
+        if (animId) clearTimeout(animId);
+        searchLevel = -1;
+        bestPath = [];
+        statusMsg = 'Select beam width and press START.';
+        buildTree();
+        tree[0].active = true;
+        draw();
+    }
+
+    k1Btn.addEventListener('click', () => setBeamWidth(1));
+    k2Btn.addEventListener('click', () => setBeamWidth(2));
+    k3Btn.addEventListener('click', () => setBeamWidth(3));
+
+    startBtn.addEventListener('click', () => {
+        if (searchLevel >= 0) return;
+        resetVis();
+        searchLevel = 0;
+        statusMsg = 'Starting beam search with k=' + beamWidth + '...';
+        draw();
+        animId = setTimeout(runBeamSearch, 600);
+    });
+
+    resetBtn.addEventListener('click', resetVis);
+
+    buildTree();
+    tree[0].active = true;
+    setBeamWidth(2);
     draw();
 }
