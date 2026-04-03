@@ -43,11 +43,12 @@
         <ol start="3">
             <li><a href="#sec-logic">The Geometry of Thought (Logic Gates)</a></li>
             <li><a href="#sec-alu">The Calculator Core (ALU)</a></li>
+            <li><a href="#sec-cpu">The Instruction Engine (CPU)</a></li>
             <li><a href="#sec-gpu">Parallel Realities (The GPU)</a></li>
         </ol>
 
         <p class="toc-part">Part III — Organization</p>
-        <ol start="6">
+        <ol start="7">
             <li><a href="#sec-ram">The Memory Palace (RAM)</a></li>
             <li><a href="#sec-os">The Conductor (Operating Systems)</a></li>
             <li><a href="#sec-kernel">The Heart of the Machine (The Kernel)</a></li>
@@ -59,12 +60,12 @@
         </ol>
 
         <p class="toc-part">Part IV — Security</p>
-        <ol start="14">
+        <ol start="15">
             <li><a href="#sec-pentest">The Defensive Art (Penetration Testing)</a></li>
         </ol>
 
         <p class="toc-part">Part V — Higher Abstractions</p>
-        <ol start="15">
+        <ol start="16">
             <li><a href="#sec-compiler">The Architecture of Translation (Compilers)</a></li>
             <li><a href="#sec-llvm">The Universal Backbone (LLVM)</a></li>
             <li><a href="#sec-interpreter">The Ghost in the Machine (Interpreters)</a></li>
@@ -144,8 +145,28 @@
         </p>
     </div>
 
+    <span class="section-tag tag-logic">HARDWARE</span>
+    <h2 id="sec-cpu">5. The Instruction Engine (CPU)</h2>
+    <p>The ALU can add and subtract, but it has no idea <em>what</em> to compute or <em>when</em>. The <strong>Central Processing Unit (CPU)</strong> is the orchestrator that brings everything together. It reads instructions from memory, decodes them into operations the ALU understands, and executes them—billions of times per second.</p>
+
+    <p>This relentless loop is called the <strong>Fetch-Decode-Execute Cycle</strong>. The <strong>Program Counter (PC)</strong> points to the next instruction in memory. The CPU <strong>fetches</strong> that instruction into its <strong>Instruction Register (IR)</strong>, <strong>decodes</strong> the binary pattern into an opcode and operands, then <strong>executes</strong> the operation—updating registers, flags, or memory. The PC advances, and the cycle repeats. Every program you have ever run, from a web browser to a video game, is nothing more than this three-step waltz performed at gigahertz speed.</p>
+
+    <div class="interactive-container">
+        <canvas id="cpuCanvas" width="700" height="380"></canvas>
+        <div class="controls">
+            <button id="cpu-fetch-btn">FETCH</button>
+            <button id="cpu-decode-btn" disabled>DECODE</button>
+            <button id="cpu-execute-btn" disabled>EXECUTE</button>
+            <button id="cpu-auto-btn">AUTO CYCLE</button>
+            <button id="cpu-reset-btn">RESET</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Step through the Fetch-Decode-Execute cycle manually, or hit AUTO CYCLE to watch the CPU execute an entire program from memory.
+        </p>
+    </div>
+
     <span class="section-tag" style="background:#ccff00; color:#000; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">PARALLELISM</span>
-    <h2 id="sec-gpu">5. Parallel Realities (The GPU)</h2>
+    <h2 id="sec-gpu">6. Parallel Realities (The GPU)</h2>
     <p>Traditional computer architecture (the CPU) is like a brilliant mathematician—it can solve incredibly complex logic problems consecutively, but only one step at a time. This becomes a bottleneck when rendering graphics or training AI, where millions of simple calculations need to happen simultaneously.</p>
     
     <p>A <strong>Graphical Processing Unit (GPU)</strong> solves this through <strong>Parallelism</strong>. Instead of a few powerful cores, it utilizes thousands of smaller, simpler cores to execute operations concurrently. An operation that takes a CPU minutes to calculate sequentially can be executed by a GPU in milliseconds.</p>
@@ -162,7 +183,7 @@
     </div>
 
     <span class="section-tag tag-struct">HARDWARE</span>
-    <h2 id="sec-ram">6. The Memory Palace (RAM)</h2>
+    <h2 id="sec-ram">7. The Memory Palace (RAM)</h2>
     <p>If data structures are the blueprints for organizing information, <strong>Random Access Memory (RAM)</strong> is the physical warehouse. It consists of billions of tiny cells that store electrical charges (bits).</p>
     
     <p>Unlike a hard drive, RAM is <strong>Volatile</strong>—it loses its data when the power is cut. However, it is incredibly fast because it allows "Random Access": you can jump to any specific <strong>Memory Address</strong> instantly, without having to read through everything that came before it. This is the stage where your computer's active thoughts are held.</p>
@@ -196,7 +217,7 @@
     </div>
 
     <span class="section-tag" style="background:rgba(255,165,0,0.1); color:#ffa500;">SYSTEMS</span>
-    <h2 id="sec-os">7. The Conductor (Operating Systems)</h2>
+    <h2 id="sec-os">8. The Conductor (Operating Systems)</h2>
     <p>An <strong>Operating System</strong> is the invisible conductor that orchestrates every process running on your computer. Without it, programs would fight over the CPU, corrupt each other's memory, and crash in seconds.</p>
 
     <p>At its core, the OS solves a fundamental problem: there is only one processor, but many programs that need to run. The solution is <strong>Process Scheduling</strong>—the OS rapidly switches between tasks, giving each a tiny slice of CPU time. In <strong>Round Robin</strong> scheduling, every process gets an equal turn. In <strong>Priority</strong> scheduling, the most critical task runs first. This illusion of parallelism is what makes your computer feel like it can do a thousand things at once.</p>
@@ -215,7 +236,7 @@
     </div>
 
     <span class="section-tag" style="background:rgba(255,165,0,0.15); color:#ffa500;">SYSTEMS</span>
-    <h2 id="sec-kernel">8. The Heart of the Machine (The Kernel)</h2>
+    <h2 id="sec-kernel">9. The Heart of the Machine (The Kernel)</h2>
     <p>If the Operating System is a conductor, the <strong>Kernel</strong> is its nervous system. It is the deepest layer of software that speaks directly to the hardware—managing memory, controlling devices, and enforcing the boundary between <strong>User Space</strong> and <strong>Kernel Space</strong>.</p>
 
     <p>Every time a program opens a file, sends a network packet, or allocates memory, it cannot do so directly. Instead, it makes a <strong>System Call</strong>—a formal request that crosses the boundary into the kernel. The kernel validates the request, executes the privileged operation on the hardware, and returns the result. This architecture is what prevents a rogue application from crashing your entire machine.</p>
@@ -235,7 +256,7 @@
     </div>
 
     <span class="section-tag tag-struct">STRUCTURE</span>
-    <h2 id="sec-structures">9. Architectures of Memory (Data Structures)</h2>
+    <h2 id="sec-structures">10. Architectures of Memory (Data Structures)</h2>
     <p>How we arrange data determines how fast we can find it. This is the essence of <strong>Data Structures</strong>.</p>
 
     <p>An <strong>Array</strong> is like a row of lockers—fast to access if you know the number, but hard to expand. A <strong>Linked List</strong> is like a scavenger hunt—each item tells you where the next one is; easy to grow, but slow to search. Choosing the right structure is the most important decision a programmer makes.</p>
@@ -252,7 +273,7 @@
     </div>
 
     <span class="section-tag tag-algo">ALGORITHMS</span>
-    <h2 id="sec-complexity">10. The Speed of Thought (Big O)</h2>
+    <h2 id="sec-complexity">11. The Speed of Thought (Big O)</h2>
     <p>Writing code that works is only half the battle. Writing code that scales is the other half. <strong>Computational Complexity</strong>, or Big O notation, is how we measure the efficiency of an algorithm.</p>
     
     <p>O(1) means constant time—no matter how much data you have, it takes the same time. O(n) means linear time—if data doubles, time doubles. O(n²) means quadratic time—if data doubles, time quadruples. In the world of billions of users, the difference between these can be seconds versus centuries.</p>
@@ -268,7 +289,7 @@
     </div>
 
     <span class="section-tag tag-algo">COMPLEXITY</span>
-    <h2 id="sec-pvnp">11. The Holy Grail: P versus NP</h2>
+    <h2 id="sec-pvnp">12. The Holy Grail: P versus NP</h2>
     <p>If the solution to a problem can be quickly verified, can the problem also be quickly solved? This is the <strong>P versus NP</strong> problem, the most famous unsolved question in computer science. The quintessential example of this is <strong>Sudoku</strong>.</p>
     
     <p><strong>P</strong> represents "Polynomial time"—problems like basic arithmetic that are "easy" to solve. <strong>NP</strong> represents "Nondeterministic Polynomial time"—problems where a solution is "easy" to verify, even if it's hard to find. A 9x9 Sudoku is easy for a master, but as the grid grows to 100x100 or 1000x1000, finding a solution becomes exponentially harder, while checking if a completed grid is correct remains a simple matter of counting rows and columns. If P = NP, then every hard puzzle would have a fast solution, potentially breaking all modern security.</p>
@@ -286,7 +307,7 @@
     </div>
 
     <span class="section-tag tag-struct">GRAPH THEORY</span>
-    <h2 id="sec-hamiltonian">12. The Labyrinth of Vertices (Hamiltonian Path)</h2>
+    <h2 id="sec-hamiltonian">13. The Labyrinth of Vertices (Hamiltonian Path)</h2>
     <p>A <strong>Hamiltonian Path</strong> is a trajectory through a graph that visits every single node exactly once. It sounds simple, but finding such a path is one of the most difficult problems in computation—often used as a benchmark for NP-hardness.</p>
     
     <p>The <strong>Knight's Tour</strong> is a classic puzzle: can a knight visit every square on a chessboard using only legal L-shaped moves? On a small board, it's a fun diversion. On a large board, it reveals the "combinatorial explosion" of possibilities that makes graph problems so computationally expensive.</p>
@@ -303,7 +324,7 @@
     </div>
 
     <span class="section-tag tag-algo">SEARCH</span>
-    <h2 id="sec-beam">13. The Guided Frontier (Beam Search)</h2>
+    <h2 id="sec-beam">14. The Guided Frontier (Beam Search)</h2>
     <p>When the search space is too vast for an exhaustive exploration but a single greedy choice is too reckless, <strong>Beam Search</strong> offers a middle path. It is a heuristic tree-search algorithm that keeps the top-<em>k</em> most promising candidates—the "beam"—at every level rather than exploring all branches or committing to just one.</p>
 
     <p>Set the <strong>beam width</strong> to 1 and you get pure greedy search: fast but blind to better paths further afield. Widen it and the algorithm hedges its bets, evaluating more candidates before pruning. This is the algorithm that powers machine translation, speech recognition, and the text generation behind every large language model—balancing quality against computational cost with a single tunable knob.</p>
@@ -323,7 +344,7 @@
     </div>
 
     <span class="section-tag tag-security">SECURITY</span>
-    <h2 id="sec-pentest">14. Penetration Testing: The Defensive Art</h2>
+    <h2 id="sec-pentest">15. Penetration Testing: The Defensive Art</h2>
     <p>In the digital world, "Security" is not a state but a process. <strong>Penetration Testing</strong> (or ethical hacking) is the practice of testing a computer system, network, or web application to find security vulnerabilities that an attacker could exploit.</p>
     
     <p>Experts follow a structured methodology: <strong>Reconnaissance</strong> to gather information, <strong>Scanning</strong> to identify open ports and services, and <strong>Exploitation</strong> to safely simulate an attack. By thinking like a hacker, we can build stronger shields for the systems that power our lives.</p>
@@ -342,7 +363,7 @@
     </div>
 
     <span class="section-tag tag-compiler">ABSTRACTION</span>
-    <h2 id="sec-compiler">15. The Architecture of Translation (Compilers)</h2>
+    <h2 id="sec-compiler">16. The Architecture of Translation (Compilers)</h2>
     <p>A <strong>Compiler</strong> is a sophisticated translation engine. It takes a program written in a high-level language and transforms it into a lower-level representation—often machine code that the processor can execute directly.</p>
     
     <p>The compilation process is a multi-stage pipeline: <strong>Lexical Analysis</strong>, <strong>Syntax Analysis</strong>, <strong>Optimization</strong>, and <strong>Code Generation</strong>. By performing these steps ahead of time, compilers can apply deep optimizations that make the final program extremely efficient.</p>
@@ -359,7 +380,7 @@
     </div>
 
     <span class="section-tag tag-compiler">ABSTRACTION</span>
-    <h2 id="sec-llvm">16. The Universal Backbone (LLVM)</h2>
+    <h2 id="sec-llvm">17. The Universal Backbone (LLVM)</h2>
     <p>Traditional compilers are monolithic—one front-end language married to one back-end architecture. <strong>LLVM</strong> (Low Level Virtual Machine) shatters this model. It introduces a universal <strong>Intermediate Representation (IR)</strong>—a language-agnostic, hardware-agnostic middle layer that decouples the "what" from the "where."</p>
 
     <p>Any language—C, Rust, Swift, or even a language you invent today—can compile its source into LLVM IR. From there, the LLVM back-end can generate optimized machine code for x86, ARM, RISC-V, or any supported target. This is why LLVM has become the backbone of the modern compiler ecosystem: write one front-end, and you instantly speak to every processor on Earth.</p>
@@ -378,7 +399,7 @@
     </div>
 
     <span class="section-tag tag-interpreter">ABSTRACTION</span>
-    <h2 id="sec-interpreter">17. The Ghost in the Machine (Interpreters)</h2>
+    <h2 id="sec-interpreter">18. The Ghost in the Machine (Interpreters)</h2>
     <p>If a compiler is a translator that converts an entire book from one language to another before you read it, an <strong>Interpreter</strong> is a live translator who listens to a speech and translates it sentence by sentence as it happens.</p>
     
     <p>Interpreters don't produce a standalone executable file. Instead, they read the source code, parse it into an <strong>Abstract Syntax Tree (AST)</strong>, and execute the instructions directly. This allows for rapid development and dynamic features, at the cost of some execution overhead.</p>
@@ -401,7 +422,7 @@
     </div>
 
     <span class="section-tag" style="background:#00ffff; color:#000; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">ABSTRACTION</span>
-    <h2 id="sec-synthesis">18. Program Synthesis: Code That Writes Itself</h2>
+    <h2 id="sec-synthesis">19. Program Synthesis: Code That Writes Itself</h2>
     <p>If a compiler translates code from one language to another, a <strong>Program Synthesizer</strong> generates code from a high-level specification. This is the holy grail of computer science: the ability for a machine to understand <em>what</em> we want and determine <em>how</em> to achieve it.</p>
     
     <p>Using <strong>Deductive Synthesis</strong>, the engine searches through millions of possible logical combinations to find the exact function that matches your provided examples. It is a massive search problem over the space of all possible programs.</p>
@@ -432,7 +453,7 @@
         </p>
     </div>
 
-    <h2 id="sec-quiz">19. Test Your Computational Intuition</h2>
+    <h2 id="sec-quiz">20. Test Your Computational Intuition</h2>
     <p>Can you implement a basic sort? Use the Python environment below to sort a list of numbers from first principles.</p>
 
     <div class="interactive-container" style="align-items: stretch; padding: 2rem;">

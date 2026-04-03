@@ -2,7 +2,7 @@
 
 function startInitializers() {
     const initializers = [
-        initHero, initBinary, initTransistorVisualizer, initLogic, initALUVisualizer, initGPUVisualizer, initRAMVisualizer,
+        initHero, initBinary, initTransistorVisualizer, initLogic, initALUVisualizer, initCPUVisualizer, initGPUVisualizer, initRAMVisualizer,
         initOSVisualizer, initKernelVisualizer, initStructs, initComplexityVisualizer, initPvsNPVisualizer,
         initKnightsTourVisualizer, initBeamSearchVisualizer, initPenTestVisualizer, initProgramSynthesis, initLLVMVisualizer,
         initInterpreterVisualizer, initCompilerVisualizer
@@ -2944,5 +2944,522 @@ function initBeamSearchVisualizer() {
     buildTree();
     tree[0].active = true;
     setBeamWidth(2);
+    draw();
+}
+
+// --- 5. THE INSTRUCTION ENGINE (CPU) ---
+function initCPUVisualizer() {
+    const canvas = document.getElementById('cpuCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const fetchBtn = document.getElementById('cpu-fetch-btn');
+    const decodeBtn = document.getElementById('cpu-decode-btn');
+    const executeBtn = document.getElementById('cpu-execute-btn');
+    const autoBtn = document.getElementById('cpu-auto-btn');
+    const resetBtn = document.getElementById('cpu-reset-btn');
+
+    const W = canvas.width;
+    const H = canvas.height;
+
+    const PROGRAM = [
+        { raw: 'LOAD R1, 42', opcode: 'LOAD', args: ['R1', '42'], desc: 'R1 ← 42' },
+        { raw: 'LOAD R2, 18', opcode: 'LOAD', args: ['R2', '18'], desc: 'R2 ← 18' },
+        { raw: 'ADD R1, R2',  opcode: 'ADD',  args: ['R1', 'R2'], desc: 'R1 ← R1 + R2' },
+        { raw: 'STORE R1, 0A', opcode: 'STORE', args: ['R1', '0x0A'], desc: 'MEM[0x0A] ← R1' }
+    ];
+
+    let pc = 0;
+    let ir = '';
+    let decodedOp = null;
+    let r1 = 0;
+    let r2 = 0;
+    let phase = 'idle'; // 'idle', 'fetched', 'decoded', 'executed'
+    let autoCycling = false;
+    let autoTimeout = null;
+    let particle = null; // animated data-flow particle
+
+    // Layout
+    const MEM_X = 30;
+    const MEM_Y = 30;
+    const MEM_W = 160;
+    const MEM_CELL_H = 46;
+
+    const CPU_X = 260;
+    const CPU_Y = 20;
+    const CPU_W = 410;
+    const CPU_H = 340;
+
+    const PC_X = CPU_X + 30;
+    const PC_Y = CPU_Y + 40;
+    const PC_W = 80;
+    const PC_H = 40;
+
+    const IR_X = CPU_X + 140;
+    const IR_Y = CPU_Y + 40;
+    const IR_W = 240;
+    const IR_H = 40;
+
+    const REG_X = CPU_X + 60;
+    const REG_Y = CPU_Y + 200;
+    const REG_W = 120;
+    const REG_H = 50;
+    const REG_GAP = 60;
+
+    const DECODE_Y = CPU_Y + 120;
+
+    function updateButtons() {
+        fetchBtn.disabled = phase !== 'idle' && phase !== 'executed';
+        decodeBtn.disabled = phase !== 'fetched';
+        executeBtn.disabled = phase !== 'decoded';
+        if (pc >= PROGRAM.length && phase === 'executed') {
+            fetchBtn.disabled = true;
+        }
+    }
+
+    function drawBackground() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, W, H);
+    }
+
+    function drawMemory() {
+        // Header
+        ctx.fillStyle = '#888';
+        ctx.font = 'bold 10px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('PROGRAM MEMORY', MEM_X + MEM_W / 2, MEM_Y - 8);
+
+        for (let i = 0; i < PROGRAM.length; i++) {
+            const y = MEM_Y + i * MEM_CELL_H;
+            const isActive = (phase === 'idle' || phase === 'executed') && i === pc && pc < PROGRAM.length;
+            const isFetched = i < pc || (i === pc && (phase === 'fetched' || phase === 'decoded'));
+            const isCurrentExec = i === pc && phase === 'executed';
+            const isPastExec = i < pc;
+
+            // Cell background
+            ctx.fillStyle = isActive ? 'rgba(0, 255, 255, 0.1)' : '#0a0a0a';
+            if (isPastExec || isCurrentExec) ctx.fillStyle = 'rgba(204, 255, 0, 0.05)';
+            ctx.fillRect(MEM_X, y, MEM_W, MEM_CELL_H - 4);
+
+            // Border
+            ctx.strokeStyle = isActive ? '#00ffff' : (isPastExec || isCurrentExec ? '#333' : '#222');
+            ctx.lineWidth = isActive ? 2 : 1;
+            ctx.strokeRect(MEM_X, y, MEM_W, MEM_CELL_H - 4);
+
+            // Address
+            ctx.fillStyle = '#555';
+            ctx.font = '9px Courier New';
+            ctx.textAlign = 'left';
+            ctx.fillText('0x' + i.toString(16).toUpperCase().padStart(2, '0'), MEM_X + 6, y + 14);
+
+            // Instruction
+            ctx.fillStyle = isPastExec || isCurrentExec ? '#666' : (isActive ? '#00ffff' : '#aaa');
+            ctx.font = '12px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(PROGRAM[i].raw, MEM_X + MEM_W / 2, y + 32);
+
+            // Checkmark for executed
+            if (isPastExec || isCurrentExec) {
+                ctx.fillStyle = '#ccff00';
+                ctx.font = '14px sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText('✓', MEM_X + MEM_W - 8, y + 16);
+            }
+        }
+    }
+
+    function drawCPUBox() {
+        // CPU border
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.strokeRect(CPU_X, CPU_Y, CPU_W, CPU_H);
+        ctx.setLineDash([]);
+
+        // CPU label
+        ctx.fillStyle = '#555';
+        ctx.font = 'bold 11px Courier New';
+        ctx.textAlign = 'left';
+        ctx.fillText('CPU', CPU_X + 10, CPU_Y + 16);
+
+        // Phase indicator
+        let phaseLabel = 'IDLE';
+        let phaseColor = '#444';
+        if (phase === 'fetched') { phaseLabel = '● FETCH'; phaseColor = '#00ffff'; }
+        else if (phase === 'decoded') { phaseLabel = '● DECODE'; phaseColor = '#ffa500'; }
+        else if (phase === 'executed') { phaseLabel = '● EXECUTE'; phaseColor = '#ccff00'; }
+        ctx.fillStyle = phaseColor;
+        ctx.font = 'bold 12px Courier New';
+        ctx.textAlign = 'right';
+        ctx.fillText(phaseLabel, CPU_X + CPU_W - 10, CPU_Y + 16);
+    }
+
+    function drawPC() {
+        ctx.fillStyle = phase === 'fetched' ? 'rgba(0, 255, 255, 0.15)' : '#0a0a0a';
+        ctx.fillRect(PC_X, PC_Y, PC_W, PC_H);
+        ctx.strokeStyle = phase === 'fetched' ? '#00ffff' : '#333';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(PC_X, PC_Y, PC_W, PC_H);
+
+        ctx.fillStyle = '#888';
+        ctx.font = '9px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('PC', PC_X + PC_W / 2, PC_Y - 6);
+
+        ctx.fillStyle = '#00ffff';
+        ctx.font = 'bold 20px Courier New';
+        ctx.fillText(pc < PROGRAM.length ? pc.toString() : 'END', PC_X + PC_W / 2, PC_Y + 28);
+    }
+
+    function drawIR() {
+        const isFetched = phase === 'fetched' || phase === 'decoded';
+        ctx.fillStyle = isFetched ? 'rgba(0, 255, 255, 0.08)' : '#0a0a0a';
+        ctx.fillRect(IR_X, IR_Y, IR_W, IR_H);
+        ctx.strokeStyle = isFetched ? '#00ffff' : '#333';
+        ctx.lineWidth = isFetched ? 2 : 1;
+        ctx.strokeRect(IR_X, IR_Y, IR_W, IR_H);
+
+        ctx.fillStyle = '#888';
+        ctx.font = '9px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('INSTRUCTION REGISTER (IR)', IR_X + IR_W / 2, IR_Y - 6);
+
+        ctx.fillStyle = ir ? '#fff' : '#333';
+        ctx.font = 'bold 14px Courier New';
+        ctx.fillText(ir || '— EMPTY —', IR_X + IR_W / 2, IR_Y + 26);
+    }
+
+    function drawDecodeZone() {
+        if (phase !== 'decoded' && phase !== 'executed') return;
+        if (!decodedOp) return;
+
+        const zoneW = 300;
+        const zoneH = 50;
+        const zoneX = CPU_X + (CPU_W - zoneW) / 2;
+
+        // Decode box
+        ctx.fillStyle = phase === 'decoded' ? 'rgba(255, 165, 0, 0.08)' : 'rgba(204, 255, 0, 0.05)';
+        ctx.fillRect(zoneX, DECODE_Y, zoneW, zoneH);
+        ctx.strokeStyle = phase === 'decoded' ? '#ffa500' : '#333';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(zoneX, DECODE_Y, zoneW, zoneH);
+
+        ctx.fillStyle = '#888';
+        ctx.font = '9px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('DECODED', zoneX + zoneW / 2, DECODE_Y - 6);
+
+        // Opcode
+        ctx.fillStyle = '#ffa500';
+        ctx.font = 'bold 14px Courier New';
+        ctx.textAlign = 'left';
+        ctx.fillText('OP: ' + decodedOp.opcode, zoneX + 12, DECODE_Y + 20);
+
+        // Operands
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px Courier New';
+        ctx.fillText('ARGS: ' + decodedOp.args.join(', '), zoneX + 12, DECODE_Y + 40);
+
+        // Description
+        ctx.fillStyle = '#ccff00';
+        ctx.font = '12px Courier New';
+        ctx.textAlign = 'right';
+        ctx.fillText(decodedOp.desc, zoneX + zoneW - 12, DECODE_Y + 30);
+
+        // Arrow from IR to decode
+        ctx.strokeStyle = '#ffa50055';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(IR_X + IR_W / 2, IR_Y + IR_H);
+        ctx.lineTo(zoneX + zoneW / 2, DECODE_Y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    function drawRegisters() {
+        const regs = [
+            { name: 'R1', val: r1, color: '#00ffff' },
+            { name: 'R2', val: r2, color: '#ff3333' }
+        ];
+
+        ctx.fillStyle = '#888';
+        ctx.font = 'bold 10px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('GENERAL REGISTERS', REG_X + REG_W + REG_GAP / 2, REG_Y - 10);
+
+        regs.forEach((reg, i) => {
+            const x = REG_X + i * (REG_W + REG_GAP);
+            const isActive = phase === 'executed' && decodedOp &&
+                ((decodedOp.opcode === 'LOAD' && decodedOp.args[0] === reg.name) ||
+                 (decodedOp.opcode === 'ADD' && reg.name === 'R1') ||
+                 (decodedOp.opcode === 'STORE' && decodedOp.args[0] === reg.name));
+
+            ctx.fillStyle = isActive ? reg.color + '22' : '#0a0a0a';
+            ctx.fillRect(x, REG_Y, REG_W, REG_H);
+            ctx.strokeStyle = isActive ? reg.color : '#333';
+            ctx.lineWidth = isActive ? 2 : 1;
+            ctx.strokeRect(x, REG_Y, REG_W, REG_H);
+
+            // Label
+            ctx.fillStyle = reg.color;
+            ctx.font = 'bold 10px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(reg.name, x + REG_W / 2, REG_Y + 16);
+
+            // Value
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 22px Courier New';
+            ctx.fillText(reg.val, x + REG_W / 2, REG_Y + 42);
+
+            // Glow when active
+            if (isActive) {
+                ctx.shadowColor = reg.color;
+                ctx.shadowBlur = 12;
+                ctx.fillText(reg.val, x + REG_W / 2, REG_Y + 42);
+                ctx.shadowBlur = 0;
+            }
+        });
+    }
+
+    function drawDataFlow() {
+        // Arrow from memory to IR (fetch path)
+        if (phase === 'fetched') {
+            ctx.strokeStyle = '#00ffff44';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            const startX = MEM_X + MEM_W;
+            const startY = MEM_Y + (pc > 0 ? pc - 1 : 0) * MEM_CELL_H + MEM_CELL_H / 2;
+            const endX = IR_X;
+            const endY = IR_Y + IR_H / 2;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Arrowhead
+            const angle = Math.atan2(endY - startY, endX - startX);
+            ctx.fillStyle = '#00ffff';
+            ctx.beginPath();
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX - 10 * Math.cos(angle - 0.3), endY - 10 * Math.sin(angle - 0.3));
+            ctx.lineTo(endX - 10 * Math.cos(angle + 0.3), endY - 10 * Math.sin(angle + 0.3));
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // Arrow from decode to registers (execute path)
+        if (phase === 'executed' && decodedOp) {
+            ctx.strokeStyle = '#ccff0044';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            const startX2 = CPU_X + CPU_W / 2;
+            const startY2 = DECODE_Y + 50;
+            const endX2 = REG_X + REG_W / 2;
+            const endY2 = REG_Y;
+            ctx.beginPath();
+            ctx.moveTo(startX2, startY2);
+            ctx.lineTo(endX2, endY2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Particle effect
+        if (particle) {
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, 5, 0, Math.PI * 2);
+            ctx.fillStyle = particle.color;
+            ctx.shadowColor = particle.color;
+            ctx.shadowBlur = 15;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    function drawCycleIndicator() {
+        const cx = CPU_X + CPU_W / 2;
+        const cy = CPU_Y + CPU_H - 35;
+        const phases = ['FETCH', 'DECODE', 'EXECUTE'];
+        const colors = ['#00ffff', '#ffa500', '#ccff00'];
+        const activeIdx = phase === 'fetched' ? 0 : phase === 'decoded' ? 1 : phase === 'executed' ? 2 : -1;
+
+        const totalW = 280;
+        const segW = totalW / 3;
+        const startX = cx - totalW / 2;
+
+        phases.forEach((p, i) => {
+            const x = startX + i * segW;
+            const isActive = i === activeIdx;
+
+            // Box
+            ctx.fillStyle = isActive ? colors[i] + '33' : '#0a0a0a';
+            ctx.fillRect(x + 2, cy, segW - 4, 24);
+            ctx.strokeStyle = isActive ? colors[i] : '#222';
+            ctx.lineWidth = isActive ? 2 : 1;
+            ctx.strokeRect(x + 2, cy, segW - 4, 24);
+
+            // Text
+            ctx.fillStyle = isActive ? colors[i] : '#444';
+            ctx.font = (isActive ? 'bold ' : '') + '10px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(p, x + segW / 2, cy + 16);
+
+            // Arrow between phases
+            if (i < phases.length - 1) {
+                ctx.fillStyle = '#333';
+                ctx.font = '14px sans-serif';
+                ctx.fillText('→', x + segW - 1, cy + 16);
+            }
+        });
+    }
+
+    function draw() {
+        drawBackground();
+        drawMemory();
+        drawCPUBox();
+        drawPC();
+        drawIR();
+        drawDecodeZone();
+        drawRegisters();
+        drawDataFlow();
+        drawCycleIndicator();
+    }
+
+    function animateParticle(startX, startY, endX, endY, color, callback) {
+        const duration = 350;
+        const startTime = performance.now();
+
+        function step(now) {
+            const t = Math.min((now - startTime) / duration, 1);
+            const ease = t * (2 - t); // ease-out
+            particle = {
+                x: startX + (endX - startX) * ease,
+                y: startY + (endY - startY) * ease,
+                color: color
+            };
+            draw();
+            if (t < 1) {
+                requestAnimationFrame(step);
+            } else {
+                particle = null;
+                callback();
+            }
+        }
+        requestAnimationFrame(step);
+    }
+
+    function doFetch() {
+        if (pc >= PROGRAM.length) return;
+        const instr = PROGRAM[pc];
+        const memY = MEM_Y + pc * MEM_CELL_H + MEM_CELL_H / 2;
+
+        animateParticle(
+            MEM_X + MEM_W, memY,
+            IR_X + IR_W / 2, IR_Y + IR_H / 2,
+            '#00ffff',
+            () => {
+                ir = instr.raw;
+                phase = 'fetched';
+                updateButtons();
+                draw();
+            }
+        );
+    }
+
+    function doDecode() {
+        const instr = PROGRAM[pc];
+        decodedOp = instr;
+        phase = 'decoded';
+        updateButtons();
+        draw();
+    }
+
+    function doExecute() {
+        const instr = PROGRAM[pc];
+
+        if (instr.opcode === 'LOAD') {
+            if (instr.args[0] === 'R1') r1 = parseInt(instr.args[1]);
+            else if (instr.args[0] === 'R2') r2 = parseInt(instr.args[1]);
+        } else if (instr.opcode === 'ADD') {
+            r1 = r1 + r2;
+        } else if (instr.opcode === 'STORE') {
+            // Visual only; we just show the value was stored
+        }
+
+        phase = 'executed';
+        pc++;
+        updateButtons();
+        draw();
+    }
+
+    function autoCycle() {
+        if (!autoCycling) return;
+        if (pc >= PROGRAM.length && phase === 'executed') {
+            autoCycling = false;
+            autoBtn.innerText = 'AUTO CYCLE';
+            return;
+        }
+
+        if (phase === 'idle' || phase === 'executed') {
+            doFetch();
+            autoTimeout = setTimeout(() => {
+                if (!autoCycling) return;
+                doDecode();
+                autoTimeout = setTimeout(() => {
+                    if (!autoCycling) return;
+                    doExecute();
+                    autoTimeout = setTimeout(autoCycle, 600);
+                }, 600);
+            }, 600);
+        }
+    }
+
+    function reset() {
+        autoCycling = false;
+        if (autoTimeout) clearTimeout(autoTimeout);
+        autoTimeout = null;
+        pc = 0;
+        ir = '';
+        decodedOp = null;
+        r1 = 0;
+        r2 = 0;
+        phase = 'idle';
+        particle = null;
+        autoBtn.innerText = 'AUTO CYCLE';
+        updateButtons();
+        draw();
+    }
+
+    fetchBtn.addEventListener('click', () => {
+        if (autoCycling) return;
+        doFetch();
+    });
+
+    decodeBtn.addEventListener('click', () => {
+        if (autoCycling) return;
+        doDecode();
+    });
+
+    executeBtn.addEventListener('click', () => {
+        if (autoCycling) return;
+        doExecute();
+    });
+
+    autoBtn.addEventListener('click', () => {
+        if (autoCycling) {
+            autoCycling = false;
+            if (autoTimeout) clearTimeout(autoTimeout);
+            autoBtn.innerText = 'AUTO CYCLE';
+            updateButtons();
+            return;
+        }
+        if (pc >= PROGRAM.length) reset();
+        autoCycling = true;
+        autoBtn.innerText = 'STOP';
+        autoCycle();
+    });
+
+    resetBtn.addEventListener('click', reset);
+
+    updateButtons();
     draw();
 }
