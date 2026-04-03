@@ -3,7 +3,7 @@
 function startInitializers() {
     const initializers = [
         initHero, initBinary, initTransistorVisualizer, initLogic, initALUVisualizer, initCPUVisualizer, initGPUVisualizer, initRAMVisualizer,
-        initOSVisualizer, initKernelVisualizer, initStructs, initComplexityVisualizer, initPvsNPVisualizer,
+        initOSVisualizer, initKernelVisualizer, initStructs, initTuringVisualizer, initComplexityVisualizer, initPvsNPVisualizer,
         initKnightsTourVisualizer, initBeamSearchVisualizer, initPenTestVisualizer, initProgramSynthesis, initLLVMVisualizer,
         initInterpreterVisualizer, initCompilerVisualizer
     ];
@@ -3461,5 +3461,290 @@ function initCPUVisualizer() {
     resetBtn.addEventListener('click', reset);
 
     updateButtons();
+    draw();
+}
+
+// --- 11. THE INFINITE TAPE (TURING MACHINES) ---
+function initTuringVisualizer() {
+    const canvas = document.getElementById('turingCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const stepBtn = document.getElementById('tm-step-btn');
+    const runBtn = document.getElementById('tm-run-btn');
+    const resetBtn = document.getElementById('tm-reset-btn');
+
+    const W = canvas.width;
+    const H = canvas.height;
+
+    // Binary Inverter Machine
+    // Start at q0. Read 0 -> write 1, move R. Read 1 -> write 0, move R. Read B -> halt.
+    const RULES = {
+        'q0': {
+            '0': { write: '1', move: 1, next: 'q0' },
+            '1': { write: '0', move: 1, next: 'q0' },
+            'B': { write: 'B', move: -1, next: 'halt' }
+        }
+    };
+
+    let tape = [];
+    let head = 0;
+    let state = 'q0';
+    let isRunning = false;
+    let runTimeout = null;
+    let phase = 'idle'; // idle, read, write, move
+
+    const INIT_TAPE = ['B', 'B', '1', '0', '1', '1', '0', 'B', 'B', 'B'];
+    const INIT_HEAD = 2; // Point to first '1'
+
+    function resetMachine() {
+        tape = [...INIT_TAPE];
+        head = INIT_HEAD;
+        state = 'q0';
+        phase = 'idle';
+        isRunning = false;
+        if (runTimeout) clearTimeout(runTimeout);
+        runTimeout = null;
+        runBtn.innerText = 'RUN';
+        stepBtn.disabled = false;
+        draw();
+    }
+
+    // Layout
+    const TAPE_Y = 60;
+    const CELL_W = 40;
+    const CELL_H = 50;
+    
+    // State machine graph layout
+    const GRAPH_CX = W / 2;
+    const GRAPH_CY = 230;
+    const NODE_R = 25;
+
+    const nodes = {
+        'q0': { x: GRAPH_CX - 80, y: GRAPH_CY },
+        'halt': { x: GRAPH_CX + 80, y: GRAPH_CY }
+    };
+
+    resetMachine(); // Initialize
+
+    function drawTape() {
+        ctx.fillStyle = '#111';
+        ctx.fillRect(0, TAPE_Y, W, CELL_H);
+        
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, TAPE_Y); ctx.lineTo(W, TAPE_Y);
+        ctx.moveTo(0, TAPE_Y + CELL_H); ctx.lineTo(W, TAPE_Y + CELL_H);
+        ctx.stroke();
+
+        const centerCellX = W / 2 - CELL_W / 2;
+        
+        for (let i = 0; i < tape.length; i++) {
+            const offsetX = (i - head) * CELL_W;
+            const x = centerCellX + offsetX;
+
+            if (x + CELL_W < 0 || x > W) continue; // Off screen
+
+            // Cell background
+            if (i === head) {
+                ctx.fillStyle = phase === 'read' ? 'rgba(0, 255, 255, 0.2)' : 
+                              phase === 'write' ? 'rgba(204, 255, 0, 0.2)' : 'rgba(255, 255, 255, 0.1)';
+                ctx.fillRect(x, TAPE_Y, CELL_W, CELL_H);
+            }
+
+            // Cell border
+            ctx.strokeStyle = i === head ? (phase === 'write' ? '#ccff00' : '#00ffff') : '#333';
+            ctx.lineWidth = i === head ? 2 : 1;
+            ctx.strokeRect(x, TAPE_Y, CELL_W, CELL_H);
+
+            // Symbol
+            const symbol = tape[i];
+            ctx.fillStyle = symbol === 'B' ? '#555' : (i === head && phase === 'write' ? '#ccff00' : '#fff');
+            ctx.font = 'bold 22px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(symbol, x + CELL_W / 2, TAPE_Y + CELL_H / 2 + 8);
+        }
+
+        // The Head Pointer
+        const pointerX = centerCellX + CELL_W / 2;
+        const pointerY = TAPE_Y + CELL_H + 5;
+        
+        ctx.fillStyle = '#00ffff';
+        ctx.beginPath();
+        ctx.moveTo(pointerX, pointerY);
+        ctx.lineTo(pointerX - 10, pointerY + 15);
+        ctx.lineTo(pointerX + 10, pointerY + 15);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#00ffff';
+        ctx.font = '10px Courier New';
+        ctx.fillText('HEAD', pointerX, pointerY + 28);
+    }
+
+    function drawGraph() {
+        // Draw transitions (simple hardcoded for this machine)
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 2;
+        
+        // Loop on q0 (0->1,R / 1->0,R)
+        ctx.beginPath();
+        ctx.arc(nodes['q0'].x, nodes['q0'].y - NODE_R, 20, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#888';
+        ctx.font = '10px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('0 → 1, R', nodes['q0'].x, nodes['q0'].y - NODE_R * 2 - 12);
+        ctx.fillText('1 → 0, R', nodes['q0'].x, nodes['q0'].y - NODE_R * 2 - 2);
+
+        // Transition q0 to halt (B->B,L)
+        ctx.beginPath();
+        ctx.moveTo(nodes['q0'].x + NODE_R, nodes['q0'].y);
+        ctx.lineTo(nodes['halt'].x - NODE_R, nodes['halt'].y);
+        ctx.stroke();
+        
+        // Arrow head
+        ctx.fillStyle = '#444';
+        ctx.beginPath();
+        ctx.moveTo(nodes['halt'].x - NODE_R, nodes['halt'].y);
+        ctx.lineTo(nodes['halt'].x - NODE_R - 10, nodes['halt'].y - 5);
+        ctx.lineTo(nodes['halt'].x - NODE_R - 10, nodes['halt'].y + 5);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#888';
+        ctx.fillText('B → B, L', GRAPH_CX, GRAPH_CY - 10);
+
+        // Draw Nodes
+        for (const [name, node] of Object.entries(nodes)) {
+            const isActive = state === name;
+            ctx.fillStyle = isActive ? (name === 'halt' ? '#ff3333' : '#00ffff') : '#111';
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, NODE_R, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.strokeStyle = isActive ? '#fff' : '#444';
+            ctx.lineWidth = isActive ? 2 : 1;
+            ctx.stroke();
+
+            ctx.fillStyle = isActive ? '#000' : '#888';
+            ctx.font = 'bold 14px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(name, node.x, node.y + 5);
+            
+            if (isActive) {
+                ctx.shadowColor = ctx.fillStyle;
+                ctx.shadowBlur = 10;
+                ctx.shadowBlur = 0;
+            }
+        }
+    }
+
+    function drawInfo() {
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px Courier New';
+        ctx.textAlign = 'left';
+        
+        const symbol = tape[head];
+        const rule = RULES[state] ? RULES[state][symbol] : null;
+
+        let statusTxt = `STATE: ${state}   |   READ: '${symbol}'`;
+        if (rule) {
+            const dir = rule.move > 0 ? 'RIGHT' : (rule.move < 0 ? 'LEFT' : 'STAY');
+            statusTxt += `   →   WRITE: '${rule.write}', MOVE: ${dir}, GOTO: ${rule.next}`;
+        } else if (state === 'halt') {
+            statusTxt += `   →   MACHINE HALTED`;
+            ctx.fillStyle = '#ff3333';
+        }
+
+        ctx.fillText(statusTxt, 20, H - 20);
+    }
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, W, H);
+        
+        drawTape();
+        drawGraph();
+        drawInfo();
+    }
+
+    function doStep() {
+        if (state === 'halt') return;
+
+        const symbol = tape[head];
+        const rule = RULES[state][symbol];
+
+        if (!rule) {
+            state = 'halt'; // No rule defined -> halt (crash/reject)
+            draw();
+            return;
+        }
+
+        // Execution phases animation
+        phase = 'read';
+        draw();
+
+        setTimeout(() => {
+            if (!isRunning && phase === 'idle') return; // Cancelled
+            // Write
+            tape[head] = rule.write;
+            phase = 'write';
+            draw();
+
+            setTimeout(() => {
+                if (!isRunning && phase === 'idle') return; // Cancelled
+                // Move & Transition
+                head += rule.move;
+                
+                // Expand tape if needed
+                if (head >= tape.length) tape.push('B');
+                if (head < 0) {
+                    tape.unshift('B');
+                    head = 0;
+                }
+
+                state = rule.next;
+                phase = 'idle';
+                
+                if (state === 'halt') {
+                    stepBtn.disabled = true;
+                    if (isRunning) {
+                        isRunning = false;
+                        runBtn.innerText = 'RUN';
+                    }
+                }
+
+                draw();
+
+                if (isRunning) {
+                    runTimeout = setTimeout(doStep, 400); // Trigger next step automatically
+                }
+            }, 300); // Time to write
+        }, 300); // Time to read
+    }
+
+    stepBtn.addEventListener('click', () => {
+        if (isRunning) return;
+        doStep();
+    });
+
+    runBtn.addEventListener('click', () => {
+        if (state === 'halt') return;
+        
+        if (isRunning) {
+            isRunning = false;
+            runBtn.innerText = 'RUN';
+            if (runTimeout) clearTimeout(runTimeout);
+        } else {
+            isRunning = true;
+            runBtn.innerText = 'PAUSE';
+            doStep();
+        }
+    });
+
+    resetBtn.addEventListener('click', resetMachine);
+
     draw();
 }

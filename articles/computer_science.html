@@ -53,6 +53,7 @@
             <li><a href="#sec-os">The Conductor (Operating Systems)</a></li>
             <li><a href="#sec-kernel">The Heart of the Machine (The Kernel)</a></li>
             <li><a href="#sec-structures">Architectures of Memory (Data Structures)</a></li>
+            <li><a href="#sec-turing">The Infinite Tape (Turing Machines)</a></li>
             <li><a href="#sec-complexity">The Speed of Thought (Big O)</a></li>
             <li><a href="#sec-pvnp">The Holy Grail (P versus NP)</a></li>
             <li><a href="#sec-hamiltonian">The Labyrinth of Vertices (Hamiltonian Path)</a></li>
@@ -60,12 +61,12 @@
         </ol>
 
         <p class="toc-part">Part IV — Security</p>
-        <ol start="15">
+        <ol start="16">
             <li><a href="#sec-pentest">The Defensive Art (Penetration Testing)</a></li>
         </ol>
 
         <p class="toc-part">Part V — Higher Abstractions</p>
-        <ol start="16">
+        <ol start="17">
             <li><a href="#sec-compiler">The Architecture of Translation (Compilers)</a></li>
             <li><a href="#sec-llvm">The Universal Backbone (LLVM)</a></li>
             <li><a href="#sec-interpreter">The Ghost in the Machine (Interpreters)</a></li>
@@ -272,8 +273,26 @@
         </p>
     </div>
 
+    <span class="section-tag tag-logic">THEORY</span>
+    <h2 id="sec-turing">11. The Infinite Tape (Turing Machines)</h2>
+    <p>Before computers were built with transistors and silicon, they were conceived in the mind of Alan Turing. In 1936, he formalized the concept of computation with a theoretical device known as the <strong>Turing Machine</strong>. It consists of practically nothing: an infinitely long tape of memory cells, a read/write head that can move left or right, and a "state register" containing the machine's current internal state.</p>
+    
+    <p>Despite this simplicity, a Turing Machine can compute <em>anything</em> that any modern supercomputer can compute. It reads the symbol on the current cell, consults its internal rulebook to decide what symbol to write back, which direction to move, and what state to transition into next. This foundational model proved that computation is universal; any machine that can simulate a Turing Machine is said to be <strong>Turing Complete</strong>.</p>
+
+    <div class="interactive-container">
+        <canvas id="turingCanvas" width="700" height="340"></canvas>
+        <div class="controls">
+            <button id="tm-step-btn">STEP</button>
+            <button id="tm-run-btn">RUN</button>
+            <button id="tm-reset-btn">RESET</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Watch the Turing Machine read the tape, look up its next action based on its current state, write a new symbol, and shift left or right. This specific machine inverts the binary string.
+        </p>
+    </div>
+
     <span class="section-tag tag-algo">ALGORITHMS</span>
-    <h2 id="sec-complexity">11. The Speed of Thought (Big O)</h2>
+    <h2 id="sec-complexity">12. The Speed of Thought (Big O)</h2>
     <p>Writing code that works is only half the battle. Writing code that scales is the other half. <strong>Computational Complexity</strong>, or Big O notation, is how we measure the efficiency of an algorithm.</p>
     
     <p>O(1) means constant time—no matter how much data you have, it takes the same time. O(n) means linear time—if data doubles, time doubles. O(n²) means quadratic time—if data doubles, time quadruples. In the world of billions of users, the difference between these can be seconds versus centuries.</p>
@@ -289,7 +308,7 @@
     </div>
 
     <span class="section-tag tag-algo">COMPLEXITY</span>
-    <h2 id="sec-pvnp">12. The Holy Grail: P versus NP</h2>
+    <h2 id="sec-pvnp">13. The Holy Grail: P versus NP</h2>
     <p>If the solution to a problem can be quickly verified, can the problem also be quickly solved? This is the <strong>P versus NP</strong> problem, the most famous unsolved question in computer science. The quintessential example of this is <strong>Sudoku</strong>.</p>
     
     <p><strong>P</strong> represents "Polynomial time"—problems like basic arithmetic that are "easy" to solve. <strong>NP</strong> represents "Nondeterministic Polynomial time"—problems where a solution is "easy" to verify, even if it's hard to find. A 9x9 Sudoku is easy for a master, but as the grid grows to 100x100 or 1000x1000, finding a solution becomes exponentially harder, while checking if a completed grid is correct remains a simple matter of counting rows and columns. If P = NP, then every hard puzzle would have a fast solution, potentially breaking all modern security.</p>
@@ -307,7 +326,7 @@
     </div>
 
     <span class="section-tag tag-struct">GRAPH THEORY</span>
-    <h2 id="sec-hamiltonian">13. The Labyrinth of Vertices (Hamiltonian Path)</h2>
+    <h2 id="sec-hamiltonian">14. The Labyrinth of Vertices (Hamiltonian Path)</h2>
     <p>A <strong>Hamiltonian Path</strong> is a trajectory through a graph that visits every single node exactly once. It sounds simple, but finding such a path is one of the most difficult problems in computation—often used as a benchmark for NP-hardness.</p>
     
     <p>The <strong>Knight's Tour</strong> is a classic puzzle: can a knight visit every square on a chessboard using only legal L-shaped moves? On a small board, it's a fun diversion. On a large board, it reveals the "combinatorial explosion" of possibilities that makes graph problems so computationally expensive.</p>
@@ -324,7 +343,7 @@
     </div>
 
     <span class="section-tag tag-algo">SEARCH</span>
-    <h2 id="sec-beam">14. The Guided Frontier (Beam Search)</h2>
+    <h2 id="sec-beam">15. The Guided Frontier (Beam Search)</h2>
     <p>When the search space is too vast for an exhaustive exploration but a single greedy choice is too reckless, <strong>Beam Search</strong> offers a middle path. It is a heuristic tree-search algorithm that keeps the top-<em>k</em> most promising candidates—the "beam"—at every level rather than exploring all branches or committing to just one.</p>
 
     <p>Set the <strong>beam width</strong> to 1 and you get pure greedy search: fast but blind to better paths further afield. Widen it and the algorithm hedges its bets, evaluating more candidates before pruning. This is the algorithm that powers machine translation, speech recognition, and the text generation behind every large language model—balancing quality against computational cost with a single tunable knob.</p>
@@ -344,7 +363,7 @@
     </div>
 
     <span class="section-tag tag-security">SECURITY</span>
-    <h2 id="sec-pentest">15. Penetration Testing: The Defensive Art</h2>
+    <h2 id="sec-pentest">16. Penetration Testing: The Defensive Art</h2>
     <p>In the digital world, "Security" is not a state but a process. <strong>Penetration Testing</strong> (or ethical hacking) is the practice of testing a computer system, network, or web application to find security vulnerabilities that an attacker could exploit.</p>
     
     <p>Experts follow a structured methodology: <strong>Reconnaissance</strong> to gather information, <strong>Scanning</strong> to identify open ports and services, and <strong>Exploitation</strong> to safely simulate an attack. By thinking like a hacker, we can build stronger shields for the systems that power our lives.</p>
@@ -363,7 +382,7 @@
     </div>
 
     <span class="section-tag tag-compiler">ABSTRACTION</span>
-    <h2 id="sec-compiler">16. The Architecture of Translation (Compilers)</h2>
+    <h2 id="sec-compiler">17. The Architecture of Translation (Compilers)</h2>
     <p>A <strong>Compiler</strong> is a sophisticated translation engine. It takes a program written in a high-level language and transforms it into a lower-level representation—often machine code that the processor can execute directly.</p>
     
     <p>The compilation process is a multi-stage pipeline: <strong>Lexical Analysis</strong>, <strong>Syntax Analysis</strong>, <strong>Optimization</strong>, and <strong>Code Generation</strong>. By performing these steps ahead of time, compilers can apply deep optimizations that make the final program extremely efficient.</p>
@@ -380,7 +399,7 @@
     </div>
 
     <span class="section-tag tag-compiler">ABSTRACTION</span>
-    <h2 id="sec-llvm">17. The Universal Backbone (LLVM)</h2>
+    <h2 id="sec-llvm">18. The Universal Backbone (LLVM)</h2>
     <p>Traditional compilers are monolithic—one front-end language married to one back-end architecture. <strong>LLVM</strong> (Low Level Virtual Machine) shatters this model. It introduces a universal <strong>Intermediate Representation (IR)</strong>—a language-agnostic, hardware-agnostic middle layer that decouples the "what" from the "where."</p>
 
     <p>Any language—C, Rust, Swift, or even a language you invent today—can compile its source into LLVM IR. From there, the LLVM back-end can generate optimized machine code for x86, ARM, RISC-V, or any supported target. This is why LLVM has become the backbone of the modern compiler ecosystem: write one front-end, and you instantly speak to every processor on Earth.</p>
@@ -399,7 +418,7 @@
     </div>
 
     <span class="section-tag tag-interpreter">ABSTRACTION</span>
-    <h2 id="sec-interpreter">18. The Ghost in the Machine (Interpreters)</h2>
+    <h2 id="sec-interpreter">19. The Ghost in the Machine (Interpreters)</h2>
     <p>If a compiler is a translator that converts an entire book from one language to another before you read it, an <strong>Interpreter</strong> is a live translator who listens to a speech and translates it sentence by sentence as it happens.</p>
     
     <p>Interpreters don't produce a standalone executable file. Instead, they read the source code, parse it into an <strong>Abstract Syntax Tree (AST)</strong>, and execute the instructions directly. This allows for rapid development and dynamic features, at the cost of some execution overhead.</p>
@@ -422,7 +441,7 @@
     </div>
 
     <span class="section-tag" style="background:#00ffff; color:#000; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">ABSTRACTION</span>
-    <h2 id="sec-synthesis">19. Program Synthesis: Code That Writes Itself</h2>
+    <h2 id="sec-synthesis">20. Program Synthesis: Code That Writes Itself</h2>
     <p>If a compiler translates code from one language to another, a <strong>Program Synthesizer</strong> generates code from a high-level specification. This is the holy grail of computer science: the ability for a machine to understand <em>what</em> we want and determine <em>how</em> to achieve it.</p>
     
     <p>Using <strong>Deductive Synthesis</strong>, the engine searches through millions of possible logical combinations to find the exact function that matches your provided examples. It is a massive search problem over the space of all possible programs.</p>
@@ -453,7 +472,7 @@
         </p>
     </div>
 
-    <h2 id="sec-quiz">20. Test Your Computational Intuition</h2>
+    <h2 id="sec-quiz">21. Test Your Computational Intuition</h2>
     <p>Can you implement a basic sort? Use the Python environment below to sort a list of numbers from first principles.</p>
 
     <div class="interactive-container" style="align-items: stretch; padding: 2rem;">
