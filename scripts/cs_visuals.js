@@ -4,7 +4,7 @@ function startInitializers() {
     const initializers = [
         initHero, initBinary, initTransistorVisualizer, initLogic, initALUVisualizer, initCPUVisualizer, initGPUVisualizer, initRAMVisualizer,
         initOSVisualizer, initKernelVisualizer, initStructs, initTuringVisualizer, initComplexityVisualizer, initPvsNPVisualizer,
-        initKnightsTourVisualizer, initBeamSearchVisualizer, initPenTestVisualizer, initProgramSynthesis, initLLVMVisualizer,
+        initKnightsTourVisualizer, initBeamSearchVisualizer, initPenTestVisualizer, initProgramSynthesis, initSpeechSynthesis, initLLVMVisualizer,
         initInterpreterVisualizer, initCompilerVisualizer
     ];
     initializers.forEach(init => {
@@ -824,6 +824,126 @@ function initProgramSynthesis() {
         codeDisplay.innerText = '???';
         startBtn.disabled = false;
         draw();
+    });
+
+    draw();
+}
+
+// --- 6.5 SPEECH SYNTHESIS ---
+function initSpeechSynthesis() {
+    const canvas = document.getElementById('speechCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const speakBtn = document.getElementById('speak-btn');
+    const stopBtn = document.getElementById('stop-speech-btn');
+    const inputEL = document.getElementById('speech-input');
+    const voiceSelect = document.getElementById('voice-select');
+
+    let isSpeaking = false;
+    let waveOffset = 0;
+    let animId = null;
+    let synth = window.speechSynthesis;
+    let voices = [];
+
+    function populateVoices() {
+        voices = synth.getVoices();
+        voiceSelect.innerHTML = '';
+        voices.forEach((v, i) => {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = `${v.name} (${v.lang})`;
+            voiceSelect.appendChild(option);
+        });
+    }
+    
+    populateVoices();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = populateVoices;
+    }
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = isSpeaking ? '#00ffff' : '#333';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        const midY = canvas.height / 2;
+        
+        for (let x = 0; x < canvas.width; x++) {
+            let amplitude = isSpeaking ? (Math.sin(x * 0.05 + waveOffset) * 20 + Math.random() * 10 - 5) : 1;
+            // Add a complex vocal wave simulation
+            if (isSpeaking) {
+                amplitude += Math.sin(x * 0.02 - waveOffset * 1.5) * 15;
+                amplitude *= Math.sin(x * 0.005) * 0.5 + 0.5; // envelope
+            } else {
+                amplitude = 0;
+            }
+            
+            if (x === 0) ctx.moveTo(x, midY + amplitude);
+            else ctx.lineTo(x, midY + amplitude);
+        }
+        ctx.stroke();
+
+        // Optional frequency bars at the bottom
+        if (isSpeaking) {
+            ctx.fillStyle = 'rgba(204, 255, 0, 0.4)';
+            for (let i = 0; i < canvas.width; i += 10) {
+                const barHeight = Math.random() * 30 + 5;
+                ctx.fillRect(i, canvas.height - barHeight, 6, barHeight);
+            }
+        }
+
+        waveOffset += 0.2;
+
+        if (isSpeaking) {
+            animId = requestAnimationFrame(draw);
+        } else {
+            if (animId) cancelAnimationFrame(animId);
+            animId = null;
+        }
+    }
+
+    speakBtn.addEventListener('click', () => {
+        if (synth.speaking) synth.cancel();
+        
+        const text = inputEL.value;
+        if (!text) return;
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        const selectedVoiceIdx = voiceSelect.value;
+        if (voices[selectedVoiceIdx]) {
+            utterance.voice = voices[selectedVoiceIdx];
+        }
+
+        utterance.onstart = () => {
+            isSpeaking = true;
+            if (animId) cancelAnimationFrame(animId);
+            draw();
+        };
+
+        utterance.onend = () => {
+            isSpeaking = false;
+            if (animId) cancelAnimationFrame(animId);
+            draw();
+        };
+
+        utterance.onerror = () => {
+            isSpeaking = false;
+            if (animId) cancelAnimationFrame(animId);
+            draw();
+        };
+
+        synth.speak(utterance);
+    });
+
+    stopBtn.addEventListener('click', () => {
+        if (synth.speaking) {
+            synth.cancel();
+            isSpeaking = false;
+            if (animId) cancelAnimationFrame(animId);
+            draw();
+        }
     });
 
     draw();

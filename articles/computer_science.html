@@ -71,6 +71,7 @@
             <li><a href="#sec-llvm">The Universal Backbone (LLVM)</a></li>
             <li><a href="#sec-interpreter">The Ghost in the Machine (Interpreters)</a></li>
             <li><a href="#sec-synthesis">Code That Writes Itself (Program Synthesis)</a></li>
+            <li><a href="#sec-speech">The Voice of the Machine (Speech Synthesis)</a></li>
             <li><a href="#sec-quiz">Test Your Computational Intuition</a></li>
         </ol>
     </nav>
@@ -472,7 +473,28 @@
         </p>
     </div>
 
-    <h2 id="sec-quiz">21. Test Your Computational Intuition</h2>
+    <span class="section-tag" style="background:#ff00ff; color:#000; display:inline-block; padding:0.2rem 0.5rem; font-size:0.8rem; font-weight:700; border-radius:3px; margin-top:2rem;">ABSTRACTION</span>
+    <h2 id="sec-speech">21. The Voice of the Machine (Speech Synthesis)</h2>
+    <p>For decades, machines communicated solely through screens and punch cards. <strong>Speech Synthesis</strong> represents the bridge between digital computation and human interaction, translating raw text into the complex frequencies of human speech.</p>
+    
+    <p>Modern Text-to-Speech (TTS) systems don't just paste together prerecorded audio clips. Instead, they parse text into phonemes, analyze linguistic context for proper intonation (prosody), and generate audio streams using sophisticated acoustic models or neural networks. The result is a machine that literally learns how to speak.</p>
+
+    <div class="interactive-container">
+        <div style="display: flex; gap: 20px; width: 100%; align-items: center; justify-content: center; margin-bottom: 20px;">
+            <input type="text" id="speech-input" value="Hello, world! I am computing from first principles." style="width: 70%; background: #0a0a0a; color: #00ffff; border: 1px solid #333; padding: 10px; font-family: 'Courier New', monospace; font-size: 1rem;">
+            <select id="voice-select" style="width: 25%; background: #0a0a0a; color: #fff; border: 1px solid #333; padding: 10px; font-family: 'Courier New', monospace;"></select>
+        </div>
+        <canvas id="speechCanvas" width="600" height="150" style="background: #000; border: 1px solid #111;"></canvas>
+        <div class="controls">
+            <button id="speak-btn">SPEAK</button>
+            <button id="stop-speech-btn">STOP</button>
+        </div>
+        <p style="font-size: 0.9rem; color: #888; text-align: center; margin-top: 1rem; font-family: 'Courier New', monospace;">
+            Type a message and watch the waveforms as the Web Speech API synthesizes audio from text in real-time.
+        </p>
+    </div>
+
+    <h2 id="sec-quiz">22. Test Your Computational Intuition</h2>
     <p>Can you implement a basic sort? Use the Python environment below to sort a list of numbers from first principles.</p>
 
     <div class="interactive-container" style="align-items: stretch; padding: 2rem;">
