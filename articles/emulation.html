@@ -44,6 +44,12 @@
                     <li><a href="#ppu-rendering"><span class="section-tag">GPU</span> PPU & Scanline Rendering</a></li>
                 </ol>
             </li>
+            <li>
+                <div class="toc-part">PART IV: THE MACHINE</div>
+                <ol>
+                    <li><a href="#atari-2600"><span class="section-tag">2600</span> The Console That Started It All</a></li>
+                </ol>
+            </li>
         </ol>
     </section>
 
@@ -98,6 +104,46 @@
                     </div>
                 </div>
                 <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Observe the raster beam's journey as it reconstructs an image pixel by pixel.</p>
+            </div>
+        </section>
+
+        <section id="atari-2600">
+            <h2>The Console That Started It All</h2>
+            <p>The <strong>Atari 2600</strong> (1977) is the Rosetta Stone of console emulation. Its architecture is spartan: a <strong>MOS 6507</strong> CPU (a pin-reduced, cost-cut version of the legendary 6502, limited to a 13-bit address bus and therefore 8KB of addressable space), a <strong>RIOT</strong> chip providing 128 bytes of RAM, two 8-bit I/O ports, and a programmable interval timer, and the <strong>TIA</strong> — the Television Interface Adapter — responsible for all video and audio output.</p>
+            <p>The TIA is one of the most constrained graphics chips ever designed. There is <strong>no framebuffer</strong>. The entire visible display must be generated on-the-fly, scanline by scanline, by "racing the beam". The CPU has roughly 76 machine cycles per scanline to set up the TIA's registers before the electron gun sweeps across the screen. Miss the window, and the image tears.</p>
+            <p>The TIA draws using five movable objects: two <strong>Player</strong> sprites (8 pixels wide each), two <strong>Missile</strong> sprites (1–8 pixels), one <strong>Ball</strong> (1–8 pixels), and a 20-bit <strong>Playfield</strong> pattern that can be reflected or repeated to fill the full 160-pixel-wide scanline. Colour is controlled by dedicated registers — COLUPF for the playfield, COLUP0/COLUP1 for the players, and COLUBK for the background — drawn from the 128-colour NTSC palette.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">TIA Playfield Editor</div>
+
+                <div class="tia-controls-row">
+                    <div class="tia-color-group">
+                        <label>PF</label>
+                        <div class="color-swatch" id="swatch-pf" title="Playfield Colour"></div>
+                    </div>
+                    <div class="tia-color-group">
+                        <label>P0</label>
+                        <div class="color-swatch" id="swatch-p0" title="Player 0 Colour"></div>
+                    </div>
+                    <div class="tia-color-group">
+                        <label>BK</label>
+                        <div class="color-swatch" id="swatch-bk" title="Background Colour"></div>
+                    </div>
+                    <div class="tia-mode-toggle">
+                        <button id="tia-reflect-btn" class="tia-btn active">Reflect</button>
+                        <button id="tia-repeat-btn" class="tia-btn">Repeat</button>
+                    </div>
+                </div>
+
+                <div class="tia-editor" id="tia-pf-grid"></div>
+
+                <canvas id="tia-canvas" width="640" height="280"></canvas>
+
+                <div class="controls">
+                    <button id="tia-clear">Clear Playfield</button>
+                    <button id="tia-preset">Load Preset</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Toggle bits on the 20-column playfield grid, change colour registers, and drag the Player sprite across the CRT output below.</p>
             </div>
         </section>
     </main>
