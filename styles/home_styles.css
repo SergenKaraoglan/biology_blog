@@ -38,6 +38,8 @@
     --neuro-glow: rgba(0, 242, 255, 0.2);
     --ee-accent: #fbbf24;
     --ee-glow: rgba(251, 191, 36, 0.2);
+    --ps1-accent: #1e90ff;
+    --ps1-glow: rgba(30, 144, 255, 0.2);
     --font-header: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -92,7 +94,8 @@ body {
             var(--nato-accent),
             var(--palantir-accent),
             var(--neuro-accent),
-            var(--ee-accent));
+            var(--ee-accent),
+            var(--ps1-accent));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -265,6 +268,10 @@ body {
     background: linear-gradient(to top, var(--neuro-glow), transparent);
 }
 
+.ps1-card::before {
+    background: linear-gradient(to top, var(--ps1-glow), transparent);
+}
+
 .portal-card:hover::before {
     opacity: 1;
 }
@@ -348,6 +355,10 @@ body {
 
 .ee-card h2 {
     color: var(--ee-accent);
+}
+
+.ps1-card h2 {
+    color: var(--ps1-accent);
 }
 
 .portal-card h2 {

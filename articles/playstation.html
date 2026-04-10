@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silicon Dreams: PlayStation Hardware | Polymath</title>
+    <meta name="description" content="Explore the PlayStation 1's hardware architecture from first principles. From the R3000A CPU pipeline to the GTE, GPU rasterizer, and SPU audio engine.">
+    <link rel="stylesheet" href="../styles/fonts.css">
+    <link rel="stylesheet" href="../styles/ps1_styles.css">
+</head>
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← RETURN TO CORE</a>
+    </nav>
+
+    <header>
+        <h1>PlayStation</h1>
+        <p>The grey box that triggered a revolution. Explore the silicon architecture that brought 3D gaming to the living room — one polygon at a time.</p>
+    </header>
+
+    <div class="hero-canvas-container">
+        <canvas id="hero-ps1-canvas"></canvas>
+    </div>
+
+    <section class="toc">
+        <div class="toc-title">Hardware Architecture</div>
+        <ol>
+            <li>
+                <div class="toc-part">PART I: THE BRAIN</div>
+                <ol>
+                    <li><a href="#cpu-pipeline"><span class="section-tag">CPU</span> The R3000A Pipeline</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">PART II: THE GEOMETRY</div>
+                <ol>
+                    <li><a href="#gte"><span class="section-tag">GTE</span> The Maths Co-Processor</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">PART III: THE UNIVERSE</div>
+                <ol>
+                    <li><a href="#memory-map"><span class="section-tag">RAM</span> The Address Map</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">PART IV: THE LIGHT</div>
+                <ol>
+                    <li><a href="#gpu"><span class="section-tag">GPU</span> Painting with Polygons</a></li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">PART V: THE SOUND</div>
+                <ol>
+                    <li><a href="#spu"><span class="section-tag">SPU</span> Digital Voices</a></li>
+                </ol>
+            </li>
+        </ol>
+    </section>
+
+    <main>
+        <!-- SECTION 1: CPU PIPELINE -->
+        <section id="cpu-pipeline">
+            <h2>The Heart of the Machine</h2>
+            <p>The PlayStation's brain is a <strong>MIPS R3000A</strong> running at <strong>33.8688 MHz</strong> — a 32-bit RISC processor with a classic five-stage pipeline. Every clock cycle, an instruction enters the pipeline and advances through <strong>Fetch</strong>, <strong>Decode</strong>, <strong>Execute</strong>, <strong>Memory Access</strong>, and <strong>Write-Back</strong>. When the pipeline is full, the CPU completes one instruction per cycle, achieving throughput that its raw clock speed alone could never explain.</p>
+            <p>The R3000A has <strong>32 general-purpose registers</strong> (R0 is hardwired to zero), a <strong>4 KB instruction cache</strong>, and a <strong>1 KB data scratchpad</strong>. It lacks a hardware multiply/divide unit in the traditional sense — instead, multiply and divide run in a separate co-processor (CP0) and take multiple cycles, writing results to special <strong>HI</strong> and <strong>LO</strong> registers. Branch instructions carry a <strong>delay slot</strong>: the instruction immediately after a branch always executes, a quirk of the MIPS architecture that compilers and programmers must carefully manage.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">R3000A Pipeline Visualizer</div>
+                <div class="pipeline-state">
+                    <div class="state-item"><span>PC:</span> <span id="pipe-pc">0x80010000</span></div>
+                    <div class="state-item"><span>Cycle:</span> <span id="pipe-cycle">0</span></div>
+                    <div class="state-item"><span>IPC:</span> <span id="pipe-ipc">0.00</span></div>
+                </div>
+                <canvas id="pipeline-canvas" width="800" height="320"></canvas>
+                <div class="controls">
+                    <button id="pipe-step">Step Cycle</button>
+                    <button id="pipe-run">Auto-Run</button>
+                    <button id="pipe-reset">Reset</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #8a9bb5; margin-bottom: 0;">Watch MIPS instructions flow through the 5-stage pipeline. Notice how the pipeline fills up and achieves one instruction per cycle at steady state.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 2: GTE -->
+        <section id="gte">
+            <h2>The Maths Co-Processor</h2>
+            <p>The PS1 could never have rendered 3D worlds with the R3000A alone. Enter the <strong>Geometry Transformation Engine</strong> (GTE), a co-processor (CP2) wired directly into the CPU that performs fixed-point matrix and vector operations at blistering speed. Where the CPU might take dozens of cycles to multiply a 3×3 matrix by a vector, the GTE completes the same operation in as few as <strong>15 cycles</strong>.</p>
+            <p>The GTE handles the critical 3D pipeline: <strong>rotation</strong>, <strong>translation</strong>, <strong>perspective projection</strong>, <strong>depth cueing</strong>, and <strong>light-source calculation</strong>. All arithmetic is performed in <strong>fixed-point 1.15.16</strong> or <strong>1.3.12</strong> format — the PS1 has no floating-point unit whatsoever. Vertices are expressed in a local coordinate space, transformed by the GTE into screen coordinates, and then handed off to the GPU for rasterization. This divide-and-conquer approach is the secret to the PS1's polygon throughput — roughly <strong>360,000 flat-shaded polygons per second</strong>.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">GTE Perspective Projector</div>
+                <canvas id="gte-canvas" width="800" height="400"></canvas>
+                <div class="controls">
+                    <div class="slider-group">
+                        <label>Rotate X</label>
+                        <input type="range" id="gte-rx" min="0" max="628" value="50">
+                    </div>
+                    <div class="slider-group">
+                        <label>Rotate Y</label>
+                        <input type="range" id="gte-ry" min="0" max="628" value="80">
+                    </div>
+                    <div class="slider-group">
+                        <label>FOV Distance</label>
+                        <input type="range" id="gte-fov" min="100" max="600" value="300">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #8a9bb5; margin-bottom: 0;">Rotate a wireframe cube and adjust perspective distance. All projection uses fixed-point integer maths — no floats, just like the real GTE.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 3: MEMORY MAP -->
+        <section id="memory-map">
+            <h2>The Address Map</h2>
+            <p>The PS1 addresses a <strong>4 GB</strong> virtual space through the MIPS architecture's three memory segments: <strong>KUSEG</strong> (user, cached), <strong>KSEG0</strong> (kernel, cached), and <strong>KSEG1</strong> (kernel, uncached). In practice, most code runs from KSEG0 starting at <strong>0x80000000</strong>, which maps to the physical <strong>2 MB of main RAM</strong> at <strong>0x00000000</strong>.</p>
+            <p>Beyond main RAM, the address bus routes to <strong>1 MB of VRAM</strong> (accessible only through GPU DMA), a <strong>1 KB scratchpad</strong> used as fast on-chip data memory, the <strong>512 KB BIOS ROM</strong> at <strong>0x1FC00000</strong>, and a constellation of <strong>I/O ports</strong> (GPU, SPU, CD-ROM, controllers, timers) mapped into the <strong>0x1F800000–0x1F802000</strong> range. Understanding this address map is the first step in emulating the PS1: every memory read or write must be decoded and routed to the correct hardware device.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">PS1 Memory Map Explorer</div>
+                <canvas id="memmap-canvas" width="800" height="360"></canvas>
+                <div class="mem-region-legend" id="memmap-legend"></div>
+                <div class="controls">
+                    <button id="mem-read">Simulate Read</button>
+                    <button id="mem-write">Simulate Write</button>
+                    <button id="mem-reset">Reset Bus</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #8a9bb5; margin-bottom: 0;">Explore the PS1's address space. Click the buttons to simulate bus transactions and watch data flow between regions.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 4: GPU -->
+        <section id="gpu">
+            <h2>Painting with Polygons</h2>
+            <p>The PS1 GPU is a dedicated 2D rasterization engine — it has no concept of 3D at all. It receives commands from the CPU via a <strong>64-byte command FIFO</strong> or through <strong>DMA</strong>, with each command specifying a primitive to draw: triangles, quads, lines, or rectangles, with optional <strong>flat shading</strong>, <strong>Gouraud (vertex) shading</strong>, <strong>texture mapping</strong>, or <strong>semi-transparency</strong>.</p>
+            <p>The GPU writes directly into <strong>1 MB of VRAM</strong>, organized as a <strong>1024×512 pixel</strong> framebuffer at 16 bits per pixel. Textures, CLUTs (colour lookup tables), and display buffers all share this same VRAM. Rendering order is controlled by an <strong>Ordering Table</strong> — a linked list of GPU command packets sorted by depth, which the CPU constructs each frame and then fires to the GPU via DMA in a single burst. This is how the PS1 achieves its characteristic rendering: no Z-buffer, just careful per-polygon sorting.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">GPU Gouraud Triangle Rasterizer</div>
+                <canvas id="gpu-canvas" width="800" height="400"></canvas>
+                <div class="controls">
+                    <button id="gpu-shade">Randomize Colours</button>
+                    <button id="gpu-move">Randomize Vertices</button>
+                    <button id="gpu-clear">Clear VRAM</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #8a9bb5; margin-bottom: 0;">A Gouraud-shaded triangle rasterized scanline-by-scanline, just as the PS1 GPU would draw it. Drag the vertices to reshape the triangle.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 5: SPU -->
+        <section id="spu">
+            <h2>Digital Voices</h2>
+            <p>The <strong>Sound Processing Unit</strong> is a self-contained audio DSP with <strong>24 hardware voices</strong>, each capable of playing back <strong>ADPCM</strong>-compressed samples at variable pitch. The SPU has its own <strong>512 KB of Sound RAM</strong>, separate from main memory, into which the CPU uploads sample data via DMA. Each voice has a programmable <strong>ADSR envelope</strong> (Attack, Decay, Sustain, Release) — the same synthesis model used in classic analogue synths.</p>
+            <p>Beyond sample playback, the SPU provides a hardware <strong>reverb unit</strong> with configurable delay, feedback, and wet/dry mix, capable of simulating environments from small rooms to cathedrals. Voices can also be configured for <strong>noise generation</strong> and <strong>frequency modulation</strong> (using one voice's output to modulate another's pitch). The final mix is output as <strong>44.1 kHz 16-bit stereo</strong> PCM — CD-quality audio that was a major selling point of the console.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">ADSR Envelope Editor</div>
+                <canvas id="spu-canvas" width="800" height="300"></canvas>
+                <div class="adsr-row">
+                    <div class="slider-group">
+                        <label>Attack</label>
+                        <input type="range" id="adsr-a" min="1" max="100" value="10">
+                    </div>
+                    <div class="slider-group">
+                        <label>Decay</label>
+                        <input type="range" id="adsr-d" min="1" max="100" value="20">
+                    </div>
+                    <div class="slider-group">
+                        <label>Sustain</label>
+                        <input type="range" id="adsr-s" min="0" max="100" value="60">
+                    </div>
+                    <div class="slider-group">
+                        <label>Release</label>
+                        <input type="range" id="adsr-r" min="1" max="100" value="40">
+                    </div>
+                </div>
+                <div class="controls">
+                    <button id="spu-trigger">Trigger Voice</button>
+                    <button id="spu-preset">Strings Preset</button>
+                    <button id="spu-reset">Reset</button>
+                </div>
+                <p style="font-size: 0.9rem; color: #8a9bb5; margin-bottom: 0;">Shape the ADSR envelope that controls each of the SPU's 24 voices. Hit "Trigger Voice" to see the envelope animate in real time.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 POLYMATH SERIES — PLAYSTATION HARDWARE MODULE</p>
+    </footer>
+
+    <script src="../scripts/ps1_visuals.js"></script>
+</body>
+</html>
