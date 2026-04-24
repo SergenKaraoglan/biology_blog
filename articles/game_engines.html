@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Decode the architecture powering virtual worlds. From the game loop and ECS to spatial partitioning, physics engines, and scene graphs.">
+    <title>Game Engines: Architectures of Play | Polymath</title>
+    <link rel="stylesheet" href="../styles/fonts.css">
+    <link rel="stylesheet" href="../styles/engine_styles.css">
+</head>
+
+<body>
+    <nav class="home-nav">
+        <a href="../index.html">← RETURN TO CORE</a>
+    </nav>
+
+    <header>
+        <h1>Game Engines</h1>
+        <p>The invisible machinery that transforms code into living, breathing worlds. A first-principles
+            deconstruction of the runtime, the world model, and the physics that holds it all together.</p>
+    </header>
+
+    <div class="hero-canvas-container">
+        <canvas id="hero-engine-canvas"></canvas>
+    </div>
+
+    <section class="toc">
+        <div class="toc-title">Structured Principles</div>
+        <ol>
+            <li>
+                <div class="toc-part">PART I: THE RUNTIME</div>
+                <ol>
+                    <li><a href="#game-loop"><span class="section-tag tag-runtime">RUNTIME</span> The Game
+                            Loop</a></li>
+                    <li><a href="#ecs"><span class="section-tag tag-runtime">RUNTIME</span> Entity-Component-System</a>
+                    </li>
+                </ol>
+            </li>
+            <li>
+                <div class="toc-part">PART II: THE WORLD</div>
+                <ol>
+                    <li><a href="#spatial-partitioning"><span class="section-tag tag-world">WORLD</span> Spatial
+                            Partitioning</a></li>
+                    <li><a href="#physics-engine"><span class="section-tag tag-world">WORLD</span> The Physics
+                            Engine</a></li>
+                    <li><a href="#scene-graph"><span class="section-tag tag-world">WORLD</span> The Scene Graph</a></li>
+                </ol>
+            </li>
+        </ol>
+    </section>
+
+    <main>
+        <section id="game-loop">
+            <h2>The Game Loop</h2>
+            <p>Every game engine, from the simplest 2D platformer to a colossal open-world RPG, is driven by one
+                fundamental construct: the <strong>game loop</strong>. Each iteration of the loop processes input,
+                updates the world state, and renders the frame. It is the heartbeat of any interactive application.</p>
+            <p>A naive loop ties physics updates to the frame rate — meaning your game runs faster on powerful
+                hardware and slower on weak machines. The solution is to <strong>decouple the simulation from the
+                    render clock</strong> using a fixed timestep for physics and a variable timestep for rendering.
+                This guarantees deterministic, stable physics regardless of the frame rate.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Game Loop Simulator</div>
+                <canvas id="loop-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <button id="toggle-timestep" style="margin-bottom: 1rem; width: 100%;">Switch to Fixed Timestep
+                    </button>
+                    <div class="slider-group">
+                        <label>Simulated FPS: <span id="fps-display">60</span></label>
+                        <input type="range" id="fps-slider" min="10" max="144" step="1" value="60">
+                    </div>
+                    <div class="slider-group">
+                        <label>Gravity: <span id="gravity-loop-display">980</span></label>
+                        <input type="range" id="gravity-loop-slider" min="200" max="2000" step="10" value="980">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Toggle between variable and fixed
+                    timestep. Drag the FPS slider to simulate different frame rates and observe how physics stability
+                    changes.</p>
+            </div>
+        </section>
+
+        <section id="ecs">
+            <h2>Entity-Component-System</h2>
+            <p>Traditional object-oriented game architectures create deep inheritance hierarchies — a
+                <strong>Player</strong> extends <strong>Character</strong> extends <strong>Entity</strong>. This
+                quickly becomes rigid and fragile. The <strong>Entity-Component-System (ECS)</strong> pattern
+                replaces inheritance with composition.
+            </p>
+            <p>An <strong>Entity</strong> is nothing more than a unique ID. <strong>Components</strong> are pure
+                data containers (Position, Velocity, Sprite). <strong>Systems</strong> are the logic — they query
+                for entities that possess specific component combinations and operate on them. This data-oriented
+                design is cache-friendly, parallelisable, and infinitely flexible.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">ECS Sandbox</div>
+                <canvas id="ecs-canvas" width="600" height="400"></canvas>
+                <div class="ecs-controls">
+                    <button id="ecs-spawn">Spawn Entity</button>
+                    <button id="ecs-add-velocity">+ Velocity</button>
+                    <button id="ecs-add-gravity">+ Gravity</button>
+                    <button id="ecs-add-render">+ Render</button>
+                    <button id="ecs-clear">Clear All</button>
+                </div>
+                <div class="ecs-entity-list" id="ecs-entity-list"></div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Spawn entities and attach components.
+                    Only entities with both Position and Velocity move. Only entities with Render are drawn. Gravity
+                    pulls entities downward.</p>
+            </div>
+        </section>
+
+        <section id="spatial-partitioning">
+            <h2>Spatial Partitioning</h2>
+            <p>Checking every object against every other object for collisions is O(n²) — disastrous at
+                scale. <strong>Spatial partitioning</strong> structures like the <strong>Quadtree</strong>
+                recursively subdivide 2D space into four quadrants. Each node holds a limited number of objects;
+                when the limit is exceeded, the node splits.</p>
+            <p>Collision queries become localised: instead of testing against every object in the world, you only
+                test against objects in the same (or neighbouring) quadrant. This transforms broad-phase collision
+                detection from O(n²) to approximately O(n log n).</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Quadtree Visualizer</div>
+                <canvas id="quadtree-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <button id="qt-toggle" style="margin-bottom: 1rem; width: 100%;">Show Quadtree Boundaries</button>
+                    <div class="slider-group">
+                        <label>Particle Count: <span id="qt-count-display">50</span></label>
+                        <input type="range" id="qt-count" min="10" max="300" step="10" value="50">
+                    </div>
+                    <div class="slider-group">
+                        <label>Max Per Node: <span id="qt-capacity-display">4</span></label>
+                        <input type="range" id="qt-capacity" min="1" max="10" step="1" value="4">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Watch the quadtree subdivide in
+                    real-time as particles move. Adjust capacity to see finer or coarser partitioning.</p>
+            </div>
+        </section>
+
+        <section id="physics-engine">
+            <h2>The Physics Engine</h2>
+            <p>A physics engine simulates Newtonian mechanics: <strong>F = ma</strong>. Each frame, forces
+                (gravity, friction, collisions) are accumulated, integrated via <strong>semi-implicit Euler
+                    integration</strong> to update velocities and positions, and then collision response is applied
+                to prevent interpenetration.</p>
+            <p>When two rigid bodies collide, the engine computes a <strong>collision normal</strong> and applies
+                an <strong>impulse</strong> — an instantaneous change in velocity — governed by the coefficient
+                of restitution (bounciness). A restitution of 1.0 is perfectly elastic; 0.0 is perfectly
+                inelastic.</p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Rigid Body Sandbox</div>
+                <canvas id="physics-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <button id="phys-spawn">Spawn Body</button>
+                    <button id="phys-reset">Reset</button>
+                    <div class="slider-group">
+                        <label>Gravity: <span id="phys-gravity-display">500</span></label>
+                        <input type="range" id="phys-gravity" min="0" max="1500" step="10" value="500">
+                    </div>
+                    <div class="slider-group">
+                        <label>Restitution: <span id="phys-restitution-display">0.6</span></label>
+                        <input type="range" id="phys-restitution" min="0" max="1" step="0.05" value="0.6">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">Spawn rigid bodies that fall under
+                    gravity and collide. Adjust restitution to control bounciness (0 = dead stop, 1 = perfect
+                    bounce).</p>
+            </div>
+        </section>
+
+        <section id="scene-graph">
+            <h2>The Scene Graph</h2>
+            <p>A <strong>scene graph</strong> is a tree structure where each node represents an object in the
+                world. Every node stores a <strong>local transform</strong> (position, rotation, scale) relative
+                to its parent. The <strong>world transform</strong> is computed by concatenating all transforms
+                from the root down to the node.</p>
+            <p>This hierarchical design means moving a parent automatically moves all its children. A character's
+                arm swings relative to the shoulder; the sword swings relative to the hand. This pattern is
+                fundamental to skeletal animation, UI layouts, and any system with nested spatial relationships.
+            </p>
+
+            <div class="interactive-container">
+                <div class="visual-label">Hierarchical Transform Visualizer</div>
+                <canvas id="scene-canvas" width="600" height="400"></canvas>
+                <div class="controls">
+                    <button id="scene-add-child">Add Child Node</button>
+                    <button id="scene-remove">Remove Last</button>
+                    <button id="scene-reset">Reset</button>
+                    <div class="slider-group">
+                        <label>Root Speed: <span id="scene-speed-display">1.0</span></label>
+                        <input type="range" id="scene-speed" min="0" max="3" step="0.1" value="1.0">
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0;">A solar-system-style scene graph.
+                    Add child nodes to see how transforms propagate hierarchically. Each child inherits its parent's
+                    world transform.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 POLYMATH SERIES — GAME ENGINES MODULE</p>
+    </footer>
+
+    <script src="../scripts/engine_visuals.js"></script>
+</body>
+
+</html>

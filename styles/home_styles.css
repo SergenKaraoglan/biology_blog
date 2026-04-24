@@ -40,6 +40,8 @@
     --ee-glow: rgba(251, 191, 36, 0.2);
     --ps1-accent: #1e90ff;
     --ps1-glow: rgba(30, 144, 255, 0.2);
+    --engine-accent: #ff6d00;
+    --engine-glow: rgba(255, 109, 0, 0.2);
     --font-header: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -95,7 +97,8 @@ body {
             var(--palantir-accent),
             var(--neuro-accent),
             var(--ee-accent),
-            var(--ps1-accent));
+            var(--ps1-accent),
+            var(--engine-accent));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -272,6 +275,10 @@ body {
     background: linear-gradient(to top, var(--ps1-glow), transparent);
 }
 
+.engine-card::before {
+    background: linear-gradient(to top, var(--engine-glow), transparent);
+}
+
 .portal-card:hover::before {
     opacity: 1;
 }
@@ -359,6 +366,10 @@ body {
 
 .ps1-card h2 {
     color: var(--ps1-accent);
+}
+
+.engine-card h2 {
+    color: var(--engine-accent);
 }
 
 .portal-card h2 {
